@@ -39,12 +39,11 @@ type BloggingContext() =
     override this.OnConfiguring (optionsbuilder :  DbContextOptionsBuilder) =
         optionsbuilder.UseSqlite(@"Data Source=C:\F#-Projects\blogging.db") |> ignore
 
-
-type Abteilungen(abteilungsid : int, name : string) =
-    let mutable abteilungsID = abteilungsid
-    let mutable name         = name
-    member this.AbteilungsID with get() = abteilungsID and set(value) = abteilungsID <- value
-    member this.Name         with get() = name         and set(value) = name         <- value
+type Abteilungen(abteilungenid : int, name : string) =
+    let mutable abteilungenID = abteilungenid
+    let mutable name     = name
+    member this.AbteilungenID with get() = abteilungenID and set(value) = abteilungenID <- value
+    member this.Name          with get() = name          and set(value) = name          <- value
 
 type Rollen(rollenid : int, name : string) =
     let mutable rollenID = rollenid
@@ -64,10 +63,11 @@ type PersonenVerzeichnis(id : int, name : string, abteilungsid : int, rollenid :
 
 type PersonenContext() =
     inherit DbContext()
+    
+    [<DefaultValue>] val mutable m_abteilungenid : DbSet<Abteilungen>
+    member public this.Abteilungen with get() = this.m_abteilungenid
+                                           and set value = this.m_abteilungenid <- value
 
-    [<DefaultValue>] val mutable m_abteilungen : DbSet<Abteilungen>
-    member public this.Abteilungen with get() = this.m_abteilungen
-                                                and set value = this.m_abteilungen <- value
 
     [<DefaultValue>] val mutable m_rollen : DbSet<Rollen>
     member public this.Rollen with get() = this.m_rollen
@@ -96,10 +96,9 @@ let program2 (id : int) (title : string) (content : string) (blogid : int) =
     let count = db.SaveChanges()
     printfn "%i records saved to database" count
 
-
 let sqlTestingAbteilungen (id : int) (name : string) =
     let db = new PersonenContext()
-    db.Add(new Abteilungen(id,name)) |> ignore
+    db.Add(new Abteilungen(id, name)) |> ignore
     let count = db.SaveChanges()
     printfn "%i records saved to database" count
 
@@ -119,6 +118,6 @@ let sqlTestingPersonenVerzeichnis (id : int) (name : string) =
 program 2 "http://sample.com"
 program2 2 "jo" "joo" 1
 
-sqlTestingAbteilungen 1 "Biotech"
+sqlTestingAbteilungen 1 "BioTech"
 sqlTestingRollen 1 "Professor"
 sqlTestingPersonenVerzeichnis 1 "Bob"
