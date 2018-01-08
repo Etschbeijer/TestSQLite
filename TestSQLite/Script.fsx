@@ -1,14 +1,23 @@
 ﻿
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
+//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
+//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
+//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
+//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
+//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
+
+#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
+#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
+#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
+#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
+#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
+#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\FSharp.Plotly.dll"
 
 open System
 open System.Diagnostics
 open Microsoft.EntityFrameworkCore
 open System.Linq
+open FSharp.Plotly
+open FSharp.Plotly.HTML
 
 ///Defining the Types/////////////////////////
 //////////////////////////////////////////////////////////////////
@@ -126,7 +135,7 @@ type PersonenContext() =
                                                         and set value = this.m_personenverzeichnis <- value
 
     override this.OnConfiguring (optionsbuilder :  DbContextOptionsBuilder) =
-        optionsbuilder.UseSqlite(@"Data Source=C:\F#-Projects\TestDatenBank11.db") |> ignore
+        optionsbuilder.UseSqlite(@"Data Source=C:\Users\PatrickB\Desktop\F#Projects\TestDatenBank.db") |> ignore
 
 ///Manipulating the databases/////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -169,7 +178,7 @@ let sqlTestingPersonenVerzeichnisMultipleTransactions (x : int) =
         db.Add({ID=i; Name=(sprintf "Bob%i") i; AbteilungenID=1;RollenID=1}) |> ignore
     db.SaveChanges() |>ignore
     timer.Stop()
-    timer.Elapsed.TotalSeconds
+    timer.Elapsed.TotalMilliseconds
 
 program 3 "http://sample.com"
 program2 3 "jo" "joo" 1
@@ -178,7 +187,33 @@ sqlTestingAbteilungen 1 "BioTech"
 sqlTestingRollen 1 "Professor"
 sqlTestingPersonenVerzeichnis 1 "Bob"
 
-sqlTestingPersonenVerzeichnisMultipleTransactions 1000000
+sqlTestingPersonenVerzeichnisMultipleTransactions 100
+
+///Plot every Graph together//////////////////////////////////////
+
+let numberOfDataPoints = [10.; 100.; 1000.; 10000.; 100000.; 1000000.]
+
+let insertionTimeAspNetMS = List.map2 (fun x y -> (x,y)) numberOfDataPoints [3.6251; 6.421; 9.4021; 77.537; 502.9515; 5079.1631]
+let insertionTimeTypeProviderMS = List.map2 (fun x y -> (x,y)) numberOfDataPoints [84.; 112.; 492.; 4110.; 41360.; 481047.]
+let insertionTimeEntityFrameworkCoreMS = List.map2 (fun x y -> (x,y)) numberOfDataPoints [743.9926; 767.0876; 778.1466; 1505.5596; 8959.6743; 84528.5174]
+
+let readTimeAspNetMS = List.map2 (fun x y -> (x,y)) numberOfDataPoints [0.3083; 0.3113; 1.044; 8.1912; 139.1479; 1273.2844]
+let readTimeTypeProviderMS =List.map2 (fun x y -> (x,y)) numberOfDataPoints [60.; 62.; 73.; 225.; 2138.; 22043.]
+let readTimeEntityFrameworkCoreMS = List.map2 (fun x y -> (x,y)) numberOfDataPoints [589.; 692.; 577.; 620.; 1078.; 5447.]
+
+[Chart.Line (insertionTimeAspNetMS, "Asp.Net");Chart.Line(insertionTimeTypeProviderMS, "SQLTypeProvider");Chart.Line(insertionTimeEntityFrameworkCoreMS, "EntityFrameworkCore")]
+|> Chart.Combine
+|> Chart.withX_AxisStyle(title="dataset size")
+|> Chart.withY_AxisStyle(title="insertion time [ms]")
+|> Chart.Show
+
+[Chart.Line (readTimeAspNetMS,"Asp.Net");Chart.Line(readTimeTypeProviderMS,"SQLTypeProvider");Chart.Line(readTimeEntityFrameworkCoreMS,"EntityFrameworkCore")]
+|> Chart.Combine
+|> Chart.withX_AxisStyle(title="dataset size")
+|> Chart.withY_AxisStyle(title="reading time [ms]")
+|> Chart.Show
+
+/// QueryTesting
 
 let context = new PersonenContext()
 
