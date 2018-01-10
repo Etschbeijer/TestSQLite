@@ -272,6 +272,7 @@ initDB "C:\Users\PatrickB\Desktop\F#Projects\DavidsDatenbank.db"
 
 ///Programming a Parser
 //OntologyItem contains ID, OntologyID and Name
+
 type OntologyItem<'a> =
     {
     ID : string
@@ -305,24 +306,42 @@ let fromFileEnumerator (converter:seq<string>-> 'a) (fileEnumerator) =
     
     // main
     fileEnumerator
-    |> Seq.filter (fun (l:string) -> not (l.StartsWith ";" || l.StartsWith " "))
     |> Seq.groupWhen same_group 
     |> Seq.map (fun l -> record (List.ofSeq l) converter)
     
-
 /// Reads FastaItem from file. Converter determines type of sequence by converting seq<char> -> type
-
 ///Testing
 let fromFile converter (filePath) =
     FileIO.readFile filePath
     |> fromFileEnumerator converter
 
-fromFile Seq.toArray "C:\Users\PatrickB\Desktop\F#Projects\TermsToParse\Pi-MS.txt"
+fromFile Seq.toArray @"C:\Users\PatrickB\Desktop\F#Projects\TermsToParse\Pi-MS.txt"
 
 
+let file filepath =
+    FileIO.readFile filepath
+
+let findTerm (arrayOfFile : string []) =
+    let rec loop acc =
+        if acc = arrayOfFile.Length-1 then -1
+        else
+            if arrayOfFile.[acc] = "[Term]"
+               then
+               printfn "%s" arrayOfFile.[acc]
+               acc
+            else
+            printfn "%s" arrayOfFile.[acc]
+            loop (acc+1)
+    loop 0
+
+let arrayFile = file "C:\Users\PatrickB\Desktop\F#Projects\TermsToParse\Pi-MS.txt" |> Seq.toArray |> findTerm
+arrayFile.[28]
+ 
 let a = ["A";"b";"C"]
-match a with
-    |[] -> ["a"]
-    |(h:string) :: t when h.StartsWith "A" -> let head = h.Remove(0)
-                                              let name = t
-                                              name
+
+let test x =
+    match ("c" = List.head x) with
+        |false  -> printfn "didn`t work"
+        |true   -> printfn "it worked"
+
+test a
