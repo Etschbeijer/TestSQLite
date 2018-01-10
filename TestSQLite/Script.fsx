@@ -11,9 +11,11 @@
 #r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
 #r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
 #r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\FSharp.Plotly.dll"
+#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\EntityFramework.dll"
 
 open System
 open System.Diagnostics
+open System.ComponentModel.DataAnnotations.Schema
 open Microsoft.EntityFrameworkCore
 open System.Linq
 open FSharp.Plotly
@@ -65,16 +67,15 @@ type BloggingContext() =
 //    member this.RollenID with get() = rollenID and set(value) = rollenID <- value
 //    member this.Name     with get() = name     and set(value) = name     <- value
 
-//type PersonenVerzeichnis(id : int, name : string, abteilungsid : int, rollenid : int) =
-
-//    let mutable id           = id
-//    let mutable name         = name
-//    let mutable abteilungsID = abteilungsid
-//    let mutable rollenID     = rollenid
-//    member this.ID           with get() = id           and set(value) = id           <- value
-//    member this.Name         with get() = name         and set(value) = name         <- value
-//    member this.AbteilungsID with get() = abteilungsID and set(value) = abteilungsID <- value
-//    member this.RollenID     with get() = rollenID     and set(value) = rollenID     <- value
+//type PersonenVerzeichnis(name : string, abteilungsid : int, rollenid : int) =
+//    let mutable id            = 0
+//    let mutable name          = name
+//    let mutable abteilungenID = abteilungsid
+//    let mutable rollenID      = rollenid
+//    member this.ID            with get() = id           and set(value) = id             <- value
+//    member this.Name          with get() = name         and set(value) = name           <- value
+//    member this.AbteilungenID with get() = abteilungenID and set(value) = abteilungenID <- value
+//    member this.RollenID      with get() = rollenID     and set(value) = rollenID       <- value
 
 //type PersonenContext() =
 //    inherit DbContext()
@@ -110,7 +111,7 @@ type Rollen =
     Name : string
     }
 
-[<CLIMutable>]
+[<CLIMutable>] [<DatabaseGeneratedAttribute(DatabaseGeneratedOption.ID)>]
 type PersonenVerzeichnis = 
     {
     ID : int
@@ -123,7 +124,7 @@ type PersonenContext() =
     inherit DbContext()
     [<DefaultValue>] val mutable m_abteilungen : DbSet<Abteilungen>
     member public this.Abteilungen with get() = this.m_abteilungen
-                                           and set value = this.m_abteilungen <- value
+                                                and set value = this.m_abteilungen <- value
 
 
     [<DefaultValue>] val mutable m_rollen : DbSet<Rollen>
@@ -166,7 +167,7 @@ let sqlTestingRollen (id : int) (name : string) =
 
 let sqlTestingPersonenVerzeichnis (id : int) (name : string) =
     let db = new PersonenContext()
-    db.Add({ID=id; Name=name; AbteilungenID=1;RollenID=1}) |> ignore
+    db.Add({ID=id; Name=name; AbteilungenID=1; RollenID=1}) |> ignore
     let count = db.SaveChanges()
     printfn "%i records saved to database" count
 
@@ -175,7 +176,7 @@ let sqlTestingPersonenVerzeichnisMultipleTransactions (x : int) =
     let timer = new Stopwatch()
     timer.Start()
     for i = 1 to x do
-        db.Add({ID=i; Name=(sprintf "Bob%i") i; AbteilungenID=1;RollenID=1}) |> ignore
+        db.Add({ID=i;Name=(sprintf "Bob%i") i; AbteilungenID=1;RollenID=1}) |> ignore
     db.SaveChanges() |>ignore
     timer.Stop()
     timer.Elapsed.TotalMilliseconds
@@ -246,3 +247,82 @@ let query2 =
     }
     |> Seq.toArray
 
+
+///Another Test
+
+
+#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
+#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.Mz.dll"
+#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.dll"
+#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.IO.dll"
+#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.dll"
+
+open BioFSharp
+open FSharp
+open FSharp.Care.Collections
+open FSharp.Care.IO
+open BioFSharp.Mz.MzIdentMLModel
+open BioFSharp.Mz.MzIdentMLModel.Db
+open System
+open System.Data
+open System.Data.SQLite
+open BioFSharp.Formula.Table
+
+initDB "C:\Users\PatrickB\Desktop\F#Projects\DavidsDatenbank.db"
+
+///Programming a Parser
+//OntologyItem contains ID, OntologyID and Name
+type OntologyItem<'a> =
+    {
+    ID : string
+    Name : 'a
+    }
+
+//creates OntologyItem with ID, OntologyID and Name
+let createOntologyItem id name =
+    {
+    ID = id
+    Name = name
+    }
+
+//Condition of grouping lines
+let private same_group (l : string) =             
+    not (String.length l = 0 || l <> "[Term]") //needs to change
+
+//Tokenizer
+
+/// Reads FastaItem from file. Converter determines type of sequence by converting seq<char> -> type
+let fromFileEnumerator (converter:seq<string>-> 'a) (fileEnumerator) =
+    // Matches grouped lines and concatenates them
+    let record d (converter:seq<string>-> 'a) = 
+        match d with
+        | [] -> raise (System.Exception "Incorrect FastA format")
+        | (h:string) :: t when h.StartsWith "[" ->  let id = t.Head
+                                                    let name = t.Item 1
+                                                    createOntologyItem id name
+                                                        
+        | h :: _ -> raise (System.Exception "Incorrect format")        
+    
+    // main
+    fileEnumerator
+    |> Seq.filter (fun (l:string) -> not (l.StartsWith ";" || l.StartsWith " "))
+    |> Seq.groupWhen same_group 
+    |> Seq.map (fun l -> record (List.ofSeq l) converter)
+    
+
+/// Reads FastaItem from file. Converter determines type of sequence by converting seq<char> -> type
+
+///Testing
+let fromFile converter (filePath) =
+    FileIO.readFile filePath
+    |> fromFileEnumerator converter
+
+fromFile Seq.toArray "C:\Users\PatrickB\Desktop\F#Projects\TermsToParse\Pi-MS.txt"
+
+
+let a = ["A";"b";"C"]
+match a with
+    |[] -> ["a"]
+    |(h:string) :: t when h.StartsWith "A" -> let head = h.Remove(0)
+                                              let name = t
+                                              name
