@@ -111,7 +111,7 @@ type Rollen =
     Name : string
     }
 
-[<CLIMutable>] [<DatabaseGeneratedAttribute(DatabaseGeneratedOption.ID)>]
+[<CLIMutable>]
 type PersonenVerzeichnis = 
     {
     ID : int
@@ -180,6 +180,8 @@ let sqlTestingPersonenVerzeichnisMultipleTransactions (x : int) =
     db.SaveChanges() |>ignore
     timer.Stop()
     timer.Elapsed.TotalMilliseconds
+
+///Testing Area
 
 program 3 "http://sample.com"
 program2 3 "jo" "joo" 1
@@ -250,7 +252,6 @@ let query2 =
 
 ///Another Test
 
-
 #r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
 #r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.Mz.dll"
 #r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.dll"
@@ -265,14 +266,14 @@ open BioFSharp.Mz.MzIdentMLModel
 open BioFSharp.Mz.MzIdentMLModel.Db
 open System
 open System.Data
+open System.IO
 open System.Data.SQLite
 open BioFSharp.Formula.Table
-
-initDB "C:\Users\PatrickB\Desktop\F#Projects\DavidsDatenbank.db"
+open BioFSharp.BioID.FastA
+open FSharp.Care.IO.SchemaReader
 
 ///Programming a Parser
 //OntologyItem contains ID, OntologyID and Name
-
 type OntologyItem<'a> =
     {
     ID : string
@@ -286,62 +287,87 @@ let createOntologyItem id name =
     Name = name
     }
 
+[<CLIMutable>]
+type Ontology = 
+    {
+    ID : string
+    Name : string
+    }
+
+type OntologyContext() =
+    inherit DbContext()
+    [<DefaultValue>] val mutable m_ontology : DbSet<Ontology>
+    member public this.Ontology with get() = this.m_ontology
+                                                and set value = this.m_ontology <- value
+
+    override this.OnConfiguring (optionsbuilder :  DbContextOptionsBuilder) =
+        optionsbuilder.UseSqlite(@"Data Source=C:\Users\PatrickB\Desktop\F#Projects\DavidsDatenbank.db") |> ignore
+ 
 //Condition of grouping lines
 let private same_group (l : string) =             
     not (String.length l = 0 || l <> "[Term]") //needs to change
 
-//Tokenizer
-
 /// Reads FastaItem from file. Converter determines type of sequence by converting seq<char> -> type
-let fromFileEnumerator (converter:seq<string>-> 'a) (fileEnumerator) =
+let fromFileEnumerator (fileEnumerator) =
     // Matches grouped lines and concatenates them
-    let record d (converter:seq<string>-> 'a) = 
-        match d with
-        | [] -> raise (System.Exception "Incorrect FastA format")
-        | (h:string) :: t when h.StartsWith "[" ->  let id = t.Head
-                                                    let name = t.Item 1
-                                                    createOntologyItem id name
-                                                        
-        | h :: _ -> raise (System.Exception "Incorrect format")        
+    let record d = 
+        match Seq.item 0 d = "[Term]" with
+        |true  ->      let id   = Seq.item 1 d
+                       let name = Seq.item 2 d
+                       createOntologyItem id name
+                                                         
+        |false -> raise (System.Exception "Incorrect ontology format")
     
     // main
     fileEnumerator
-    |> Seq.groupWhen same_group 
-    |> Seq.map (fun l -> record (List.ofSeq l) converter)
-    
-/// Reads FastaItem from file. Converter determines type of sequence by converting seq<char> -> type
-///Testing
-let fromFile converter (filePath) =
-    FileIO.readFile filePath
-    |> fromFileEnumerator converter
+    |> Seq.groupWhen same_group
+    |> Seq.map (fun l -> record l)
 
-fromFile Seq.toArray @"C:\Users\PatrickB\Desktop\F#Projects\TermsToParse\Pi-MS.txt"
-
-
-let file filepath =
-    FileIO.readFile filepath
-
-let findTerm (arrayOfFile : string []) =
+let findTerm (arrayOfFile : string seq) =
     let rec loop acc =
-        if acc = arrayOfFile.Length-1 then -1
+        if (acc + 1) = (Seq.length arrayOfFile) then Seq.skip acc arrayOfFile
         else
-            if arrayOfFile.[acc] = "[Term]"
+            if Seq.item acc arrayOfFile = "[Term]"
                then
-               printfn "%s" arrayOfFile.[acc]
-               acc
+               (Seq.skip acc arrayOfFile)
             else
-            printfn "%s" arrayOfFile.[acc]
             loop (acc+1)
     loop 0
 
-let arrayFile = file "C:\Users\PatrickB\Desktop\F#Projects\TermsToParse\Pi-MS.txt" |> Seq.toArray |> findTerm
-arrayFile.[28]
- 
-let a = ["A";"b";"C"]
+let sqlTestingOntologySequenceTransactions (x : seq<OntologyItem<string>>) =
+    let db = new OntologyContext()
+    let timer = new Stopwatch()
+    timer.Start()
+    for i = 0 to (Seq.length x)-1 do
+        db.Add({ID=(Seq.item i x).ID; Name=(Seq.item i x).Name}) |> ignore
+    db.SaveChanges() |>ignore
+    timer.Stop()
+    timer.Elapsed.TotalMilliseconds
 
-let test x =
-    match ("c" = List.head x) with
-        |false  -> printfn "didn`t work"
-        |true   -> printfn "it worked"
+/// Reads FastaItem from file. Converter determines type of sequence by converting seq<char> -> type
+///Testing
+let fromFile (filePath) =
+    FileIO.readFile filePath
+    |> findTerm
+    |> fromFileEnumerator
+    //|> sqlTestingOntologySequenceTransactions
 
-test a
+let test = fromFile @"C:\Users\PatrickB\Desktop\F#Projects\TermsToParse\Pi-MS.txt"
+test
+
+Seq.item 1 test
+
+initDB "C:\Users\PatrickB\Desktop\F#Projects\DavidsDatenbank.db"
+
+let everyNth n (input:seq<_>) = 
+    seq{ use en = input.GetEnumerator()
+            // Call MoveNext at most 'n' times (or return false earlier)
+         let rec nextN n = 
+            if n = 0 then true
+            else en.MoveNext() && (nextN (n - 1)) 
+            // While we can move n elements forward...
+        while nextN n do
+        // Retrun each nth element
+        yield en.Current }
+
+everyNth 2 [0..10]
