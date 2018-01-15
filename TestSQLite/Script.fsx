@@ -1,17 +1,19 @@
 ﻿
-//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
-//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
-//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
-//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
-//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
+#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
+#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
+#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
+#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
+#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
+#r @"C:\Users\Patrick\source\repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\EntityFramework.dll"
+#r @"C:\Users\Patrick\source\repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\FSharp.Plotly.dll"
 
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
-#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\FSharp.Plotly.dll"
-#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\EntityFramework.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\FSharp.Plotly.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\EntityFramework.dll"
 
 open System
 open System.Diagnostics
@@ -251,12 +253,17 @@ let query2 =
 
 
 ///Another Test
+#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\System.Data.SQLite.dll"
+#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\BioFSharp.dll"
+#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\BioFSharp.Mz.dll"
+#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\FSharp.Care.dll"
+#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\FSharp.Care.IO.dll"
 
-#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
-#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.Mz.dll"
-#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.dll"
-#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.IO.dll"
-#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.Mz.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.IO.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.dll"
 
 open BioFSharp
 open FSharp
@@ -274,10 +281,10 @@ open FSharp.Care.IO.SchemaReader
 
 ///Programming a Parser
 //OntologyItem contains ID, OntologyID and Name
-type OntologyItem<'a> =
+type OntologyItem =
     {
     ID : string
-    Name : 'a
+    Name : string
     }
 
 //creates OntologyItem with ID, OntologyID and Name
@@ -301,7 +308,7 @@ type OntologyContext() =
                                                 and set value = this.m_ontology <- value
 
     override this.OnConfiguring (optionsbuilder :  DbContextOptionsBuilder) =
-        optionsbuilder.UseSqlite(@"Data Source=C:\Users\PatrickB\Desktop\F#Projects\DavidsDatenbank.db") |> ignore
+        optionsbuilder.UseSqlite(@"Data Source=C:\F#-Projects\DavidsDatenbank.db") |> ignore
  
 //Condition of grouping lines
 let private same_group (l : string) =             
@@ -334,7 +341,7 @@ let findTerm (arrayOfFile : string seq) =
             loop (acc+1)
     loop 0
 
-let sqlTestingOntologySequenceTransactions (x : seq<OntologyItem<string>>) =
+let sqlTestingOntologySequenceTransactions (x : seq<OntologyItem>) =
     let db = new OntologyContext()
     let timer = new Stopwatch()
     timer.Start()
@@ -349,25 +356,55 @@ let sqlTestingOntologySequenceTransactions (x : seq<OntologyItem<string>>) =
 let fromFile (filePath) =
     FileIO.readFile filePath
     |> findTerm
-    |> fromFileEnumerator
+    //|> fromFileEnumerator
     //|> sqlTestingOntologySequenceTransactions
 
-let test = fromFile @"C:\Users\PatrickB\Desktop\F#Projects\TermsToParse\Pi-MS.txt"
+let test = fromFile @"C:\F#-Projects\ParserStuff\Psi-MS.txt"
 test
 
 Seq.item 1 test
 
-initDB "C:\Users\PatrickB\Desktop\F#Projects\DavidsDatenbank.db"
+initDB "C:\F#-Projects\DavidsDatenbank.db"
 
-let everyNth n (input:seq<_>) = 
+let everyNth1 (input : 'a seq) = 
+    let n = 1
     seq{ use en = input.GetEnumerator()
             // Call MoveNext at most 'n' times (or return false earlier)
          let rec nextN n = 
             if n = 0 then true
-            else en.MoveNext() && (nextN (n - 1)) 
+            else 
+                if en.Current = "[Term]" then
+                    en.MoveNext() && (nextN (n - 1))
+   
+                else en.MoveNext() && (nextN n)
             // While we can move n elements forward...
         while nextN n do
         // Retrun each nth element
         yield en.Current }
 
-everyNth 2 [0..10]
+let everyNth2 (input : 'a seq) = 
+    let n = 1
+    seq{ use en = input.GetEnumerator()
+            // Call MoveNext at most 'n' times (or return false earlier)
+         let rec nextN n = 
+            if n = 0 then true
+            else 
+                if en.Current = "[Term]" then
+                    en.MoveNext() && en.MoveNext() && (nextN (n - 1))
+   
+                else en.MoveNext() && (nextN n)
+            // While we can move n elements forward...
+        while nextN n do
+        // Retrun each nth element
+        yield en.Current }
+
+let idSequence = everyNth1 test 
+let nameSequence = everyNth2 test
+Seq.map2 ( fun x y -> createOntologyItem x y) idSequence nameSequence
+
+
+let frage (x : 'a seq) =
+    if x.Contains("A") then printfn "it contains A"
+    else printfn "it does not contain A"
+
+frage ["A";"B"]
