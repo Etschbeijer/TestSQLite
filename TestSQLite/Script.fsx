@@ -1,19 +1,19 @@
 ﻿
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
-#r @"C:\Users\Patrick\source\repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\EntityFramework.dll"
-#r @"C:\Users\Patrick\source\repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\FSharp.Plotly.dll"
+//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
+//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
+//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
+//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
+//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
+//#r @"C:\Users\Patrick\source\repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\EntityFramework.dll"
+//#r @"C:\Users\Patrick\source\repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\FSharp.Plotly.dll"
 
-//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\FSharp.Plotly.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\EntityFramework.dll"
+#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
+#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
+#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
+#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
+#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
+#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\FSharp.Plotly.dll"
+#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\EntityFramework.dll"
 
 open System
 open System.Diagnostics
@@ -253,17 +253,17 @@ let query2 =
 
 
 ///Another Test
-#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\System.Data.SQLite.dll"
-#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\BioFSharp.dll"
-#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\BioFSharp.Mz.dll"
-#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\FSharp.Care.dll"
-#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\FSharp.Care.IO.dll"
+//#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\System.Data.SQLite.dll"
+//#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\BioFSharp.dll"
+//#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\BioFSharp.Mz.dll"
+//#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\FSharp.Care.dll"
+//#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\FSharp.Care.IO.dll"
 
-//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.Mz.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.IO.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.dll"
+#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
+#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.Mz.dll"
+#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.dll"
+#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.IO.dll"
+#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.dll"
 
 open BioFSharp
 open FSharp
@@ -279,19 +279,81 @@ open BioFSharp.Formula.Table
 open BioFSharp.BioID.FastA
 open FSharp.Care.IO.SchemaReader
 
-///Programming a Parser
-//OntologyItem contains ID, OntologyID and Name
-type OntologyItem =
+///types for the DataBank
+[<CLIMutable>]
+type AnalysisSoftware =
     {
-    ID : string
+    ID : int
     Name : string
     }
 
-//creates OntologyItem with ID, OntologyID and Name
-let createOntologyItem id name =
+[<CLIMutable>]
+type AnalysisSoftwareParam =
     {
-    ID = id
-    Name = name
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+[<CLIMutable>]
+type DBSequence =
+    {
+    ID : int
+    Accession : string
+    Name : string
+    SearchDBID : string
+    }
+
+[<CLIMutable>]
+type DBSequenceParams =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+[<CLIMutable>]
+type ModLocation =
+    {
+    ID : int
+    PeptideID : int
+    ModificationID : int
+    Location : int
+    Residue : string
+    }
+
+[<CLIMutable>]
+type ModLocationParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+[<CLIMutable>]
+type Modification =
+    {
+    ID : int
+    Name : string
+    Residues : string
+    MonoisotopicMassDelta : float
+    AvgMassDelta : float
+    }
+
+[<CLIMutable>]
+type ModificationParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
     }
 
 [<CLIMutable>]
@@ -299,6 +361,63 @@ type Ontology =
     {
     ID : string
     Name : string
+    }
+
+[<CLIMutable>]
+type Organization =
+    {
+    ID : int
+    Name : string
+    Parent_ID : string
+    }
+
+[<CLIMutable>]
+type OrganizationParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+[<CLIMutable>]
+type Peptide =
+    {
+    ID : int
+    Sequence : string
+    }
+
+[<CLIMutable>]
+type PeptideEvidence =
+    {
+    ID : int
+    DBSequenceID : int
+    PeptideID : int
+    isDecoy : string
+    Frame : string
+    Start : int
+    End : int
+    Pre : string
+    Post : string
+    TranslationsID : int
+    }
+
+[<CLIMutable>]
+type PeptideEvidenceParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+//creates OntologyItem with ID, OntologyID and Name
+let createOntologyItem id name =
+    {
+    ID = id
+    Name = name
     }
 
 type OntologyContext() =
@@ -341,7 +460,7 @@ let findTerm (arrayOfFile : string seq) =
             loop (acc+1)
     loop 0
 
-let sqlTestingOntologySequenceTransactions (x : seq<OntologyItem>) =
+let sqlTestingOntologySequenceTransactions (x : seq<Ontology>) =
     let db = new OntologyContext()
     let timer = new Stopwatch()
     timer.Start()
