@@ -102,14 +102,14 @@ type BloggingContext() =
 [<CLIMutable>]
 type Abteilungen = 
     {
-    AbteilungenID : int
+    ID : int
     Name : string
     }
 
 [<CLIMutable>]
 type Rollen = 
     {
-    RollenID : int
+    ID : int
     Name : string
     }
 
@@ -138,7 +138,7 @@ type PersonenContext() =
                                                         and set value = this.m_personenverzeichnis <- value
 
     override this.OnConfiguring (optionsbuilder :  DbContextOptionsBuilder) =
-        optionsbuilder.UseSqlite(@"Data Source=C:\Users\PatrickB\Desktop\F#Projects\TestDatenBank.db") |> ignore
+        optionsbuilder.UseSqlite(@"Data Source=C:\F#-Projects\TestDatenBank.db") |> ignore
 
 ///Manipulating the databases/////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -157,13 +157,13 @@ let program2 (id : int) (title : string) (content : string) (blogid : int) =
 
 let sqlTestingAbteilungen (id : int) (name : string) =
     let db = new PersonenContext()
-    db.Add({AbteilungenID=id; Name=name}) |> ignore
+    db.Add({Abteilungen.ID=id; Abteilungen.Name=name}) |> ignore
     let count = db.SaveChanges()
     printfn "%i records saved to database" count
 
 let sqlTestingRollen (id : int) (name : string) =
     let db = new PersonenContext()
-    db.Add({RollenID=id; Name=name}) |> ignore
+    db.Add({Rollen.ID=id; Rollen.Name=name}) |> ignore
     let count = db.SaveChanges()
     printfn "%i records saved to database" count
 
