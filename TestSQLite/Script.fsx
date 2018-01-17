@@ -122,6 +122,12 @@ type PersonenVerzeichnis =
     RollenID : int
     }
 
+let a:Abteilungen = 
+    {
+    ID=1;
+    Name=""
+    }
+
 type PersonenContext() =
     inherit DbContext()
     [<DefaultValue>] val mutable m_abteilungen : DbSet<Abteilungen>
@@ -389,6 +395,16 @@ type Peptide =
     }
 
 [<CLIMutable>]
+type PeptideParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+[<CLIMutable>]
 type PeptideEvidence =
     {
     ID : int
@@ -412,6 +428,227 @@ type PeptideEvidenceParam =
     FKUnit : string
     Value : string
     }
+
+[<CLIMutable>]
+type PeptideHypothesis =
+    {
+    ID : int
+    PeptideEvidenceID : int
+    PeptideDetectionHypothesisID : int
+    }
+
+[<CLIMutable>]
+type PeptideHypothesisParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+[<CLIMutable>]
+type Person =
+    {
+    ID : int
+    FirstName : string
+    LastName : string
+    MiddleName : string
+    OrganisationID : int
+    }
+
+[<CLIMutable>]
+type PersonParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+[<CLIMutable>]
+type ProteinAmbiguityGroup =
+    {
+    ID : int
+    ProteinDetectionListID : int
+    Name : string
+    }
+
+[<CLIMutable>]
+type ProteinAmbiguityGroupParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+[<CLIMutable>]
+type ProteinDetectionHypothesis =
+    {
+    ID : int
+    DBSequenceID : int
+    ProteinAmbiguityGroupID : int
+    Name : string
+    PassThreshold : string
+    }
+
+[<CLIMutable>]
+type ProteinDetectionHypothesisParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+[<CLIMutable>]
+type ProteinDetectionList =
+    {
+    ID : int
+    Accession : string
+    Name : string
+    SearchDBID : string
+
+    }
+
+[<CLIMutable>]
+type ProteinDetectionListParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+[<CLIMutable>]
+type ProteinDetectionProtocol =
+    {
+    ID : int
+    Name : string
+    AnalysisSoftwareID : int
+    }
+
+[<CLIMutable>]
+type ProteinDetectionProtocolParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+    
+[<CLIMutable>]
+type SpectrumIdentification =
+    {
+    ID : int
+    Name : string
+    ActivityDate : string
+    SpectrumIdentificationListID : int
+    SpectrumIdentificationProtocollID : int
+    }
+
+[<CLIMutable>]
+type SpectrumIdentificationParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+[<CLIMutable>]
+type SpectrumIdentificationItem =
+    {
+    ID : int
+    SpectrumIdentificationResultID : int
+    SampleID : int
+    PeptideID : int
+    MassTableID : int
+    Name : string
+    PassThreshold : string
+    Rank : int
+    CalculatedMassToCharge : float
+    ExperimentalMassToCharge : float
+    ChargeState : int
+    CalculatedIP : float
+    Fragmentation : string //// Look up
+    }
+
+[<CLIMutable>]
+type SpectrumIdentificationItemParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+[<CLIMutable>]
+type SpectrumIdentificationList =
+    {
+    ID : int
+    Name : string
+    NumSequencesSeqrched : int
+    }
+
+[<CLIMutable>]
+type SpectrumIdentificationListParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+[<CLIMutable>]
+type SpectrumIdentificationProtocol =
+    {
+    ID : int
+    Name : string
+    AnalysisSoftwareID : int
+    }
+
+[<CLIMutable>]
+type SpectrumIdentificationProtocoltParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+[<CLIMutable>]
+type SpectrumIdentificationResult =
+    {
+    ID : int
+    SpectrumID : int
+    SpectraDataID : int
+    SpectrumIdentificationListID : int
+    Name : string
+    }
+
+[<CLIMutable>]
+type SpectrumIdentificationResultParam =
+    {
+    ID : int
+    FKParamContainer : int
+    FKTerm : string
+    FKUnit : string
+    Value : string
+    }
+
+
+
 
 //creates OntologyItem with ID, OntologyID and Name
 let createOntologyItem id name =
