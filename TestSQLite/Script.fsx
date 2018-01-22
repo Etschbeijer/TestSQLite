@@ -144,7 +144,7 @@ type PersonenContext() =
                                                         and set value = this.m_personenverzeichnis <- value
 
     override this.OnConfiguring (optionsbuilder :  DbContextOptionsBuilder) =
-        optionsbuilder.UseSqlite(@"Data Source=C:\F#-Projects\TestDatenBank.db") |> ignore
+        optionsbuilder.UseSqlite(@"Data Source=C:\Users\PatrickB\Desktop\F#Projects") |> ignore
 
 ///Manipulating the databases/////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -664,7 +664,7 @@ type OntologyContext() =
                                                 and set value = this.m_ontology <- value
 
     override this.OnConfiguring (optionsbuilder :  DbContextOptionsBuilder) =
-        optionsbuilder.UseSqlite(@"Data Source=C:\F#-Projects\DavidsDatenbank.db") |> ignore
+        optionsbuilder.UseSqlite(@"Data Source=C:\Users\PatrickB\Desktop\F#Projects\DavidsDatenbank.db") |> ignore
  
 //Condition of grouping lines
 let private same_group (l : string) =             
@@ -712,10 +712,10 @@ let sqlTestingOntologySequenceTransactions (x : seq<Ontology>) =
 let fromFile (filePath) =
     FileIO.readFile filePath
     |> findTerm
-    //|> fromFileEnumerator
-    //|> sqlTestingOntologySequenceTransactions
+    |> fromFileEnumerator
+    |> sqlTestingOntologySequenceTransactions
 
-let test = fromFile @"C:\F#-Projects\ParserStuff\Psi-MS.txt"
+let test = fromFile @"C:\Users\PatrickB\Desktop\F#Projects\TermsToParse\Pi-MS.txt"
 test
 
 Seq.item 1 test
