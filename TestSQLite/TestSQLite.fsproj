@@ -55,6 +55,7 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Library1.fs" />
     <None Include="Script.fsx" />
+    <None Include="DataBankScript.fsx" />
     <Content Include="packages.config" />
     <Content Include="App.config" />
     <Content Include="docs\MySqlTransaction.xml" />
