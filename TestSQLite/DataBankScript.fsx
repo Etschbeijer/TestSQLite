@@ -1,31 +1,36 @@
 ﻿
 ///Another Test
-//#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\System.Data.SQLite.dll"
-//#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\BioFSharp.dll"
-//#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\BioFSharp.Mz.dll"
-//#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\FSharp.Care.dll"
-//#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\bin\BioFSharp.Mz\FSharp.Care.IO.dll"
+#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
+#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.dll"
+#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.Mz.dll"
+#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.dll"
+#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.IO.dll"
+#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
+#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
+#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
+#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
+#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
 
-#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
-#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.Mz.dll"
-#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.dll"
-#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.IO.dll"
-#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.dll"
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
-#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\FSharp.Plotly.dll"
-#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\EntityFramework.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.Mz.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.IO.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\FSharp.Plotly.dll"
+//#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\EntityFramework.dll"
 
 open System
 open System.Diagnostics
-open System.ComponentModel.DataAnnotations.Schema
+//open System.ComponentModel.DataAnnotations.Schema
 open Microsoft.EntityFrameworkCore
 open System.Linq
-open FSharp.Plotly
-open FSharp.Plotly.HTML
+//open FSharp.Plotly
+//open FSharp.Plotly.HTML
 open BioFSharp
 open FSharp
 open FSharp.Care.Collections
@@ -137,7 +142,7 @@ type Organization =
     {
     ID : int
     Name : string
-    Parent_ID : string
+    Parent_ID : int
     RowVersion : DateTime 
     }
 
@@ -479,7 +484,7 @@ type TermRelationShip =
 [<CLIMutable>]
 type TermTag =
     {
-    ID : int
+    TermTagID : int
     TermID : int 
     Name : string
     Value : string
@@ -654,7 +659,8 @@ type DBMSContext() =
                                         and set value = this.m_termTag <- value
 
     override this.OnConfiguring (optionsbuilder :  DbContextOptionsBuilder) =
-        optionsbuilder.UseSqlite(@"Data Source=C:\Users\PatrickB\Desktop\F#Projects\DavidsDatenbank.db") |> ignore
+        optionsbuilder.EnableSensitiveDataLogging() |> ignore
+        optionsbuilder.UseSqlite(@"Data Source=C:\F#-Projects\DavidsDatenbank.db") |> ignore
  
 
 //creates OntologyItem with ID, OntologyID and Name
@@ -699,26 +705,31 @@ let findTerm (arrayOfFile : string seq) =
 
 let sqlTestingOntologySequenceTransactions (x : seq<Ontology>) =
     let db = new DBMSContext()
-    db
     let timer = new Stopwatch()
     timer.Start()
     x
     |> Seq.iter (fun ontoItem -> 
-                  db.Add( {Ontology.ID=ontoItem.ID; Ontology.Name=ontoItem.Name; Ontology.RowVersion=DateTime.Now}) |> ignore
-               )
+                 db.Add({Ontology.ID=ontoItem.ID; Ontology.Name=ontoItem.Name; Ontology.RowVersion=DateTime.Now}) |> ignore
+                )
+    //db.Add({Term.ID=1; Term.Name="Bob"; Term.OntologyID="id: MS:1000001"; Term.RowVersion=DateTime.Now}) |> ignore   
     db.SaveChanges() |>ignore 
     timer.Stop()
     timer.Elapsed.TotalMilliseconds
 
 let sqlTestingTermTransaction (x : seq<Ontology>) =
     let db = new DBMSContext()
-    db
     let timer = new Stopwatch()
     timer.Start()
-    x
-    |> Seq.iter (fun termItem -> 
-                  db.Add( {TermTag.ID=1; TermTag.Name="Bob"; TermTag.TermID=1; TermTag.Value="Yes"; TermTag.RowVersion=DateTime.Now}) |> ignore
-               )
+    db.Add({Term.ID=1; Term.Name="Bob"; Term.OntologyID="id: MS:1000001"; Term.RowVersion=DateTime.Now}) |> ignore   
+    db.SaveChanges() |>ignore 
+    timer.Stop()
+    timer.Elapsed.TotalMilliseconds
+
+let sqlTestingModification (x : seq<Ontology>) =
+    let db = new DBMSContext()
+    let timer = new Stopwatch()
+    timer.Start() 
+    db.Add({Parent.ID=1; Parent.Name="Flower"; Parent.Country="Germany"; Parent.RowVersion=DateTime.Now}) |> ignore
     db.SaveChanges() |>ignore 
     timer.Stop()
     timer.Elapsed.TotalMilliseconds
@@ -737,14 +748,22 @@ let fromFileTerm (filePath) =
     |> fromFileEnumerator
     |> sqlTestingTermTransaction
 
-BioFSharp.Mz.MzIdentMLModel.Db.initDB "C:\Users\PatrickB\Desktop\F#Projects\DavidsDatenbank.db"
+let fromFileTerm2 (filePath) =
+    FileIO.readFile filePath
+    |> findTerm
+    |> fromFileEnumerator
+    |> sqlTestingModification
 
-let test = fromFile @"C:\Users\PatrickB\Desktop\F#Projects\TermsToParse\Pi-MS.txt"
+
+BioFSharp.Mz.MzIdentMLModel.Db.initDB @"C:\F#-Projects\DavidsDatenbank.db"
+
+let test = fromFile @"C:\F#-Projects\ParserStuff\Pi-MS.txt"
 
 test
 
-let test2 = fromFileTerm @"C:\Users\PatrickB\Desktop\F#Projects\TermsToParse\Pi-MS.txt"
+let test2 = fromFileTerm @"C:\F#-Projects\ParserStuff\Pi-MS.txt"
 
+let test3 = fromFileTerm2 @"C:\F#-Projects\ParserStuff\Pi-MS.txt"
 
 
 let everyNth1 (input : 'a seq) = 
@@ -779,9 +798,9 @@ let everyNth2 (input : 'a seq) =
         // Retrun each nth element
         yield en.Current }
 
-let idSequence = everyNth1 test 
-let nameSequence = everyNth2 test
-Seq.map2 ( fun x y -> createOntologyItem x y) idSequence nameSequence
+//let idSequence = everyNth1 test 
+//let nameSequence = everyNth2 test
+//Seq.map2 ( fun x y -> createOntologyItem x y) idSequence nameSequence
 
 
 let frage (x : 'a seq) =
