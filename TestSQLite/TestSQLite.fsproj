@@ -70,13 +70,33 @@
     <Content Include="docs\MySqlCommandBuilder.xml" />
     <Content Include="docs\MySqlCommand.xml" />
     <None Include="Script1.fsx" />
+    <Content Include="Ontologies_Terms\Pride.txt" />
+    <Content Include="Ontologies_Terms\Psi-MS.txt" />
+    <Content Include="Ontologies_Terms\Unimod.txt" />
+    <Content Include="Ontologies_Terms\Unit_Ontology.txt" />
+    <None Include="Ontologies_Terms\DavidsDatenbank.db" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="BioFSharp">
+      <HintPath>..\..\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="BioFSharp.IO">
+      <HintPath>..\..\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="BioFSharp.Mz">
+      <HintPath>..\..\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.Mz.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="FSharp.Care">
+      <HintPath>..\..\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.dll</HintPath>
+    </Reference>
+    <Reference Include="FSharp.Care.IO">
+      <HintPath>..\..\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.IO.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Core">
       <HintPath>..\packages\FSharp.Core.3.1.2.5\lib\net40\FSharp.Core.dll</HintPath>

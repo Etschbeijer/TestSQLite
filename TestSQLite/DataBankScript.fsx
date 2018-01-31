@@ -8,12 +8,12 @@
 #r @"..\TestSQLite\bin\Debug\netstandard.dll"
 #r @"..\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
 #r @"..\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
-#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
-#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.dll"
-#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.IO.dll"
-#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.Mz.dll"
-#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.dll"
-#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.IO.dll"
+#r @"..\TestSQLite\bin\Debug\System.Data.SQLite.dll"
+#r @"..\TestSQLite\bin\Debug\BioFSharp.dll"
+#r @"..\TestSQLite\bin\Debug\BioFSharp.IO.dll"
+#r @"..\TestSQLite\bin\Debug\BioFSharp.Mz.dll"
+#r @"..\TestSQLite\bin\Debug\FSharp.Care.dll"
+#r @"..\TestSQLite\bin\Debug\FSharp.Care.IO.dll"
 
 
 //#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
@@ -667,7 +667,7 @@ type DBMSContext() =
 
     override this.OnConfiguring (optionsBuilder :  DbContextOptionsBuilder) =
         optionsBuilder.EnableSensitiveDataLogging() |> ignore
-        optionsBuilder.UseSqlite(@"Data Source=/F#-Projects\DavidsDatenbank.db") |> ignore
+        optionsBuilder.UseSqlite(@"Data Source=C:\F#-Projects\DavidsDatenbank.db") |> ignore
 
  
 
@@ -720,4 +720,4 @@ let createDB dbPath oboPath1 oboPath2 oboPath3 oboPath4 =
 
 ///Applying functions
 
-createDB "/F#-Projects\DavidsDatenbank.db" "/F#-Projects\ParserStuff\Psi-MS.txt" "/F#-Projects/ParserStuff/Pride.txt" "/F#-Projects\ParserStuff\Unimod.txt" "/F#-Projects\ParserStuff\Unit_Ontology.txt"
+createDB @"C:\F#-Projects\DavidsDatenbank.db" @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\Ontologies_Terms\Psi-MS.txt" @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\Ontologies_Terms\Pride.txt" @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\Ontologies_Terms\Unimod.txt" @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\Ontologies_Terms\Unit_Ontology.txt"
