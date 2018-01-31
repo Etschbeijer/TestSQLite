@@ -1,15 +1,20 @@
 ﻿
 ///Another Test
+#I @"..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45"
+#I @"..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\"
+#r "Microsoft.AspNet.Identity.Core.dll"
+#r "Microsoft.AspNet.Identity.EntityFramework.dll"
+#r "System.ComponentModel.DataAnnotations.dll"
+#r @"..\TestSQLite\bin\Debug\netstandard.dll"
+#r @"..\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
+#r @"..\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
 #r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
 #r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.dll"
+#r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.IO.dll"
 #r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.Mz.dll"
 #r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.dll"
 #r @"C:\Users\Patrick\source\repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.IO.dll"
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
-#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
+
 
 //#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
 //#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.dll"
@@ -26,24 +31,26 @@
 
 open System
 open System.Diagnostics
-//open System.ComponentModel.DataAnnotations.Schema
+open System.ComponentModel.DataAnnotations.Schema
 open Microsoft.EntityFrameworkCore
 open System.Linq
 //open FSharp.Plotly
 //open FSharp.Plotly.HTML
-open BioFSharp
-open FSharp
-open FSharp.Care.Collections
+//open BioFSharp
+//open FSharp
+//open FSharp.Care.Collections
 open FSharp.Care.IO
 open BioFSharp.Mz.MzIdentMLModel
-open System
-open System.Data
-open System.IO
-open System.Data.SQLite
-open BioFSharp.Formula.Table
-open BioFSharp.BioID.FastA
-open FSharp.Care.IO.SchemaReader
-open BioFSharp.ModificationInfo
+//open System
+//open System.Data
+//open System.IO
+//open System.Data.SQLite
+//open BioFSharp.Formula.Table
+//open BioFSharp.BioID.FastA
+//open FSharp.Care.IO.SchemaReader
+//open BioFSharp.ModificationInfo
+open BioFSharp.IO.Obo
+
 
 ///types for the DataBank
 [<CLIMutable>]
@@ -465,7 +472,7 @@ type SpectrumIdentificationResultParam =
 [<CLIMutable>]
 type Term =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     OntologyID : string
     Name : string
     RowVersion : DateTime 
@@ -658,9 +665,10 @@ type DBMSContext() =
     member public this.TermTag with get() = this.m_termTag
                                         and set value = this.m_termTag <- value
 
-    override this.OnConfiguring (optionsbuilder :  DbContextOptionsBuilder) =
-        optionsbuilder.EnableSensitiveDataLogging() |> ignore
-        optionsbuilder.UseSqlite(@"Data Source=C:\F#-Projects\DavidsDatenbank.db") |> ignore
+    override this.OnConfiguring (optionsBuilder :  DbContextOptionsBuilder) =
+        optionsBuilder.EnableSensitiveDataLogging() |> ignore
+        optionsBuilder.UseSqlite(@"Data Source=/F#-Projects\DavidsDatenbank.db") |> ignore
+
  
 
 //creates OntologyItem with ID, OntologyID and Name
@@ -671,141 +679,45 @@ let createOntologyItem (id : string) (name : string) (rowversion : DateTime) =
     Ontology.RowVersion = rowversion
     }
 
-//Condition of grouping lines
-let private same_group (l : string) =             
-    not (String.length l = 0 || l <> "[Term]") //needs to change
-
-/// Reads FastaItem from file. Converter determines type of sequence by converting seq<char> -> type
-let fromFileEnumerator (fileEnumerator) =
-    // Matches grouped lines and concatenates them
-    let record d = 
-        match Seq.item 0 d = "[Term]" with
-        |true  ->      let id   = Seq.item 1 d
-                       let name = Seq.item 2 d
-                       let rowVersion = DateTime().Date
-                       createOntologyItem id name rowVersion
-                                                         
-        |false -> raise (System.Exception "Incorrect ontology format")
-    
-    // main
-    fileEnumerator
-    |> Seq.groupWhen same_group
-    |> Seq.map (fun l -> record l)
-
-let findTerm (arrayOfFile : string seq) =
-    let rec loop acc =
-        if (acc + 1) = (Seq.length arrayOfFile) then Seq.skip acc arrayOfFile
-        else
-            if Seq.item acc arrayOfFile = "[Term]"
-               then
-               (Seq.skip acc arrayOfFile)
-            else
-            loop (acc+1)
-    loop 0
+let createseqOfOntoItems (inputSeq : seq<OboTerm>) =
+    inputSeq
+    |> Seq.map (fun x -> createOntologyItem x.Id x.Name System.DateTime.Now)
 
 let sqlTestingOntologySequenceTransactions (x : seq<Ontology>) =
-    let db = new DBMSContext()
+    let db = new DBMSContext()   
     let timer = new Stopwatch()
     timer.Start()
     x
     |> Seq.iter (fun ontoItem -> 
                  db.Add({Ontology.ID=ontoItem.ID; Ontology.Name=ontoItem.Name; Ontology.RowVersion=DateTime.Now}) |> ignore
                 )
+    x
+    |> Seq.iter (fun termItem -> 
+                    db.Add({Term.ID=0; Term.Name=termItem.Name; Term.OntologyID=termItem.ID; Term.RowVersion=DateTime.Now}) |> ignore
+                )
     //db.Add({Term.ID=1; Term.Name="Bob"; Term.OntologyID="id: MS:1000001"; Term.RowVersion=DateTime.Now}) |> ignore   
     db.SaveChanges() |>ignore 
     timer.Stop()
     timer.Elapsed.TotalMilliseconds
 
-let sqlTestingTermTransaction (x : seq<Ontology>) =
-    let db = new DBMSContext()
-    let timer = new Stopwatch()
-    timer.Start()
-    db.Add({Term.ID=1; Term.Name="Bob"; Term.OntologyID="id: MS:1000001"; Term.RowVersion=DateTime.Now}) |> ignore   
-    db.SaveChanges() |>ignore 
-    timer.Stop()
-    timer.Elapsed.TotalMilliseconds
-
-let sqlTestingModification (x : seq<Ontology>) =
-    let db = new DBMSContext()
-    let timer = new Stopwatch()
-    timer.Start() 
-    db.Add({Parent.ID=1; Parent.Name="Flower"; Parent.Country="Germany"; Parent.RowVersion=DateTime.Now}) |> ignore
-    db.SaveChanges() |>ignore 
-    timer.Stop()
-    timer.Elapsed.TotalMilliseconds
 
 /// Reads FastaItem from file. Converter determines type of sequence by converting seq<char> -> type
 ///Testing
 let fromFile (filePath) =
     FileIO.readFile filePath
-    |> findTerm
-    |> fromFileEnumerator
+    |> parseOboTerms
+    |> Seq.toList
+    |> createseqOfOntoItems
     |> sqlTestingOntologySequenceTransactions
 
-let fromFileTerm (filePath) =
-    FileIO.readFile filePath
-    |> findTerm
-    |> fromFileEnumerator
-    |> sqlTestingTermTransaction
 
-let fromFileTerm2 (filePath) =
-    FileIO.readFile filePath
-    |> findTerm
-    |> fromFileEnumerator
-    |> sqlTestingModification
+let createDB dbPath oboPath1 oboPath2 oboPath3 oboPath4 =
+    BioFSharp.Mz.MzIdentMLModel.Db.initDB dbPath |> ignore
+    fromFile oboPath1 |> ignore
+    fromFile oboPath2 |> ignore
+    fromFile oboPath3 |> ignore
+    fromFile oboPath4
 
+///Applying functions
 
-BioFSharp.Mz.MzIdentMLModel.Db.initDB @"C:\F#-Projects\DavidsDatenbank.db"
-
-let test = fromFile @"C:\F#-Projects\ParserStuff\Pi-MS.txt"
-
-test
-
-let test2 = fromFileTerm @"C:\F#-Projects\ParserStuff\Pi-MS.txt"
-
-let test3 = fromFileTerm2 @"C:\F#-Projects\ParserStuff\Pi-MS.txt"
-
-
-let everyNth1 (input : 'a seq) = 
-    let n = 1
-    seq{ use en = input.GetEnumerator()
-            // Call MoveNext at most 'n' times (or return false earlier)
-         let rec nextN n = 
-            if n = 0 then true
-            else 
-                if en.Current = "[Term]" then
-                    en.MoveNext() && (nextN (n - 1))
-   
-                else en.MoveNext() && (nextN n)
-            // While we can move n elements forward...
-        while nextN n do
-        // Retrun each nth element
-        yield en.Current }
-
-let everyNth2 (input : 'a seq) = 
-    let n = 1
-    seq{ use en = input.GetEnumerator()
-            // Call MoveNext at most 'n' times (or return false earlier)
-         let rec nextN n = 
-            if n = 0 then true
-            else 
-                if en.Current = "[Term]" then
-                    en.MoveNext() && en.MoveNext() && (nextN (n - 1))
-   
-                else en.MoveNext() && (nextN n)
-            // While we can move n elements forward...
-        while nextN n do
-        // Retrun each nth element
-        yield en.Current }
-
-//let idSequence = everyNth1 test 
-//let nameSequence = everyNth2 test
-//Seq.map2 ( fun x y -> createOntologyItem x y) idSequence nameSequence
-
-
-let frage (x : 'a seq) =
-    if x.Contains("A") then printfn "it contains A"
-    else printfn "it does not contain A"
-
-frage ["A";"B"]
-
+createDB "/F#-Projects\DavidsDatenbank.db" "/F#-Projects\ParserStuff\Psi-MS.txt" "/F#-Projects/ParserStuff/Pride.txt" "/F#-Projects\ParserStuff\Unimod.txt" "/F#-Projects\ParserStuff\Unit_Ontology.txt"
