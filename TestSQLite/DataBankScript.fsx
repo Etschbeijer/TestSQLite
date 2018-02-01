@@ -16,6 +16,7 @@
 #r @"..\TestSQLite\bin\Debug\FSharp.Care.IO.dll"
 
 
+
 //#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
 //#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.dll"
 //#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.Mz.dll"
@@ -667,9 +668,9 @@ type DBMSContext() =
 
     override this.OnConfiguring (optionsBuilder :  DbContextOptionsBuilder) =
         optionsBuilder.EnableSensitiveDataLogging() |> ignore
-        optionsBuilder.UseSqlite(@"Data Source=C:\F#-Projects\DavidsDatenbank.db") |> ignore
+        optionsBuilder.UseSqlite(@"Data Source=C:\Users\Patrick\Desktop\F#_Project_DZ-PB_DB-SQLite\DavidsDatenbank.db") |> ignore
 
- 
+let fileDir = __SOURCE_DIRECTORY__ 
 
 //creates OntologyItem with ID, OntologyID and Name
 let createOntologyItem (id : string) (name : string) (rowversion : DateTime) =
@@ -711,13 +712,13 @@ let fromFile (filePath) =
     |> sqlTestingOntologySequenceTransactions
 
 
-let createDB dbPath oboPath1 oboPath2 oboPath3 oboPath4 =
+let createDB dbPath =
     BioFSharp.Mz.MzIdentMLModel.Db.initDB dbPath |> ignore
-    fromFile oboPath1 |> ignore
-    fromFile oboPath2 |> ignore
-    fromFile oboPath3 |> ignore
-    fromFile oboPath4
+    fromFile (fileDir + "\Ontologies_Terms\Psi-MS.txt") |> ignore
+    fromFile (fileDir + "\Ontologies_Terms\Pride.txt") |> ignore
+    fromFile (fileDir + "\Ontologies_Terms\Unimod.txt") |> ignore
+    fromFile (fileDir + "\Ontologies_Terms\Unit_Ontology.txt")
 
 ///Applying functions
 
-createDB @"C:\F#-Projects\DavidsDatenbank.db" @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\Ontologies_Terms\Psi-MS.txt" @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\Ontologies_Terms\Pride.txt" @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\Ontologies_Terms\Unimod.txt" @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\Ontologies_Terms\Unit_Ontology.txt"
+createDB @"C:\Users\Patrick\Desktop\F#_Project_DZ-PB_DB-SQLite\DavidsDatenbank.db"
