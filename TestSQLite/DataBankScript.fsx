@@ -1,5 +1,4 @@
-﻿
-///Another Test
+﻿///Another Test
 #I @"..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45"
 #I @"..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\"
 #r "Microsoft.AspNet.Identity.Core.dll"
@@ -15,21 +14,6 @@
 #r @"..\TestSQLite\bin\Debug\FSharp.Care.dll"
 #r @"..\TestSQLite\bin\Debug\FSharp.Care.IO.dll"
 
-
-
-//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\System.Data.SQLite.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\BioFSharp.Mz.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\BioFSharp.Mz\src\BioFSharp.Mz\bin\Debug\FSharp.Care.IO.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\FSharp.Plotly.dll"
-//#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\EntityFramework.dll"
-
 open System
 open System.Diagnostics
 open System.ComponentModel.DataAnnotations.Schema
@@ -42,6 +26,7 @@ open System.Linq
 //open FSharp.Care.Collections
 open FSharp.Care.IO
 open BioFSharp.Mz.MzIdentMLModel
+open BioFSharp.Mz.MzIdentMLModel.DataModel
 //open System
 //open System.Data
 //open System.IO
@@ -51,13 +36,17 @@ open BioFSharp.Mz.MzIdentMLModel
 //open FSharp.Care.IO.SchemaReader
 //open BioFSharp.ModificationInfo
 open BioFSharp.IO.Obo
+open BioFSharp.ModificationInfo
+open FSharp.Care.Collections
 
+let fileDir = __SOURCE_DIRECTORY__ 
+let dbPath = fileDir + "\Ontologies_Terms\DavidsDatenbank.db"
 
 ///types for the DataBank
 [<CLIMutable>]
 type AnalysisSoftware =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     Name : string 
     RowVersion : DateTime 
     }
@@ -65,7 +54,7 @@ type AnalysisSoftware =
 [<CLIMutable>]
 type AnalysisSoftwareParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -76,7 +65,7 @@ type AnalysisSoftwareParam =
 [<CLIMutable>]
 type DBSequence =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     Accession : string
     Name : string
     SearchDBID : string
@@ -86,7 +75,7 @@ type DBSequence =
 [<CLIMutable>]
 type DBSequenceParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -97,7 +86,7 @@ type DBSequenceParam =
 [<CLIMutable>]
 type ModLocation =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     PeptideID : int
     ModificationID : int
     Location : int
@@ -108,7 +97,7 @@ type ModLocation =
 [<CLIMutable>]
 type ModLocationParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -119,7 +108,7 @@ type ModLocationParam =
 [<CLIMutable>]
 type Modification =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     Name : string 
     Residues : string 
     MonoisotopicMassDelta : float 
@@ -130,7 +119,7 @@ type Modification =
 [<CLIMutable>]
 type ModificationParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -148,7 +137,7 @@ type Ontology =
 [<CLIMutable>]
 type Organization =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     Name : string
     Parent_ID : int
     RowVersion : DateTime 
@@ -157,7 +146,7 @@ type Organization =
 [<CLIMutable>]
 type OrganizationParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -168,7 +157,7 @@ type OrganizationParam =
 [<CLIMutable>]
 type Parent =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     Name : string
     Country : string 
     RowVersion : DateTime 
@@ -177,7 +166,7 @@ type Parent =
 [<CLIMutable>]
 type ParentParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -188,7 +177,7 @@ type ParentParam =
 [<CLIMutable>]
 type Peptide =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     Sequence : string
     RowVersion : DateTime 
     }
@@ -196,7 +185,7 @@ type Peptide =
 [<CLIMutable>]
 type PeptideParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -207,7 +196,7 @@ type PeptideParam =
 [<CLIMutable>]
 type PeptideEvidence =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     DBSequenceID : int
     PeptideID : int
     isDecoy : string 
@@ -223,7 +212,7 @@ type PeptideEvidence =
 [<CLIMutable>]
 type PeptideEvidenceParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -234,7 +223,7 @@ type PeptideEvidenceParam =
 [<CLIMutable>]
 type PeptideHypothesis =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     PeptideEvidenceID : int
     PeptideDetectionHypothesisID : int 
     RowVersion : DateTime    
@@ -243,7 +232,7 @@ type PeptideHypothesis =
 [<CLIMutable>]
 type PeptideHypothesisParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -254,7 +243,7 @@ type PeptideHypothesisParam =
 [<CLIMutable>]
 type Person =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FirstName : string 
     LastName : string 
     MiddleName : string 
@@ -265,7 +254,7 @@ type Person =
 [<CLIMutable>]
 type PersonParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -276,7 +265,7 @@ type PersonParam =
 [<CLIMutable>]
 type ProteinAmbiguityGroup =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     ProteinDetectionListID : int
     Name : string 
     RowVersion : DateTime
@@ -285,7 +274,7 @@ type ProteinAmbiguityGroup =
 [<CLIMutable>]
 type ProteinAmbiguityGroupParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -296,7 +285,7 @@ type ProteinAmbiguityGroupParam =
 [<CLIMutable>]
 type ProteinDetectionHypothesis =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     DBSequenceID : int
     ProteinAmbiguityGroupID : int
     Name : string 
@@ -307,7 +296,7 @@ type ProteinDetectionHypothesis =
 [<CLIMutable>]
 type ProteinDetectionHypothesisParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -318,7 +307,7 @@ type ProteinDetectionHypothesisParam =
 [<CLIMutable>]
 type ProteinDetectionList =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     Accession : string
     Name : string
     SearchDBID : string
@@ -328,7 +317,7 @@ type ProteinDetectionList =
 [<CLIMutable>]
 type ProteinDetectionListParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -339,7 +328,7 @@ type ProteinDetectionListParam =
 [<CLIMutable>]
 type ProteinDetectionProtocol =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     Name : string 
     AnalysisSoftwareID : int
     RowVersion : DateTime  
@@ -348,7 +337,7 @@ type ProteinDetectionProtocol =
 [<CLIMutable>]
 type ProteinDetectionProtocolParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -359,7 +348,7 @@ type ProteinDetectionProtocolParam =
 [<CLIMutable>]
 type SpectrumIdentification =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     Name : string 
     ActivityDate : string 
     SpectrumIdentificationListID : int
@@ -370,7 +359,7 @@ type SpectrumIdentification =
 [<CLIMutable>]
 type SpectrumIdentificationParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -381,7 +370,7 @@ type SpectrumIdentificationParam =
 [<CLIMutable>]
 type SpectrumIdentificationItem =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     SpectrumIdentificationResultID : int 
     SampleID : int 
     PeptideID : int
@@ -400,7 +389,7 @@ type SpectrumIdentificationItem =
 [<CLIMutable>]
 type SpectrumIdentificationItemParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -411,7 +400,7 @@ type SpectrumIdentificationItemParam =
 [<CLIMutable>]
 type SpectrumIdentificationList =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     Name : string 
     NumSequencesSeqrched : int 
     RowVersion : DateTime 
@@ -420,7 +409,7 @@ type SpectrumIdentificationList =
 [<CLIMutable>]
 type SpectrumIdentificationListParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -431,7 +420,7 @@ type SpectrumIdentificationListParam =
 [<CLIMutable>]
 type SpectrumIdentificationProtocol =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     Name : string 
     AnalysisSoftwareID : int
     RowVersion : DateTime 
@@ -440,7 +429,7 @@ type SpectrumIdentificationProtocol =
 [<CLIMutable>]
 type SpectrumIdentificationProtocolParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -451,7 +440,7 @@ type SpectrumIdentificationProtocolParam =
 [<CLIMutable>]
 type SpectrumIdentificationResult =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     SpectrumID : int
     //SpectraDataID : string // quetionable???
     SpectrumIdentificationListID : int 
@@ -462,7 +451,7 @@ type SpectrumIdentificationResult =
 [<CLIMutable>]
 type SpectrumIdentificationResultParam =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm : string
     FKUnit : string
@@ -473,7 +462,7 @@ type SpectrumIdentificationResultParam =
 [<CLIMutable>]
 type Term =
     {
-    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
+    ID : string
     OntologyID : string
     Name : string
     RowVersion : DateTime 
@@ -482,7 +471,7 @@ type Term =
 [<CLIMutable>]
 type TermRelationShip =
     {
-    ID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     TermID : int 
     RelationShipType : string
     FKRelatedTerm : string
@@ -492,7 +481,7 @@ type TermRelationShip =
 [<CLIMutable>]
 type TermTag =
     {
-    TermTagID : int
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     TermID : int 
     Name : string
     Value : string
@@ -667,10 +656,12 @@ type DBMSContext() =
                                         and set value = this.m_termTag <- value
 
     override this.OnConfiguring (optionsBuilder :  DbContextOptionsBuilder) =
+        let fileDir = __SOURCE_DIRECTORY__ 
+        let dbPath = fileDir + "\Ontologies_Terms\DavidsDatenbank.db"
         optionsBuilder.EnableSensitiveDataLogging() |> ignore
-        optionsBuilder.UseSqlite(@"Data Source=C:\Users\Patrick\Desktop\F#_Project_DZ-PB_DB-SQLite\DavidsDatenbank.db") |> ignore
+        optionsBuilder.UseSqlite(@"Data Source="+ dbPath) |> ignore
 
-let fileDir = __SOURCE_DIRECTORY__ 
+"C:\Users\Patrick\Source\Repos\TestSQLite\TestSQLite\Ontologies_Terms\DavidsDatenbank.db"
 
 //creates OntologyItem with ID, OntologyID and Name
 let createOntologyItem (id : string) (name : string) (rowversion : DateTime) =
@@ -684,17 +675,14 @@ let createseqOfOntoItems (inputSeq : seq<OboTerm>) =
     inputSeq
     |> Seq.map (fun x -> createOntologyItem x.Id x.Name System.DateTime.Now)
 
-let sqlTestingOntologySequenceTransactions (x : seq<Ontology>) =
+let sqlTestingOntologyTermsTransactions (inputSeq : seq<Ontology>) (inputName : string) =
     let db = new DBMSContext()   
     let timer = new Stopwatch()
     timer.Start()
-    x
-    |> Seq.iter (fun ontoItem -> 
-                 db.Add({Ontology.ID=ontoItem.ID; Ontology.Name=ontoItem.Name; Ontology.RowVersion=DateTime.Now}) |> ignore
-                )
-    x
+    db.Add({Ontology.ID=inputName; Ontology.Name="This Table contains the" + inputName + "ontology"; Ontology.RowVersion=DateTime.Now}) |> ignore
+    inputSeq
     |> Seq.iter (fun termItem -> 
-                    db.Add({Term.ID=0; Term.Name=termItem.Name; Term.OntologyID=termItem.ID; Term.RowVersion=DateTime.Now}) |> ignore
+                    db.Add({Term.ID=Guid.NewGuid().ToString(); Term.Name=termItem.Name; Term.OntologyID=inputName; Term.RowVersion=DateTime.Now}) |> ignore
                 )
     //db.Add({Term.ID=1; Term.Name="Bob"; Term.OntologyID="id: MS:1000001"; Term.RowVersion=DateTime.Now}) |> ignore   
     db.SaveChanges() |>ignore 
@@ -709,16 +697,64 @@ let fromFile (filePath) =
     |> parseOboTerms
     |> Seq.toList
     |> createseqOfOntoItems
-    |> sqlTestingOntologySequenceTransactions
+    |> sqlTestingOntologyTermsTransactions
 
+//Seq.item 100 (fromFile (fileDir + "\Ontologies_Terms\Psi-MS.txt"))
 
 let createDB dbPath =
     BioFSharp.Mz.MzIdentMLModel.Db.initDB dbPath |> ignore
-    fromFile (fileDir + "\Ontologies_Terms\Psi-MS.txt") |> ignore
-    fromFile (fileDir + "\Ontologies_Terms\Pride.txt") |> ignore
-    fromFile (fileDir + "\Ontologies_Terms\Unimod.txt") |> ignore
-    fromFile (fileDir + "\Ontologies_Terms\Unit_Ontology.txt")
+    fromFile (fileDir + "\Ontologies_Terms\Psi-MS.txt") "Psi-MS" |> ignore
+    fromFile (fileDir + "\Ontologies_Terms\Pride.txt") "Pride"   |> ignore
+    fromFile (fileDir + "\Ontologies_Terms\Unimod.txt") "Unimod" |> ignore
+    fromFile (fileDir + "\Ontologies_Terms\Unit_Ontology.txt") "Unit_Ontology"
 
 ///Applying functions
 
-createDB @"C:\Users\Patrick\Desktop\F#_Project_DZ-PB_DB-SQLite\DavidsDatenbank.db"
+createDB dbPath
+
+
+/// Working with ParamContainer
+
+let term1 = 
+    Term.create "0f16e34f-1eba-4194-b6cd-1e09206a570b" "Psi-MS" "Ontology!!!"
+
+let term2 = 
+    Term.create "0f16e34f-1eba-4194-b6cd-1e09206a570b" "Pride" "Ontology!!!"
+
+let term3 = 
+    Term.create "0f16e34f-1eba-4194-b6cd-1e09206a570b" "Unimod" "Ontology!!!"
+
+let term4 = 
+    Term.create "0f16e34f-1eba-4194-b6cd-1e09206a570b" "Unit_Ontology" "Ontology!!!"
+
+let a = 
+    CvParam.create (Guid.NewGuid()) term1 1
+
+let b =
+    CvParam.create (Guid.NewGuid()) term2 2 
+
+let c =
+    CvParam.create (Guid.NewGuid()) term3 3
+
+let d =
+    CvParam.create (Guid.NewGuid()) term4 4
+
+let ab = [a;b;c;d]
+
+let dadam = ParamContainer.ofSeq ab
+
+let sqlTestingOrganzationParamsTransactions (inputSeq : Collections.Generic.Dictionary<TermId,CvParam>) =
+    let db = new DBMSContext()   
+    let timer = new Stopwatch()
+    timer.Start()
+    inputSeq
+    |> Seq.iter (fun ParamItem -> 
+    db.Add({OrganizationParam.ID=0; OrganizationParam.FKTerm=ParamItem.Value.Term.Id; OrganizationParam.Value=ParamItem.Value.Value.ToString(); OrganizationParam.FKUnit=ParamItem.Value.Unit.IsSome.ToString(); OrganizationParam.FKParamContainer=3; OrganizationParam.RowVersion=DateTime.Now}) |> ignore
+    )
+    //db.Add({Term.ID=1; Term.Name="Bob"; Term.OntologyID="id: MS:1000001"; Term.RowVersion=DateTime.Now}) |> ignore   
+    db.SaveChanges() |>ignore 
+    timer.Stop()
+    timer.Elapsed.TotalMilliseconds
+
+sqlTestingOrganzationParamsTransactions dadam 
+/// Change TermID of MzIdentMLModels to String
