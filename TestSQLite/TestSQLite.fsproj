@@ -75,6 +75,10 @@
     <Content Include="Ontologies_Terms\Unimod.txt" />
     <Content Include="Ontologies_Terms\Unit_Ontology.txt" />
     <None Include="Ontologies_Terms\DavidsDatenbank.db" />
+    <None Include="VertiefungsPraktikum_Task9_1.fsx" />
+    <None Include="VertiefungsPraktikum_Task9_2.fsx" />
+    <None Include="VertiefungsPraktikum_Task9_3.fsx" />
+    <None Include="VertiefungsPraktikum_Task9_4.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BioFSharp">

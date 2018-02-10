@@ -1,27 +1,27 @@
-﻿
-//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
-//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
-//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
-//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
-//#r @"C:\Users\Patrick\source\repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
-//#r @"C:\Users\Patrick\source\repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\EntityFramework.dll"
-//#r @"C:\Users\Patrick\source\repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\FSharp.Plotly.dll"
-
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\netstandard.dll"
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\FSharp.Data.TypeProviders.dll"
-#r @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\bin\Debug\System.Linq.dll"
-#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\FSharp.Plotly.dll"
-#r @"C:\Users\PatrickB\Source\Repos\DatenBankTest\TestTabelleDavidFirma\bin\Debug\EntityFramework.dll"
+﻿///Another Test
+#I @"..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45"
+#I @"..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\"
+#r "Microsoft.AspNet.Identity.Core.dll"
+#r "Microsoft.AspNet.Identity.EntityFramework.dll"
+#r "System.ComponentModel.DataAnnotations.dll"
+#r @"..\TestSQLite\bin\Debug\netstandard.dll"
+#r @"..\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
+#r @"..\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Relational.dll"
+#r @"..\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
+#r @"..\TestSQLite\bin\Debug\System.Data.SQLite.dll"
+#r @"..\TestSQLite\bin\Debug\BioFSharp.dll"
+#r @"..\TestSQLite\bin\Debug\BioFSharp.IO.dll"
+#r @"..\TestSQLite\bin\Debug\BioFSharp.Mz.dll"
+#r @"..\TestSQLite\bin\Debug\FSharp.Care.dll"
+#r @"..\TestSQLite\bin\Debug\FSharp.Care.IO.dll"
 
 open System
 open System.Diagnostics
 open System.ComponentModel.DataAnnotations.Schema
 open Microsoft.EntityFrameworkCore
 open System.Linq
-open FSharp.Plotly
-open FSharp.Plotly.HTML
+//open FSharp.Plotly
+//open FSharp.Plotly.HTML
 
 ///Defining the Types/////////////////////////
 //////////////////////////////////////////////////////////////////
