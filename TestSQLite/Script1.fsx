@@ -28,4 +28,3 @@ let createDoubleList (inPutList : int list) =
             loop (acc+1) accF accL
     loop 0 double newList
 createDoubleList nList
-

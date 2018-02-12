@@ -25,7 +25,7 @@ open BioFSharp.Mz.Fragmentation.Series
 
 let partFromFile amountOfProteins path =
     FastA.fromFile BioSeq.ofAminoAcidString path
-    //|> Seq.take amountOfProteins
+    |> Seq.take amountOfProteins
 
 let protease =
     Digestion.Table.getProteaseBy "Trypsin"
@@ -47,25 +47,31 @@ let filterPeptides2 (minValue :float) (maxValue : float) (inputPeptide : seq<flo
     inputPeptide
     |> Seq.filter (fun (peptideMass, _) -> peptideMass >= minValue && peptideMass <= maxValue)
 
+let combineFloatSequences (input : seq<seq<float>*int>) =
+    input |> Seq.map (fun (_,y) -> y), 
+    input |> Seq.map (fun (x,_) -> x)
+    |>Seq.concat
+
+
 let arrangeBinSize (inputSize : float) inputPeptide =
     inputPeptide
     |> Distributions.Frequency.create inputSize
 
-let peptidesOfProteom (amountOfProteins : int) (charge : float) (binSizePeptide : float) =
-    partFromFile (amountOfProteins : int) @"C:\Users\Patrick\source\repos\FastaFileChlamy.txt" 
-    |> Seq.toList
-    |> List.map (fun x -> x.Sequence)
-    |> Seq.map (fun protein -> digestProteom protein)
-    |> Seq.map (Seq.map (fun peptide -> BioList.toString peptide))
-    |> Seq.map (Seq.map (fun peptide -> BioArray.ofAminoAcidString peptide))
-    |> Seq.map (Seq.map (fun peptide -> calcMassOfPeptides peptide))
-    |> Seq.map (Seq.map (fun peptideMass -> chargePeptide peptideMass charge))
-    |> Seq.map (fun peptide -> filterPeptides 200. 1300. peptide)
-    |> Seq.map (fun peptide -> (peptide, Seq.length peptide))
-    |> Seq.map (fun (peptide,amountPeptides) -> (arrangeBinSize binSizePeptide peptide), amountPeptides)
+//let peptidesOfProteom (amountOfProteins : int) (charge : float) (binSizePeptide : float) =
+//    partFromFile amountOfProteins @"C:\Users\Patrick\source\repos\FastaFileChlamy.txt" 
+//    |> Seq.toList
+//    |> List.map (fun x -> x.Sequence)
+//    |> Seq.map (fun protein -> digestProteom protein)
+//    |> Seq.map (Seq.map (fun peptide -> BioList.toString peptide))
+//    |> Seq.map (Seq.map (fun peptide -> BioArray.ofAminoAcidString peptide))
+//    |> Seq.map (Seq.map (fun peptide -> calcMassOfPeptides peptide))
+//    |> Seq.map (Seq.map (fun peptideMass -> chargePeptide peptideMass charge))
+//    |> Seq.map (fun peptide -> filterPeptides 200. 1300. peptide)
+//    |> Seq.map (fun peptide -> (peptide, Seq.length peptide))
+//    |> Seq.map (fun (peptide,amountPeptides) -> (arrangeBinSize binSizePeptide peptide), amountPeptides)
 
 let fragmentsOfBIonsOfPeptides (amountOfProteins : int) (charge : float) (binSizePeptide : float) =
-    partFromFile (amountOfProteins : int) @"C:\Users\Patrick\source\repos\FastaFileChlamy.txt" 
+    partFromFile amountOfProteins @"C:\Users\Patrick\source\repos\FastaFileChlamy.txt" 
     |> Seq.toList
     |> List.map (fun x -> x.Sequence)
     |> Seq.map (fun protein -> digestProteom protein)
@@ -84,12 +90,14 @@ let fragmentsOfBIonsOfPeptides (amountOfProteins : int) (charge : float) (binSiz
     //|> Seq.map List.toSeq
     |> Seq.map (fun fragments -> filterPeptides 200. 700. fragments)
     |> Seq.map (fun bIon -> (bIon, Seq.length bIon))
-    |> Seq.map (fun (bIon,amountbIons) -> (arrangeBinSize binSizePeptide bIon), amountbIons)
+    |> combineFloatSequences
+    |> (fun (amountbIons, bIon) -> (arrangeBinSize binSizePeptide bIon))
+    |> Map.toSeq
 
-fragmentsOfBIonsOfPeptides 10 1. 0.7
+fragmentsOfBIonsOfPeptides 100 1. 0.7
 
 let fragmentsOfYIonsOfPeptides (amountOfProteins : int) (charge : float) (binSizePeptide : float) =
-    partFromFile (amountOfProteins : int) @"C:\Users\Patrick\source\repos\FastaFileChlamy.txt" 
+    partFromFile amountOfProteins @"C:\Users\Patrick\source\repos\FastaFileChlamy.txt" 
     |> Seq.toList
     |> List.map (fun x -> x.Sequence)
     |> Seq.map (fun protein -> digestProteom protein)
@@ -102,13 +110,15 @@ let fragmentsOfYIonsOfPeptides (amountOfProteins : int) (charge : float) (binSiz
     |> Seq.concat
     |> Seq.map (fun peptide -> BioArray.toString peptide)
     |> Seq.map(fun peptide -> BioList.ofAminoAcidString peptide)
-    |> Seq.map(fun peptide -> bOfBioList monoisoMass peptide)
-    |> Seq.map(List.map(fun bIons -> bIons.MainPeak.Mass))
+    |> Seq.map(fun peptide -> yOfBioList monoisoMass peptide)
+    |> Seq.map(List.map(fun yIons -> yIons.MainPeak.Mass))
     |> Seq.map (List.map(fun fragmentMass -> chargePeptide fragmentMass charge))
     //|> Seq.map List.toSeq
     |> Seq.map (fun fragments -> filterPeptides 200. 700. fragments)
-    |> Seq.map (fun bIon -> (bIon, Seq.length bIon))
-    |> Seq.map (fun (bIon,amountbIons) -> (arrangeBinSize binSizePeptide bIon), amountbIons)
+    |> Seq.map (fun yIon -> (yIon, Seq.length yIon))
+    |> combineFloatSequences
+    |> (fun (amountbIons, yIon) -> (arrangeBinSize binSizePeptide yIon))
+    |> Map.toSeq
 
 let calculateRelativeRatio (input1 : float) (input2 : float) =
     (input1 / input2)*100.
@@ -119,69 +129,49 @@ let showCHart input =
     |> Chart.withY_AxisStyle("ratio bin with one element to all bins [%]")
     |> Chart.Show
 
-let amountOfBinsWithMoreElemnts input =
-    Seq.map (fun (x,_) -> x) input
-    |> Seq.map Seq.length
-    |> Seq.map (fun x -> float x)
+let amountOfBinsWithOneElement input =
+    input
+    |>(Seq.filter(fun (_,y) -> y = 1))
+    |> Seq.length
+    |> float
 
-let amountOfBinsWithOneElement input = 
-    Seq.map (fun (x,_) -> x) input
-    |> Seq.map (fun x -> Map.toList x)
-    |> Seq.map (List.filter(fun (_,y) -> y = 1))
-    |> Seq.map Seq.length
-    |> Seq.map (fun x -> float x)
+let amountOfBinsWithMoreElemnts input =
+    input
+    |> Seq.length
+    |> float
 
 ///Applying Functions
-
-let peptideInfo =
-    [1. .. 4.]
-    |> Seq.map (fun charge -> peptidesOfProteom 300 charge 0.7)
-
-let amountOfPeptidesWithMoreElements =
-    peptideInfo
-    |> Seq.map amountOfBinsWithMoreElemnts
-    |>Seq.map Seq.sum
-    |> Seq.map float
-
-let amountOfPeptidesWithOneElement =
-    peptideInfo
-    |> Seq.map (fun x -> amountOfBinsWithOneElement x)
-    |> Seq.map Seq.sum
-    |> Seq.map float
-
-let ratioOfPeptideMoreELemntsToPeptideOneElement =
-    Seq.map2 (fun x y -> calculateRelativeRatio x y) amountOfPeptidesWithOneElement amountOfPeptidesWithMoreElements
 
 let fragmentInfo =
     [1. .. 4.]
     |> Seq.map (fun charge -> [fragmentsOfBIonsOfPeptides 300 charge 0.7; fragmentsOfYIonsOfPeptides 10 charge 0.7])
+    |> Seq.concat
 
-fragmentInfo
-
-let amountOfFragmentsWithMoreElements =
-    fragmentInfo
-    |> Seq.map (List.map (fun x -> amountOfBinsWithMoreElemnts x))
-    |> Seq.map (List.map (fun x -> Seq.sum x))
-    |> Seq.map (List.map (fun x -> float x))
-
-amountOfFragmentsWithMoreElements
+Seq.length fragmentInfo
 
 let amountOfFragmentsWithOneElement =
     fragmentInfo
-    |> Seq.map (List.map (fun x -> amountOfBinsWithOneElement x))
-    |> Seq.map (List.map (fun x -> Seq.sum x))
-    |> Seq.map (List.map (fun x -> float x))
+    |> Seq.map (fun x -> amountOfBinsWithOneElement x)
+    //|> (Seq.map (fun x -> Seq.sum x))
+    //|> float
+
+Seq.length amountOfFragmentsWithOneElement
+
+let amountOfFragmentsWithMoreElements =
+    fragmentInfo
+    |> (Seq.map (fun x -> amountOfBinsWithMoreElemnts x))
+    //|> Seq.sum
+    //|> float
+
+amountOfFragmentsWithMoreElements
 
 amountOfFragmentsWithOneElement
 
 let ratioOfFragmenMoreElementsToFragmentOneElement =
-    Seq.map2 (Seq.map2(fun x y -> calculateRelativeRatio x y)) amountOfFragmentsWithOneElement amountOfFragmentsWithMoreElements
-
-showCHart ratioOfPeptideMoreELemntsToPeptideOneElement
+    Seq.map2 (fun x y -> calculateRelativeRatio x y) amountOfFragmentsWithOneElement amountOfFragmentsWithMoreElements
 
 ratioOfFragmenMoreElementsToFragmentOneElement
-    |> Seq.map (fun x -> Chart.Column ([0. .. (Seq.length x)|> float], x))
-    |> Chart.Combine
+    |> (fun x -> Chart.Column ([0. .. (Seq.length x)|> float], x))
     |> Chart.withX_AxisStyle("amount of checked Charges ")
     |> Chart.withY_AxisStyle("ratio bin with one element to all bins [%]")
     |> Chart.Show
