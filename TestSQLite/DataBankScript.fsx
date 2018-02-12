@@ -38,12 +38,20 @@ open FSharp.Care.IO
 //open FSharp.Care.IO.SchemaReader
 //open BioFSharp.ModificationInfo
 open BioFSharp.IO.Obo
-
+open BioFSharp.Mz.MzIdentMLModel
 
 let fileDir = __SOURCE_DIRECTORY__ 
 let dbPath = fileDir + "\Ontologies_Terms\DavidsDatenbank.db"
 
 ///types for the DataBank
+
+type Optional<'a> =
+    |Some of 'a
+    |Nullable
+    
+type NullableString() =
+    inherit System.Attribute()
+    member val X : string = null with get, set
 
 type PrimaryKeyAttribute() =
     class
@@ -137,7 +145,7 @@ type ModificationParam =
 [<CLIMutable>]
 type Ontology = 
     {
-    [<Key>] [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
+    ID : string
     Name       : string
     RowVersion : DateTime
     }
@@ -157,7 +165,7 @@ type OrganizationParam =
     [<Key>] [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] ID : int
     FKParamContainer : int
     FKTerm           : string
-    FKUnit           : string option
+    FKUnit           : string
     Value            : string
     RowVersion       : DateTime 
     }
@@ -491,7 +499,7 @@ type Term =
     {
     [<Key>] ID         : string
     Name       : string
-    OntologyID : int
+    OntologyID : string
     RowVersion : DateTime 
     }
 
@@ -692,7 +700,7 @@ type DBMSContext() =
 "C:\Users\Patrick\Source\Repos\TestSQLite\TestSQLite\Ontologies_Terms\DavidsDatenbank.db"
 
 //creates OntologyItem with ID, OntologyID and Name
-let createOntologyItem (id : int) (name : string) (rowversion : DateTime) =
+let createOntologyItem (id : string) (name : string) (rowversion : DateTime) =
     {
     Ontology.ID         = id
     Ontology.Name       = name
@@ -735,19 +743,19 @@ let createSequenceParentItems maxNumber =
 //    inputSeq
 //    |> Seq.map (fun x -> createOntologyItem 0 x.Name System.DateTime.Now)
 
-let sqlTestingOntologyTermsTransactions (inputSeq : seq<OboTerm>) (inPutName : string) (inputNumber : int) =
+let sqlTestingOntologyTermsTransactions (inputSeq : seq<OboTerm>) (inPutName : string) =
     printfn "1"
     let db = new DBMSContext()   
     printfn "2"
     let timer = new Stopwatch()
     printfn "3"
     timer.Start() 
-    db.Add({Ontology.ID=inputNumber; Ontology.Name=inPutName; Ontology.RowVersion=DateTime.Now}) |> ignore
+    db.Add({Ontology.ID=inPutName; Ontology.Name=inPutName; Ontology.RowVersion=DateTime.Now}) |> ignore
     inputSeq
     |> Seq.iter (fun termItem -> 
                     db.Add({Term.ID         = termItem.Id; 
                             Term.Name       = termItem.Name; 
-                            Term.OntologyID = inputNumber; 
+                            Term.OntologyID = inPutName; 
                             Term.RowVersion = DateTime.Now}) |> ignore
                 )
     printfn "4"
@@ -756,14 +764,14 @@ let sqlTestingOntologyTermsTransactions (inputSeq : seq<OboTerm>) (inPutName : s
     timer.Stop() 
     timer.Elapsed.TotalMilliseconds
 
-let addEmptyOntologyandTerm (inPutName) =
-    let db = new DBMSContext()
-    db.Add({Ontology.ID=0; Ontology.Name=inPutName; Ontology.RowVersion=DateTime.Now}) |> ignore
-    db.Add({Term.ID         = ""; 
-            Term.Name       = ""; 
-            Term.OntologyID = 5; 
-            Term.RowVersion = DateTime.Now}) |> ignore
-    db.SaveChanges() |>ignore
+//let addEmptyOntologyandTerm (inPutName) =
+//    let db = new DBMSContext()
+//    db.Add({Ontology.ID=""; Ontology.Name=""; Ontology.RowVersion=DateTime.Now}) |> ignore
+//    db.Add({Term.ID         = ""; 
+//            Term.Name       = ""; 
+//            Term.OntologyID = ""; 
+//            Term.RowVersion = DateTime.Now}) |> ignore
+//    db.SaveChanges() |>ignore
 
 let sqlTestingParentTransactions (inputSeq : seq<Parent>) =
     let db = new DBMSContext()   
@@ -794,90 +802,6 @@ let sqlTestingOrganTransactions (inputSeq : seq<Organization>) =
     db.SaveChanges() |>ignore 
     timer.Stop() 
     timer.Elapsed.TotalMilliseconds
-
-/// Reads FastaItem from file. Converter determines type of sequence by converting seq<char> -> type
-///Testing
-let fromFile (filePath) =
-    FileIO.readFile filePath
-    |> parseOboTerms
-    |> Seq.toList
-    //|> createseqOfOntoItems
-    |> sqlTestingOntologyTermsTransactions
-
-//Seq.item 100 (fromFile (fileDir + "\Ontologies_Terms\Psi-MS.txt"))
-
-let createDB dbPath =
-    BioFSharp.Mz.MzIdentMLModel.Db.initDB dbPath |> ignore
-    fromFile (fileDir + "\Ontologies_Terms\Psi-MS.txt")        "Psi-MS"        1 |> ignore
-    fromFile (fileDir + "\Ontologies_Terms\Pride.txt")         "Pride"         2 |> ignore
-    fromFile (fileDir + "\Ontologies_Terms\Unimod.txt")        "Unimod"        3 |> ignore
-    fromFile (fileDir + "\Ontologies_Terms\Unit_Ontology.txt") "Unit_Ontology" 4 |> ignore
-    addEmptyOntologyandTerm ""
-
-///Applying functions
-
-createDB dbPath
-
-let sequenzOfParents       = createSequenceParentItems       50
-
-sqlTestingParentTransactions sequenzOfParents
-
-let sequenzOfOrganizations = createSequenceOrganizationItems 10
-
-sqlTestingOrganTransactions sequenzOfOrganizations 
-
-/// Working with ParamContainer
-
-open BioFSharp.Mz.MzIdentMLModel
-//open BioFSharp.Mz.MzIdentMLModel.DataModel
-
-let term1 = 
-    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) 1 "Ontology!!!"
-
-let term2 = 
-    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) 2 "Ontology!!!"
-
-let term3 = 
-    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) 3 "Ontology!!!"
-
-let term4 = 
-    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) 4 "Ontology!!!"
-
-let term5 = 
-    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) 1 "Ontology!!!"
-
-let term6 = 
-    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) 2 "Ontology!!!"
-
-let term7 = 
-    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) 3 "Ontology!!!"
-
-let term8 = 
-    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) 4 "Ontology!!!"
-
-let term9 = 
-    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) 4 "Ontology!!!"
-let a = 
-    CvParam.createWithUnit (Guid.NewGuid()) term1 1 term5
-
-let b =
-    CvParam.createWithUnit (Guid.NewGuid()) term2 2 term6
-
-let c =
-    CvParam.createWithUnit (Guid.NewGuid()) term3 3 term7
-
-let d =
-    CvParam.createWithUnit (Guid.NewGuid()) term4 4 term8
-
-let e =
-    CvParam.create (Guid.NewGuid()) term9 1
-
-let ab = [a; b; c; d]
-
-let dadam = ParamContainer.ofSeq ab
-
-/// Write function for testing isSome for FKUnit!!!
-/// Try to implement some/none
 
 let sqLiteOrganParamConTransactionsWithUnit (inputSeqParams : Collections.Generic.Dictionary<DataModel.TermId,DataModel.CvParam>) =
     let db = new DBMSContext()   
@@ -914,20 +838,98 @@ let sqLiteOrganParamConTransactionsWithUnit (inputSeqParams : Collections.Generi
                       OrganizationParam.FKParamContainer = 1; 
                       OrganizationParam.FKTerm           = paramItem.Value.Term.Id; 
                       OrganizationParam.Value            = paramItem.Value.Value.ToString(); 
-                      OrganizationParam.FKUnit           = ""; /// Try to implement the option type because an axtra ontology isn`t a good solution
+                      OrganizationParam.FKUnit           = null; /// Try to implement the option type because an axtra ontology isn`t a good solution
                       OrganizationParam.RowVersion       = DateTime.Now}) |> ignore
                     )
     db.SaveChanges() |> ignore
     timer.Stop()
     timer.Elapsed.TotalMilliseconds
+/// Reads FastaItem from file. Converter determines type of sequence by converting seq<char> -> type
+///Testing
+let fromFile (filePath) =
+    FileIO.readFile filePath
+    |> parseOboTerms
+    |> Seq.toList
+    //|> createseqOfOntoItems
+    |> sqlTestingOntologyTermsTransactions
+
+//Seq.item 100 (fromFile (fileDir + "\Ontologies_Terms\Psi-MS.txt"))
+
+let createDB dbPath =
+    BioFSharp.Mz.MzIdentMLModel.Db.initDB dbPath |> ignore
+    fromFile (fileDir + "\Ontologies_Terms\Psi-MS.txt")        "Psi-MS"        |> ignore
+    fromFile (fileDir + "\Ontologies_Terms\Pride.txt")         "Pride"         |> ignore
+    fromFile (fileDir + "\Ontologies_Terms\Unimod.txt")        "Unimod"        |> ignore
+    fromFile (fileDir + "\Ontologies_Terms\Unit_Ontology.txt") "Unit_Ontology" |> ignore
+
+
+///Applying functions
+
+createDB dbPath
+
+let sequenzOfParents       = createSequenceParentItems       50
+
+sqlTestingParentTransactions sequenzOfParents
+
+let sequenzOfOrganizations = createSequenceOrganizationItems 10
+
+sqlTestingOrganTransactions sequenzOfOrganizations 
+
+/// Working with ParamContainer
+
+
+//open BioFSharp.Mz.MzIdentMLModel.DataModel
+
+let term1 = 
+    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) "Pride" "Ontology!!!"
+
+let term2 = 
+    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) "Pride" "Ontology!!!"
+
+let term3 = 
+    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) "Pride" "Ontology!!!"
+
+let term4 = 
+    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) "Pride" "Ontology!!!"
+
+let term5 = 
+    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) "Pride" "Ontology!!!"
+
+let term6 = 
+    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) "Pride" "Ontology!!!"
+
+let term7 = 
+    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) "Pride" "Ontology!!!"
+
+let term8 = 
+    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) "Pride" "Ontology!!!"
+
+let term9 = 
+    BioFSharp.Mz.MzIdentMLModel.Term.create (Guid.NewGuid().ToString()) "Pride" "Ontology!!!"
+let a = 
+    CvParam.createWithUnit (Guid.NewGuid()) term1 1 term5
+
+let b =
+    CvParam.createWithUnit (Guid.NewGuid()) term2 2 term6
+
+let c =
+    CvParam.createWithUnit (Guid.NewGuid()) term3 3 term7
+
+let d =
+    CvParam.createWithUnit (Guid.NewGuid()) term4 4 term8
+
+let e =
+    CvParam.create (Guid.NewGuid()) term9 1
+
+let ab = [a; b; c; d; e]
+
+let dadam = ParamContainer.ofSeq ab
+
+/// Write function for testing isSome for FKUnit!!!
+/// Try to implement some/none
+
+
 
 sqLiteOrganParamConTransactionsWithUnit dadam
 
 /// Try to implement the option type because an axtra ontology isn`t a good solution
-
-let insertOrganParams id fkParamContainer fkTerm value rowVersion =
-    let db = new DBMSContext()
-    db.Add(new OrganizationParam(id, fkParamContainer, fkTerm, value, rowVersion)) |> ignore
-    db.SaveChanges() |> ignore
-
-insertOrganParams 0 1 "MS:0000000" "yes"  DateTime.Now
