@@ -123,31 +123,14 @@ type PersonenContext() =
 
 ///Trying to fill the Database
 
-let initdb =
-    let db = new PersonenContext()
-    db.Database.EnsureCreated() |> ignore
-    let Abteilungen : Abteilung =
-        {
-         Abteilung.AbteilungID = 0; 
-         Abteilung.Name =  "BoB"
-         Abteilung.PersonenVerzeichnis = null
-        }
-    db.Abteilung.Add(Abteilungen) |> ignore
-    db.SaveChanges() |> ignore
-    let Rollen : Rolle =
-        {
-         Rolle.RolleID = 0;
-         Rolle.Name    = "BoB";
-         Rolle.PersonenVerzeichnis = null
-        }
-    db.Rolle.Add(Rollen) |> ignore
-    let PersonenVerzeichnis : PersonenVerzeichnis =
-        {
-         PersonenVerzeichnis.PersonenVerzeichnisID = 0
-         PersonenVerzeichnis.Name = "BoB"
-         PersonenVerzeichnis.Abteilung = Abteilungen
-         PersonenVerzeichnis.Rolle = Rollen
-        }
-    db.PersonenVerzeichnis.Add(PersonenVerzeichnis) |> ignore
-    db.SaveChanges() |> ignore
+let createDoubleList (inPutList : int list) =
+    let mutable newList = Array.create inPutList.Length 0
+    let rec loop (acc : int) (accF: int->int) (accL : int []) =
+        if acc = inPutList.Length-1 then 
+            accL |> Array.toList
+        else
+            accL.[acc] <- (accF inPutList.[acc])
+            loop (acc+1) accF accL
+    loop 0 double newList
+createDoubleList nList
 
