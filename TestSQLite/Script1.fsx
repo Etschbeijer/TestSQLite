@@ -69,12 +69,12 @@ type PersonenVerzeichnis =
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
     PersonenVerzeichnisID : int
     Name                  : string
-    Abteilung             : Abteilung
-    [<ForeignKey("Abteilung")>]
-    FKUnit                : int
+    //[<ForeignKey("AbteilungID")>]
+    FKAbteilung           : Abteilung
+    //[<ForeignKey("AbteilungID2")>]
+    FKUnit                : Abteilung
     Rolle                 : Rolle
     }
-
 
 and [<CLIMutable>] 
     Abteilung =
@@ -82,9 +82,8 @@ and [<CLIMutable>]
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
     AbteilungID         : int
     Name                : string
-    PersonenVerzeichnis : List<PersonenVerzeichnis>
+    //PersonenVerzeichnis : List<PersonenVerzeichnis>
     }
-
 
 and [<CLIMutable>] 
     Rolle =
@@ -92,7 +91,7 @@ and [<CLIMutable>]
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
     RolleID             : int
     Name                : string
-    PersonenVerzeichnis : List<PersonenVerzeichnis>
+    //PersonenVerzeichnis : List<PersonenVerzeichnis>
     }
 
 type PersonenContext() =
@@ -102,7 +101,6 @@ type PersonenContext() =
     val mutable m_abteilungen : DbSet<Abteilung>
     member public this.Abteilung with get() = this.m_abteilungen
                                                 and set value = this.m_abteilungen <- value
-
 
     [<DefaultValue>] 
     val mutable m_rollen : DbSet<Rolle>
@@ -129,36 +127,36 @@ let initDB =
         {
         Abteilung.AbteilungID = 0
         Abteilung.Name        = "BoB"
-        Abteilung.PersonenVerzeichnis = null
+        //Abteilung.PersonenVerzeichnis = null
         }
     let Abteilungen2 =
         {
-        Abteilung.AbteilungID = 3
-        Abteilung.Name        = "BoB"
-        Abteilung.PersonenVerzeichnis = null
+        Abteilung.AbteilungID = 0
+        Abteilung.Name        = "BoB2"
+        //Abteilung.PersonenVerzeichnis = null
         }
     let Rollen =
         {
         Rolle.RolleID = 0
         Rolle.Name        = "BoB"
-        Rolle.PersonenVerzeichnis = null
+        //Rolle.PersonenVerzeichnis = null
         }
     let PersonenVerzeichnis =
         {
         PersonenVerzeichnis.PersonenVerzeichnisID = 0
         PersonenVerzeichnis.Name = "BoB"
-        PersonenVerzeichnis.Abteilung = Abteilungen
-        PersonenVerzeichnis.FKUnit = 3
+        PersonenVerzeichnis.FKAbteilung = Abteilungen
+        PersonenVerzeichnis.FKUnit = Abteilungen2
         PersonenVerzeichnis.Rolle = Rollen
         }
-    let PersonenVerzeichnis2 =
-        {
-        PersonenVerzeichnis.PersonenVerzeichnisID = 0
-        PersonenVerzeichnis.Name = "BoB"
-        PersonenVerzeichnis.Abteilung = Abteilungen2
-        PersonenVerzeichnis.FKUnit = 3
-        PersonenVerzeichnis.Rolle = Rollen
-        }
+    //let PersonenVerzeichnis2 =
+    //    {
+    //    PersonenVerzeichnis.PersonenVerzeichnisID = 0
+    //    PersonenVerzeichnis.Name = "BoB"
+    //    PersonenVerzeichnis.Abteilung = Abteilungen2
+    //    //PersonenVerzeichnis.FKUnit = 3
+    //    PersonenVerzeichnis.Rolle = Rollen
+    //    }
     db.PersonenVerzeichnis.Add(PersonenVerzeichnis) |> ignore
-    db.PersonenVerzeichnis.Add(PersonenVerzeichnis2) |> ignore
+    //db.PersonenVerzeichnis.Add(PersonenVerzeichnis2) |> ignore
     db.SaveChanges()
