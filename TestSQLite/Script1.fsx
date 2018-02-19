@@ -70,8 +70,8 @@ type PersonenVerzeichnis =
     PersonenVerzeichnisID : int
     Name                  : string
     Abteilung             : Abteilung
-    //[<ForeignKey("FKUnit")>]
-    //FKUnit                : Abteilung
+    [<ForeignKey("Abteilung")>]
+    FKUnit                : int
     Rolle                 : Rolle
     }
 
@@ -83,8 +83,6 @@ and [<CLIMutable>]
     AbteilungID         : int
     Name                : string
     PersonenVerzeichnis : List<PersonenVerzeichnis>
-    //[<ForeignKey("FKUnit")>]
-    //FKUnit              : PersonenVerzeichnis
     }
 
 
@@ -132,7 +130,12 @@ let initDB =
         Abteilung.AbteilungID = 0
         Abteilung.Name        = "BoB"
         Abteilung.PersonenVerzeichnis = null
-        //Abteilung.FKUnit = null
+        }
+    let Abteilungen2 =
+        {
+        Abteilung.AbteilungID = 3
+        Abteilung.Name        = "BoB"
+        Abteilung.PersonenVerzeichnis = null
         }
     let Rollen =
         {
@@ -145,8 +148,17 @@ let initDB =
         PersonenVerzeichnis.PersonenVerzeichnisID = 0
         PersonenVerzeichnis.Name = "BoB"
         PersonenVerzeichnis.Abteilung = Abteilungen
-        //PersonenVerzeichnis.FKUnit = Abteilungen
+        PersonenVerzeichnis.FKUnit = 3
+        PersonenVerzeichnis.Rolle = Rollen
+        }
+    let PersonenVerzeichnis2 =
+        {
+        PersonenVerzeichnis.PersonenVerzeichnisID = 0
+        PersonenVerzeichnis.Name = "BoB"
+        PersonenVerzeichnis.Abteilung = Abteilungen2
+        PersonenVerzeichnis.FKUnit = 3
         PersonenVerzeichnis.Rolle = Rollen
         }
     db.PersonenVerzeichnis.Add(PersonenVerzeichnis) |> ignore
+    db.PersonenVerzeichnis.Add(PersonenVerzeichnis2) |> ignore
     db.SaveChanges()
