@@ -74,6 +74,7 @@ type PersonenVerzeichnis =
     //[<ForeignKey("AbteilungID2")>]
     FKUnit                : Abteilung
     Rolle                 : Rolle
+    Abteilungen           : List<Abteilung>
     }
 
 and [<CLIMutable>] 
@@ -135,6 +136,18 @@ let initDB =
         Abteilung.Name        = "BoB2"
         //Abteilung.PersonenVerzeichnis = null
         }
+    let Abteilungen3 =
+        {
+        Abteilung.AbteilungID = 0
+        Abteilung.Name        = "NOOOOO"
+        //Abteilung.PersonenVerzeichnis = null
+        }
+    let Abteilungen4 =
+        {
+        Abteilung.AbteilungID = 0
+        Abteilung.Name        = "JOOOO"
+        //Abteilung.PersonenVerzeichnis = null
+        }
     let Rollen =
         {
         Rolle.RolleID = 0
@@ -148,6 +161,7 @@ let initDB =
         PersonenVerzeichnis.FKAbteilung = Abteilungen
         PersonenVerzeichnis.FKUnit = Abteilungen2
         PersonenVerzeichnis.Rolle = Rollen
+        PersonenVerzeichnis.Abteilungen = new System.Collections.Generic.List<Abteilung>([Abteilungen3;Abteilungen4])
         }
     //let PersonenVerzeichnis2 =
     //    {
@@ -160,3 +174,6 @@ let initDB =
     db.PersonenVerzeichnis.Add(PersonenVerzeichnis) |> ignore
     //db.PersonenVerzeichnis.Add(PersonenVerzeichnis2) |> ignore
     db.SaveChanges()
+
+///Take Elements of List in Type and fill in right Table
+/// Have a Lsit of Spesen which is put into Table of Abteilung when put in PersonenVerzeichnis but put in Rolle when put in Abteilung!!!
