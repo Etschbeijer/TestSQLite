@@ -16,12 +16,12 @@
 #r @"..\TestSQLite\bin\Debug\FSharp.Care.dll"
 #r @"..\TestSQLite\bin\Debug\FSharp.Care.IO.dll"
 
-open System
-open System.Diagnostics
+//open System
+//open System.Diagnostics
 open System.ComponentModel.DataAnnotations.Schema
 open Microsoft.EntityFrameworkCore
-open System.Linq
-open BioFSharp.BioItem
+//open System.Linq
+//open BioFSharp.BioItem
 open System.Collections.Generic
 //open FSharp.Plotly
 //open FSharp.Plotly.HTML
@@ -74,15 +74,17 @@ type PersonenVerzeichnis =
     //[<ForeignKey("AbteilungID2")>]
     FKUnit                : Abteilung
     Rolle                 : Rolle
-    Abteilungen           : List<Abteilung>
+    //[<ForeignKey("Abteilung")>]
+    Somethings           : List<Something>
     }
 
 and [<CLIMutable>] 
     Abteilung =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
-    AbteilungID         : int
+    ID                  : int
     Name                : string
+    Rollen              : List<Something>
     //PersonenVerzeichnis : List<PersonenVerzeichnis>
     }
 
@@ -92,9 +94,18 @@ and [<CLIMutable>]
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
     RolleID             : int
     Name                : string
+    Abteilungen         : List<Something>
     //PersonenVerzeichnis : List<PersonenVerzeichnis>
     }
 
+and [<CLIMutable>] 
+    Something =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
+    ID             : int
+    Name           : string
+    //PersonenVerzeichnis : List<PersonenVerzeichnis>
+    }
 type PersonenContext() =
     inherit DbContext()
     
@@ -112,6 +123,23 @@ type PersonenContext() =
     val mutable m_personenverzeichnis : DbSet<PersonenVerzeichnis>
     member public this.PersonenVerzeichnis with get() = this.m_personenverzeichnis
                                                         and set value = this.m_personenverzeichnis <- value
+    /// Read up again EntitySplitting
+    override this.OnModelCreating (modelbuilder : ModelBuilder) =
+        modelbuilder.Entity<PersonenVerzeichnis>()
+            |> (fun x -> 
+                    x.Property(fun personItem -> 
+                        personItem.Somethings |> Seq.map 
+                                (fun abteilungField ->
+                                    {
+                                     Abteilung.ID = abteilungField.ID 
+                                     Abteilung.Name = abteilungField.Name 
+                                     Abteilung.Rollen = null
+                                    }
+                                )
+                              ) |> ignore
+                    x.ToTable("Abteilung")    
+                ) |> ignore
+
 
     override this.OnConfiguring (optionsBuilder :  DbContextOptionsBuilder) =
         let fileDir = __SOURCE_DIRECTORY__ 
@@ -124,44 +152,48 @@ type PersonenContext() =
 let initDB =
     let db = new PersonenContext()
     db.Database.EnsureCreated() |> ignore
-    let Abteilungen =
+    let abteilungen1 =
         {
-        Abteilung.AbteilungID = 0
+        Abteilung.ID = 0
         Abteilung.Name        = "BoB"
+        Abteilung.Rollen      = null
         //Abteilung.PersonenVerzeichnis = null
         }
-    let Abteilungen2 =
+    let abteilungen2 =
         {
-        Abteilung.AbteilungID = 0
+        Abteilung.ID = 0
         Abteilung.Name        = "BoB2"
+        Abteilung.Rollen      = null
         //Abteilung.PersonenVerzeichnis = null
         }
-    let Abteilungen3 =
+    let something1 =
         {
-        Abteilung.AbteilungID = 0
-        Abteilung.Name        = "NOOOOO"
+        Something.ID   = 0
+        Something.Name = "NOOOOO"
+
         //Abteilung.PersonenVerzeichnis = null
         }
-    let Abteilungen4 =
+    let something2 =
         {
-        Abteilung.AbteilungID = 0
-        Abteilung.Name        = "JOOOO"
+        Something.ID   = 0
+        Something.Name = "JOOOO"
         //Abteilung.PersonenVerzeichnis = null
         }
     let Rollen =
         {
-        Rolle.RolleID = 0
+        Rolle.RolleID     = 0
         Rolle.Name        = "BoB"
+        Rolle.Abteilungen = null
         //Rolle.PersonenVerzeichnis = null
         }
     let PersonenVerzeichnis =
         {
         PersonenVerzeichnis.PersonenVerzeichnisID = 0
         PersonenVerzeichnis.Name = "BoB"
-        PersonenVerzeichnis.FKAbteilung = Abteilungen
-        PersonenVerzeichnis.FKUnit = Abteilungen2
+        PersonenVerzeichnis.FKAbteilung = abteilungen1
+        PersonenVerzeichnis.FKUnit = abteilungen2
         PersonenVerzeichnis.Rolle = Rollen
-        PersonenVerzeichnis.Abteilungen = new System.Collections.Generic.List<Abteilung>([Abteilungen3;Abteilungen4])
+        PersonenVerzeichnis.Somethings = new System.Collections.Generic.List<Something>([something1;something2])
         }
     //let PersonenVerzeichnis2 =
     //    {
