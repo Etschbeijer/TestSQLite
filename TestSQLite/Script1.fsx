@@ -139,9 +139,9 @@ type PersonenContext() =
             .Property<System.Nullable<int>>("AbteilungID")
             .HasColumnName<System.Nullable<int>>("FKUnit")
             .IsRequired(false) |> ignore
-        modelbuilder.Entity<PersonenVerzeichnis>()
-            .Property(fun field -> field.Somethings)
-            .
+        //modelbuilder.Entity<PersonenVerzeichnis>()
+        //    .Property(fun field -> field.Somethings)
+        //    .
 
         modelbuilder.Entity<Something>()
             .ToTable<Something>("Stuff") |> ignore
