@@ -10,22 +10,22 @@
 #r @"..\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Relational.dll"
 #r @"..\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.Sqlite.dll"
 #r @"..\TestSQLite\bin\Debug\System.Data.SQLite.dll"
-#r @"..\TestSQLite\bin\Debug\BioFSharp.dll"
-#r @"..\TestSQLite\bin\Debug\BioFSharp.IO.dll"
-#r @"..\TestSQLite\bin\Debug\BioFSharp.Mz.dll"
+//#r @"..\TestSQLite\bin\Debug\BioFSharp.dll"
+//#r @"..\TestSQLite\bin\Debug\BioFSharp.IO.dll"
+//#r @"..\TestSQLite\bin\Debug\BioFSharp.Mz.dll"
 #r @"..\TestSQLite\bin\Debug\FSharp.Care.dll"
 #r @"..\TestSQLite\bin\Debug\FSharp.Care.IO.dll"
 
-//open System
+open System
 //open System.Diagnostics
 open System.ComponentModel.DataAnnotations.Schema
 open Microsoft.EntityFrameworkCore
-//open System.Linq
+open System.Linq
 //open BioFSharp.BioItem
 open System.Collections.Generic
-open Microsoft.EntityFrameworkCore.Storage
-open Microsoft.EntityFrameworkCore.Migrations
-open BioFSharp.Mz.MzIdentMLModel.Db
+
+
+
 
 //open FSharp.Plotly
 //open FSharp.Plotly.HTML
@@ -73,12 +73,13 @@ type PersonenVerzeichnis =
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
     PersonenVerzeichnisID : int
     Name                  : string
-    [<ForeignKey("FKAbteilung")>]
-    Abteilung             : Abteilung
-    //[<ForeignKey("AbteilungID2")>]
+    [<Column("FKAbteilung")>] [<ForeignKey("FKPersonenVerzeichnis")>]
+    FKAbteilungID         : int
+    FKAbteilung           : Abteilung
+    //[<Column("FKUnit")>] [<ForeignKey("FKUnit")>]
+    //FKUnitID              : Nullable<int>
     //FKUnit                : Abteilung
     Rolle                 : Rolle
-    //[<PrimaryKey(TypeName = "Abteilung")>]
     Somethings            : List<Something>
     }
 
@@ -88,8 +89,8 @@ and [<CLIMutable>]
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
     ID                  : int
     Name                : string
-    Rollen              : List<Something>
-    FKAbteilung         : List<PersonenVerzeichnis>
+    //Rollen              : List<Something>
+    FKPersonenVerzeichnis      : List<PersonenVerzeichnis>
     //[<Column("FKUnit")>]
     FKUnit              : List<PersonenVerzeichnis>
     }
@@ -118,37 +119,36 @@ type PersonenContext() =
     [<DefaultValue>] 
     val mutable m_abteilungen : DbSet<Abteilung>
     member public this.Abteilung with get() = this.m_abteilungen
-                                                and set value = this.m_abteilungen <- value
+                                              and set value = this.m_abteilungen <- value
 
     [<DefaultValue>] 
     val mutable m_rollen : DbSet<Rolle>
     member public this.Rolle with get() = this.m_rollen
-                                           and set value = this.m_rollen <- value
+                                          and set value = this.m_rollen <- value
 
     [<DefaultValue>] 
     val mutable m_personenverzeichnis : DbSet<PersonenVerzeichnis>
     member public this.PersonenVerzeichnis with get() = this.m_personenverzeichnis
                                                         and set value = this.m_personenverzeichnis <- value
+
     /// Read up again EntitySplitting
     override this.OnModelCreating (modelbuilder : ModelBuilder) =
         modelbuilder.Entity<PersonenVerzeichnis>()
-            .HasOne(fun field -> field.Abteilung)
-            .WithMany("FKAbteilung")
+            .HasOne(fun field -> field.FKAbteilung)
+            .WithMany("FKPersonenVerzeichnis")
             .IsRequired() |> ignore
-        modelbuilder.Entity<PersonenVerzeichnis>()
-            .Property<System.Nullable<int>>("AbteilungID")
-            .HasColumnName<System.Nullable<int>>("FKUnit")
-            .IsRequired(false) |> ignore
         //modelbuilder.Entity<PersonenVerzeichnis>()
-        //    .Property(fun field -> field.Somethings)
-        //    .
-
+        //    .HasOne(fun field -> field.FKUnitID)
+        //    .WithMany("FKUnitPersonen")
+            //.IsRequired(false) |> ignore
         modelbuilder.Entity<Something>()
             .ToTable<Something>("Stuff") |> ignore
+
         //modelbuilder.Entity<PersonenVerzeichnis>()
-        //    .ToTable<PersonenVerzeichnis>("Abteilung") |> ignore
+        //    .Property(fun field -> field.Name).HasColumnName("Abteilung2") |> ignore
             
-            //.Property(fun x -> x.FKUnit).HasColumnName<List<PersonenVerzeichnis>>("FKUnit") |> ignore
+        modelbuilder.Entity<PersonenVerzeichnis>()            
+            .Property("AbteilungID").HasColumnName("FKUnit") |> ignore
        
             //.ToTable("FKUnit") |> ignore
             //|> (fun x -> 
@@ -181,17 +181,35 @@ let initDB =
         {
         Abteilung.ID     = 0
         Abteilung.Name   = "BoB"
-        Abteilung.Rollen = null
-        Abteilung.FKAbteilung = null
+        //Abteilung.Rollen = null
+        Abteilung.FKPersonenVerzeichnis  = null
         Abteilung.FKUnit = null
         }
     let abteilungen2 =
         {
         Abteilung.ID     = 0
         Abteilung.Name   = "BoB2"
-        Abteilung.Rollen = null
-        Abteilung.FKAbteilung = null
+        //Abteilung.Rollen = null
+        Abteilung.FKPersonenVerzeichnis  = null
         Abteilung.FKUnit = null
+        }
+    let abteilungen3 =
+        {
+        Abteilung.ID     = 0
+        Abteilung.Name   = "BoB2"
+        //Abteilung.Rollen = null
+        Abteilung.FKPersonenVerzeichnis  = null
+        Abteilung.FKUnit = null
+        //Abteilung.FKUnit = new System.Collections.Generic.List<PersonenVerzeichnis>([
+        //                                                                            {
+        //                                                                            PersonenVerzeichnis.PersonenVerzeichnisID = 0
+        //                                                                            PersonenVerzeichnis.Name = "BoB"
+        //                                                                            //PersonenVerzeichnis.Abteilung1 = abteilungen1
+        //                                                                            //PersonenVerzeichnis.Abteilung2 = abteilungen2
+        //                                                                            //PersonenVerzeichnis.Rolle = Rollen
+        //                                                                            PersonenVerzeichnis.Somethings = null
+        //                                                                            }
+        //                                                                            ])
         }
     let something1 =
         {
@@ -210,15 +228,17 @@ let initDB =
         {
         Rolle.RolleID     = 0
         Rolle.Name        = "BoB"
-        Rolle.Abteilungen = null
+        Rolle.Abteilungen = new System.Collections.Generic.List<Something>([something1;something2])
         //Rolle.PersonenVerzeichnis = null
         }
     let PersonenVerzeichnis =
         {
         PersonenVerzeichnis.PersonenVerzeichnisID = 0
         PersonenVerzeichnis.Name = "BoB"
-        PersonenVerzeichnis.Abteilung = abteilungen1
-        //PersonenVerzeichnis.FKUnit = null
+        PersonenVerzeichnis.FKAbteilungID = abteilungen1.ID
+        PersonenVerzeichnis.FKAbteilung = abteilungen1
+        //PersonenVerzeichnis.FKUnitID = Nullable()
+        //PersonenVerzeichnis.FKUnit = abteilungen2
         PersonenVerzeichnis.Rolle = Rollen
         PersonenVerzeichnis.Somethings = new System.Collections.Generic.List<Something>([something1;something2])
         }
@@ -230,9 +250,13 @@ let initDB =
     //    //PersonenVerzeichnis.FKUnit = 3
     //    PersonenVerzeichnis.Rolle = Rollen
     //    }
+    [abteilungen1; abteilungen2]
+    |> List.map (fun item -> db.Abteilung.Add(item)) |> ignore
+    db.Abteilung.Add(abteilungen3) |> ignore
     db.PersonenVerzeichnis.Add(PersonenVerzeichnis) |> ignore
     //db.PersonenVerzeichnis.Add(PersonenVerzeichnis2) |> ignore
     db.SaveChanges()
 
 ///Take Elements of List in Type and fill in right Table
 /// Have a Lsit of Spesen which is put into Table of Abteilung when put in PersonenVerzeichnis but put in Rolle when put in Abteilung!!!
+
