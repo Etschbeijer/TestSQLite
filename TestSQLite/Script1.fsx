@@ -24,9 +24,6 @@ open System.Linq
 //open BioFSharp.BioItem
 open System.Collections.Generic
 
-
-
-
 //open FSharp.Plotly
 //open FSharp.Plotly.HTML
 
@@ -72,13 +69,13 @@ type PersonenVerzeichnis =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
     PersonenVerzeichnisID : int
-    Name                  : string
+    mutable Name          : string
     [<Column("FKAbteilung")>] [<ForeignKey("FKPersonenVerzeichnis")>]
     FKAbteilungID         : int
     FKAbteilung           : Abteilung
-    //[<Column("FKUnit")>] [<ForeignKey("FKUnit")>]
-    //FKUnitID              : Nullable<int>
-    //FKUnit                : Abteilung
+    [<Column("FKUnit")>] [<ForeignKey("FKUnitPersonen")>]
+    FKUnitID              : Nullable<int>
+    FKUnit                : Abteilung
     Rolle                 : Rolle
     Somethings            : List<Something>
     }
@@ -92,7 +89,7 @@ and [<CLIMutable>]
     //Rollen              : List<Something>
     FKPersonenVerzeichnis      : List<PersonenVerzeichnis>
     //[<Column("FKUnit")>]
-    FKUnit              : List<PersonenVerzeichnis>
+    FKUnitPersonen             : List<PersonenVerzeichnis>
     }
 
 and [<CLIMutable>] 
@@ -137,18 +134,18 @@ type PersonenContext() =
             .HasOne(fun field -> field.FKAbteilung)
             .WithMany("FKPersonenVerzeichnis")
             .IsRequired() |> ignore
-        //modelbuilder.Entity<PersonenVerzeichnis>()
-        //    .HasOne(fun field -> field.FKUnitID)
-        //    .WithMany("FKUnitPersonen")
-            //.IsRequired(false) |> ignore
+        modelbuilder.Entity<PersonenVerzeichnis>()
+            .HasOne(fun field -> field.FKUnit)
+            .WithMany("FKUnitPersonen")
+            .IsRequired(false) |> ignore
         modelbuilder.Entity<Something>()
             .ToTable<Something>("Stuff") |> ignore
 
         //modelbuilder.Entity<PersonenVerzeichnis>()
         //    .Property(fun field -> field.Name).HasColumnName("Abteilung2") |> ignore
             
-        modelbuilder.Entity<PersonenVerzeichnis>()            
-            .Property("AbteilungID").HasColumnName("FKUnit") |> ignore
+        //modelbuilder.Entity<PersonenVerzeichnis>()            
+        //    .Property("AbteilungID").HasColumnName("FKUnit") |> ignore
        
             //.ToTable("FKUnit") |> ignore
             //|> (fun x -> 
@@ -183,7 +180,7 @@ let initDB =
         Abteilung.Name   = "BoB"
         //Abteilung.Rollen = null
         Abteilung.FKPersonenVerzeichnis  = null
-        Abteilung.FKUnit = null
+        Abteilung.FKUnitPersonen = null
         }
     let abteilungen2 =
         {
@@ -191,7 +188,7 @@ let initDB =
         Abteilung.Name   = "BoB2"
         //Abteilung.Rollen = null
         Abteilung.FKPersonenVerzeichnis  = null
-        Abteilung.FKUnit = null
+        Abteilung.FKUnitPersonen = null
         }
     let abteilungen3 =
         {
@@ -199,7 +196,7 @@ let initDB =
         Abteilung.Name   = "BoB2"
         //Abteilung.Rollen = null
         Abteilung.FKPersonenVerzeichnis  = null
-        Abteilung.FKUnit = null
+        Abteilung.FKUnitPersonen = null
         //Abteilung.FKUnit = new System.Collections.Generic.List<PersonenVerzeichnis>([
         //                                                                            {
         //                                                                            PersonenVerzeichnis.PersonenVerzeichnisID = 0
@@ -237,8 +234,8 @@ let initDB =
         PersonenVerzeichnis.Name = "BoB"
         PersonenVerzeichnis.FKAbteilungID = abteilungen1.ID
         PersonenVerzeichnis.FKAbteilung = abteilungen1
-        //PersonenVerzeichnis.FKUnitID = Nullable()
-        //PersonenVerzeichnis.FKUnit = abteilungen2
+        PersonenVerzeichnis.FKUnitID = Nullable()
+        PersonenVerzeichnis.FKUnit = abteilungen2
         PersonenVerzeichnis.Rolle = Rollen
         PersonenVerzeichnis.Somethings = new System.Collections.Generic.List<Something>([something1;something2])
         }
@@ -250,13 +247,45 @@ let initDB =
     //    //PersonenVerzeichnis.FKUnit = 3
     //    PersonenVerzeichnis.Rolle = Rollen
     //    }
-    [abteilungen1; abteilungen2]
-    |> List.map (fun item -> db.Abteilung.Add(item)) |> ignore
-    db.Abteilung.Add(abteilungen3) |> ignore
+    //[abteilungen1; abteilungen2]
+    //|> List.map (fun item -> db.Abteilung.Add(item)) |> ignore
+    //db.Abteilung.Add(abteilungen3) |> ignore
     db.PersonenVerzeichnis.Add(PersonenVerzeichnis) |> ignore
     //db.PersonenVerzeichnis.Add(PersonenVerzeichnis2) |> ignore
     db.SaveChanges()
 
 ///Take Elements of List in Type and fill in right Table
-/// Have a Lsit of Spesen which is put into Table of Abteilung when put in PersonenVerzeichnis but put in Rolle when put in Abteilung!!!
 
+let context = new PersonenContext()
+
+//let testPerson =
+//    {
+//    PersonenVerzeichnis.PersonenVerzeichnisID = 0
+//    PersonenVerzeichnis.Name = "BoB"
+//    PersonenVerzeichnis.FKAbteilung = {Abteilung.ID = 0; Abteilung.Name = "Bobi"; Abteilung.FKPersonenVerzeichnis = null; Abteilung.FKUnit = null}
+//    PersonenVerzeichnis.FKAbteilungID = 1
+//    PersonenVerzeichnis.Rolle = {Rolle.RolleID = 0; Name = "bob"; Abteilungen = null}
+//    PersonenVerzeichnis.Somethings = null    
+//    }
+
+//context.Add(testPerson)
+//context.SaveChanges()
+
+//let newTest1 =
+//    query {
+//        for i in context.PersonenVerzeichnis do
+//        select i
+//          }
+
+//let readLine =
+//    for i in newTest1 do
+//        Console.WriteLine(i.PersonenVerzeichnisID)
+
+//let newTest2 =
+//    (query {
+//        for i in context.PersonenVerzeichnis do
+//        if i.Name = "" then select i}).Single()
+
+//newTest2.Name <- "Some BoB"
+
+//context.SaveChanges()
