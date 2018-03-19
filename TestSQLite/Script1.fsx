@@ -20,7 +20,7 @@ open System
 //open System.Diagnostics
 open System.ComponentModel.DataAnnotations.Schema
 open Microsoft.EntityFrameworkCore
-open System.Linq
+//open System.Linq
 //open BioFSharp.BioItem
 open System.Collections.Generic
 
@@ -247,7 +247,7 @@ let initDB =
 
 ///Take Elements of List in Type and fill in right Table
 
-let context = new PersonenContext()
+//let context = new PersonenContext()
 
 //let testPerson =
 //    {
