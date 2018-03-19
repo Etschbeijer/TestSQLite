@@ -31,21 +31,20 @@ open System.Collections.Generic
 ///Defining the Types/////////////////////////
 //////////////////////////////////////////////////////////////////
 
-//type PersonenVerzeichnis(personenVerzeichnisid : int, name : string, abteilungen : Abteilungen, rollen : Rollen) =
+//type PersonenVerzeichnis(personenVerzeichnisid : int, name : string, abteilungen : Abteilung, rollen : Rolle) =
 //    let mutable personenVerzeichnisid = personenVerzeichnisid
 //    let mutable name                  = name
-//    //let mutable abteilungenID = abteilungsid
-//    //let mutable rollenID      = rollenid
 //    let mutable abteilungen   = abteilungen
 //    let mutable rollen        = rollen
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
 //    member this.PersonenVerzeichnisID with get() = personenVerzeichnisid and set(value) = personenVerzeichnisid <- value
 //    member this.Name          with get()         = name          and set(value)         = name                  <- value
-////  member this.AbteilungenID with get()         = abteilungenID and set(value)         = abteilungenID         <- value
-////  member this.RollenID      with get()         = rollenID      and set(value)         = rollenID              <- value
+//    member this.AbteilungenID with get()         = abteilungen   and set(value)         = abteilungen           <- value
+//    member this.RollenID      with get()         = rollen        and set(value)         = rollen                <- value
 //    member this.Abteilungen   with get()         = abteilungen   and set(value)         = abteilungen           <- value
 //    member this.Rollen        with get()         = rollen        and set(value)         = rollen                <- value
-   
+
+//[<AllowNullLiteral>]   
 //and Abteilungen(abteilungenid : int, name : string, personenVerzeichnis : List<PersonenVerzeichnis>) =
 //    let mutable abteilungenID       = abteilungenid
 //    let mutable name                = name
@@ -64,7 +63,7 @@ open System.Collections.Generic
 //    member this.Name     with get()            = name     and set(value)            = name                <- value
 //    member this.PersonenVerzeichnis with get() = personenVerzeichnis and set(value) = personenVerzeichnis <- value
 
-[<CLIMutable>]
+[<CLIMutable>] 
 type PersonenVerzeichnis =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
@@ -75,22 +74,34 @@ type PersonenVerzeichnis =
     FKAbteilung           : Abteilung
     [<Column("FKUnit")>] [<ForeignKey("FKUnitPersonen")>]
     FKUnitID              : Nullable<int>
+    [<CompilationRepresentation(CompilationRepresentationFlags.UseNullAsTrueValue)>]
     FKUnit                : Abteilung
     Rolle                 : Rolle
     Somethings            : List<Something>
     }
-
-and [<CLIMutable>] 
-    Abteilung =
-    {
+  
+and [<AllowNullLiteral>] Abteilung (abteilungenid : int, name : string, fkpersonenVerzeichnis : List<PersonenVerzeichnis>, fkunitpersonen : List<PersonenVerzeichnis>) =
+    let mutable abteilungID           = abteilungenid
+    let mutable name                  = name
+    let mutable fkpersonenVerzeichnis = fkpersonenVerzeichnis
+    let mutable fkunitpersonen        = fkunitpersonen
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
-    ID                  : int
-    Name                : string
-    //Rollen              : List<Something>
-    FKPersonenVerzeichnis      : List<PersonenVerzeichnis>
-    //[<Column("FKUnit")>]
-    FKUnitPersonen             : List<PersonenVerzeichnis>
-    }
+    member this.AbteilungID           with get() = abteilungID           and set(value) = abteilungID           <- value
+    member this.Name                  with get() = name                  and set(value) = name                  <- value
+    member this.FKPersonenVerzeichnis with get() = fkpersonenVerzeichnis and set(value) = fkpersonenVerzeichnis <- value
+    member this.FKUnitPersonen        with get() = fkunitpersonen        and set(value) = fkunitpersonen        <- value    
+
+//and [<AllowNullLiteral>] [<CLIMutable>]
+//    Abteilung =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
+//    ID                  : int
+//    Name                : string
+//    //Rollen              : List<Something>
+//    FKPersonenVerzeichnis      : List<PersonenVerzeichnis>
+//    //[<Column("FKUnit")>]
+//    FKUnitPersonen             : List<PersonenVerzeichnis>
+//    }
 
 and [<CLIMutable>] 
     Rolle =
@@ -174,29 +185,9 @@ type PersonenContext() =
 let initDB =
     let db = new PersonenContext()
     db.Database.EnsureCreated() |> ignore
-    let abteilungen1 =
-        {
-        Abteilung.ID     = 0
-        Abteilung.Name   = "BoB"
-        //Abteilung.Rollen = null
-        Abteilung.FKPersonenVerzeichnis  = null
-        Abteilung.FKUnitPersonen = null
-        }
-    let abteilungen2 =
-        {
-        Abteilung.ID     = 0
-        Abteilung.Name   = "BoB2"
-        //Abteilung.Rollen = null
-        Abteilung.FKPersonenVerzeichnis  = null
-        Abteilung.FKUnitPersonen = null
-        }
-    let abteilungen3 =
-        {
-        Abteilung.ID     = 0
-        Abteilung.Name   = "BoB2"
-        //Abteilung.Rollen = null
-        Abteilung.FKPersonenVerzeichnis  = null
-        Abteilung.FKUnitPersonen = null
+    let abteilungen1 = new Abteilung(0, "BoB", null, null)
+    let abteilungen2 = new Abteilung(0, "BoB", null, null)
+    let abteilungen3 = new Abteilung(0, "BoB", null, null)
         //Abteilung.FKUnit = new System.Collections.Generic.List<PersonenVerzeichnis>([
         //                                                                            {
         //                                                                            PersonenVerzeichnis.PersonenVerzeichnisID = 0
@@ -207,7 +198,7 @@ let initDB =
         //                                                                            PersonenVerzeichnis.Somethings = null
         //                                                                            }
         //                                                                            ])
-        }
+        
     let something1 =
         {
         Something.ID   = 0
@@ -232,7 +223,7 @@ let initDB =
         {
         PersonenVerzeichnis.PersonenVerzeichnisID = 0
         PersonenVerzeichnis.Name = "BoB"
-        PersonenVerzeichnis.FKAbteilungID = abteilungen1.ID
+        PersonenVerzeichnis.FKAbteilungID = abteilungen1.AbteilungID
         PersonenVerzeichnis.FKAbteilung = abteilungen1
         PersonenVerzeichnis.FKUnitID = Nullable()
         PersonenVerzeichnis.FKUnit = abteilungen2
