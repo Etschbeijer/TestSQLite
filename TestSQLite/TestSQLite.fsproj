@@ -81,6 +81,7 @@
     <None Include="VertiefungsPraktikum_Task9_4.fsx" />
     <None Include="VertiefungsPraktikum_Task9_5.fsx" />
     <None Include="Script2.fsx" />
+    <None Include="TermTableTest.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BioFSharp">
