@@ -28,12 +28,100 @@ open FSharp.Care.IO
 open BioFSharp.IO
 ///Defining Types
 
+//type [<CLIMutable>] AnalysisSoftware =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                     : int
+//    Name                   : string 
+//    RowVersion             : DateTime
+//    AnalysisSoftwareParams : List<AnalysisSoftwareParam>
+//    }
+
+
+//and [<CLIMutable>] AnalysisSoftwareParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : AnalysisSoftware
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime  
+//    }
+
+//and [<CLIMutable>] DBSequence =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    Accession        : string
+//    Name             : string
+//    SearchDBID       : string //Refers to SearchDB???
+//    RowVersion       : DateTime 
+//    DBSequenceParams : List<DBSequenceParam>
+//    }
+
+//and [<CLIMutable>] DBSequenceParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : DBSequenceParam
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
+
+//and [<CLIMutable>] ModLocation =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                : int
+//    PeptideID         : Peptide
+//    ModificationID    : Modification
+//    Location          : int
+//    Residue           : string
+//    RowVersion        : DateTime
+//    ModLocationParams : List<ModLocation>
+//    }
+
+//and [<CLIMutable>] ModLocationParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : ModLocation
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
+
+//and [<CLIMutable>] Modification =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                    : int
+//    Name                  : string 
+//    Residues              : string 
+//    MonoisotopicMassDelta : float 
+//    AvgMassDelta          : float 
+//    RowVersion            : DateTime 
+//    ModificationParams    : List<ModificationParam>
+//    }
+
+//and [<CLIMutable>] ModificationParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : Modification
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
+
 type [<CLIMutable>] Ontology = 
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
     ID             : int
-    [<Column("Name")>]
-    OntologyName   : string
+    Name           : string
     RowVersion     : DateTime
     OntologyParams : List<OntologyParam>
     Terms          : List<Term>
@@ -50,6 +138,228 @@ and [<CLIMutable>] OntologyParam =
     RowVersion             : DateTime
     }
 
+//and [<CLIMutable>] Organization =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                 : int
+//    Name               : string
+//    ParentID           : Parent
+//    RowVersion         : DateTime
+//    OrganizationParams : List<OrganizationParam>
+//    }
+
+//and [<CLIMutable>] OrganizationParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : Organization
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
+
+//and [<CLIMutable>] Parent =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID           : int
+//    Name         : string
+//    Country      : string 
+//    RowVersion   : DateTime
+//    ParentParams : List<ParentParam>
+//    }
+
+//and [<CLIMutable>] ParentParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
+//    ID               : int
+//    FKParamContainer : Parent
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime   
+//    }
+
+//and [<CLIMutable>] Peptide =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID            : int
+//    Sequence      : string
+//    RowVersion    : DateTime 
+//    PeptideParams : List<PeptideParam>
+//    }
+
+//and [<CLIMutable>] PeptideParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : Peptide
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime  
+//    }
+
+
+//and [<CLIMutable>] PeptideEvidence =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                    : int
+//    DBSequenceID          : int //Refers to DBSequenceList
+//    PeptideID             : Peptide
+//    isDecoy               : string 
+//    Frame                 : string 
+//    Start                 : int 
+//    End                   : int 
+//    Pre                   : string 
+//    Post                  : string 
+//    TranslationsID        : int //Refers to Translation
+//    RowVersion            : DateTime 
+//    PeptideEvidenceParams : List<PeptideEvidenceParam>
+//    }
+
+//and [<CLIMutable>] PeptideEvidenceParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : PeptideEvidence
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
+
+//and [<CLIMutable>] PeptideHypothesis =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                           : int
+//    PeptideEvidenceID            : PeptideEvidence
+//    PeptideDetectionHypothesisID : int //Refers to peptideDetectionHyptothesis
+//    RowVersion                   : DateTime  
+//    PeptideHypothesisParams      : List<PeptideHypothesisParam>
+//    }
+
+//and [<CLIMutable>] PeptideHypothesisParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : PeptideHypothesis
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
+
+//and [<CLIMutable>] Person =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID             : int
+//    FirstName      : string 
+//    LastName       : string 
+//    MiddleName     : string 
+//    OrganisationID : int //Refers to Organisation
+//    RowVersion     : DateTime  
+//    PersonParams   : List<PersonParam>
+//    }
+
+//and [<CLIMutable>] PersonParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : Person
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime   
+//    }
+
+//and [<CLIMutable>] ProteinAmbiguityGroup =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                          : int
+//    ProteinDetectionListID      : int //Refers to ProteinList
+//    Name                        : string 
+//    RowVersion                  : DateTime
+//    ProteinAmbiguityGroupParams : List<ProteinAmbiguityGroupParam>
+//    }
+
+//and [<CLIMutable>] ProteinAmbiguityGroupParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : ProteinAmbiguityGroup
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime     
+//    }
+
+//and [<CLIMutable>] ProteinDetectionHypothesis =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                               : int
+//    DBSequenceID                     : int //Refers to DBSequenceList
+//    ProteinAmbiguityGroupID          : ProteinAmbiguityGroup
+//    Name                             : string 
+//    PassThreshold                    : string
+//    RowVersion                       : DateTime  
+//    ProteinDetectionHypothesisParams : List<ProteinDetectionHypothesisParam>
+//    }
+
+//and [<CLIMutable>] ProteinDetectionHypothesisParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : ProteinDetectionHypothesis
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime
+//    }
+
+//and [<CLIMutable>] ProteinDetectionList =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                         : int
+//    Accession                  : string
+//    Name                       : string
+//    SearchDBID                 : string //Refers to SearchDBList
+//    RowVersion                 : DateTime
+//    ProteinDetectionListParams : List<ProteinDetectionListParam>
+//    }
+
+//and [<CLIMutable>] ProteinDetectionListParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : ProteinDetectionList
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime
+//    }
+
+//and [<CLIMutable>] ProteinDetectionProtocol =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                             : int
+//    Name                           : string 
+//    AnalysisSoftwareID             : int
+//    RowVersion                     : DateTime
+//    ProteinDetectionProtocolParams : List<ProteinDetectionProtocolParam>
+//    }
+
+//and [<CLIMutable>] ProteinDetectionProtocolParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : ProteinDetectionProtocol
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime  
+//    }
+    
 and [<CLIMutable>] SpectrumIdentification =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
@@ -57,7 +367,7 @@ and [<CLIMutable>] SpectrumIdentification =
     Name                              : string 
     ActivityDate                      : string 
     SpectrumIdentificationListID      : int //Refers to SpectrumidentificationList normally
-    SpectrumIdentificationProtocollID : int //Refers to SpectrumidentificationProtocoll normally
+    SpectrumIdentificationProtocollID : int //Refers to SpectrumIdentificationProtocol normally
     RowVersion                        : DateTime
     SpectrumIdentificationParams      : List<SpectrumIdentificationParam>
     }
@@ -73,13 +383,106 @@ and [<CLIMutable>] SpectrumIdentificationParam =
     RowVersion             : DateTime
     }
 
+//and [<CLIMutable>] SpectrumIdentificationItem =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                               : int
+//    SpectrumIdentificationResultID   : SpectrumIdentificationResult
+//    SampleID                         : int 
+//    PeptideID                        : Peptide
+//    MassTableID                      : int //Refers to MassTableList
+//    Name                             : string 
+//    PassThreshold                    : string
+//    Rank                             : int 
+//    CalculatedMassToCharge           : float 
+//    ExperimentalMassToCharge         : float
+//    ChargeState                      : int
+//    CalculatedIP                     : float 
+//    Fragmentation                    : DateTime  
+//    RowVersion                       : DateTime
+//    SpectrumIdentificationItemParams : List<SpectrumIdentificationItemParam>
+//    }
+
+//and [<CLIMutable>] SpectrumIdentificationItemParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : SpectrumIdentificationItem
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
+
+//and [<CLIMutable>] SpectrumIdentificationList =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                               : int
+//    Name                             : string 
+//    NumSequencesSeqrched             : int 
+//    RowVersion                       : DateTime
+//    SpectrumIdentificationListParams : List<SpectrumIdentificationListParam>
+//    }
+
+//and [<CLIMutable>] SpectrumIdentificationListParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : SpectrumIdentificationList
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
+
+//and [<CLIMutable>] SpectrumIdentificationProtocol =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                                   : int
+//    Name                                 : string 
+//    AnalysisSoftwareID                   : int
+//    RowVersion                           : DateTime 
+//    SpectrumIdentificationProtocolParams : List<SpectrumIdentificationProtocolParam>
+//    }
+
+//and [<CLIMutable>] SpectrumIdentificationProtocolParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : SpectrumIdentificationProtocol
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
+
+//and [<CLIMutable>] SpectrumIdentificationResult =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                           : int
+//    SpectrumID                   : int//Refers to SpectrumIdentificationID
+//    //SpectraDataID : string // quetionable???
+//    SpectrumIdentificationListID : int 
+//    Name                         : string 
+//    RowVersion                   : DateTime 
+//    }
+
+//and [<CLIMutable>] SpectrumIdentificationResultParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : int
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime    
+//    }
+
 and [<CLIMutable>] Term =
     {
     ID             : string
     Name           : string
-    //OntologyID : string
-    (*[<ForeignKey("OntologyName")>]*)
-    Ontology     : Ontology
+    Ontology       : Ontology
     RowVersion     : DateTime 
     OntologyParams : List<OntologyParam>
     }
@@ -123,6 +526,38 @@ type DBMSContext() =
     [<DefaultValue>] val mutable m_spectrumIdentificationParam : DbSet<SpectrumIdentificationParam>
     member public this.SpectrumIdentificationParam with get() = this.m_spectrumIdentificationParam
                                                     and set value = this.m_spectrumIdentificationParam <- value
+
+    //[<DefaultValue>] val mutable m_spectrumIdentificationItem : DbSet<SpectrumIdentificationItem>
+    //member public this.SpectrumIdentificationItem with get() = this.m_spectrumIdentificationItem
+    //                                                and set value = this.m_spectrumIdentificationItem <- value
+
+    //[<DefaultValue>] val mutable m_spectrumIdentificationItemParam : DbSet<SpectrumIdentificationItemParam>
+    //member public this.SpectrumIdentificationItemParam with get() = this.m_spectrumIdentificationItemParam
+    //                                                   and set value = this.m_spectrumIdentificationItemParam <- value
+
+    //[<DefaultValue>] val mutable m_spectrumIdentificationList : DbSet<SpectrumIdentificationList>
+    //member public this.SpectrumIdentificationList with get() = this.m_spectrumIdentificationList
+    //                                                and set value = this.m_spectrumIdentificationList <- value
+
+    //[<DefaultValue>] val mutable m_spectrumIdentificationListParam : DbSet<SpectrumIdentificationListParam>
+    //member public this.SpectrumIdentificationListParam with get() = this.m_spectrumIdentificationListParam
+    //                                                    and set value = this.m_spectrumIdentificationListParam <- value
+
+    //[<DefaultValue>] val mutable m_spectrumIdentificationProtocol : DbSet<SpectrumIdentificationProtocol>
+    //member public this.SpectrumIdentificationProtocol with get() = this.m_spectrumIdentificationProtocol
+    //                                                    and set value = this.m_spectrumIdentificationProtocol <- value
+
+    //[<DefaultValue>] val mutable m_spectrumIdentificationProtocolParam : DbSet<SpectrumIdentificationProtocolParam>
+    //member public this.SpectrumIdentificationProtocolParam with get() = this.m_spectrumIdentificationProtocolParam
+    //                                                        and set value = this.m_spectrumIdentificationProtocolParam <- value
+
+    //[<DefaultValue>] val mutable m_spectrumIdentificationResult : DbSet<SpectrumIdentificationResult>
+    //member public this.SpectrumIdentificationResult with get() = this.m_spectrumIdentificationResult
+    //                                                and set value = this.m_spectrumIdentificationResult <- value
+
+    //[<DefaultValue>] val mutable m_spectrumIdentificationResultParam : DbSet<SpectrumIdentificationResultParam>
+    //member public this.SpectrumIdentificationResultParam with get() = this.m_spectrumIdentificationResultParam
+    //                                                        and set value = this.m_spectrumIdentificationResultParam <- value
 
     [<DefaultValue>] val mutable m_term : DbSet<Term>
     member public this.Term with get() = this.m_term
@@ -168,23 +603,23 @@ let fromUnit_Ontology =
 ///Define Types to insert into DB
 let ontologyPsiMS = 
                 {
-                 Ontology.ID = 0
-                 Ontology.OntologyName = "Psi-MS"
-                 Ontology.RowVersion = DateTime.Now.Date
+                 Ontology.ID             = 0
+                 Ontology.Name           = "Psi-MS"
+                 Ontology.RowVersion     = DateTime.Now.Date
                  Ontology.OntologyParams = null
-                 Ontology.Terms = new System.Collections.Generic.List<Term>
+                 Ontology.Terms          = new System.Collections.Generic.List<Term>
                     (fromPsiMS
                     |> Seq.map (fun item -> {
-                                             Term.ID = item.Id; 
-                                             Term.Name = item.Name; 
-                                             Term.Ontology = {
-                                                              Ontology.ID = 0; 
-                                                              Ontology.OntologyName = "Psi-MS"; 
-                                                              Ontology.RowVersion = DateTime.Now.Date; 
-                                                              Ontology.OntologyParams = null; 
-                                                              Ontology.Terms = null
-                                                             }; 
-                                             Term.RowVersion = DateTime.Now.Date; 
+                                             Term.ID             = item.Id; 
+                                             Term.Name           = item.Name; 
+                                             Term.Ontology       = {
+                                                                      Ontology.ID             = 0 
+                                                                      Ontology.Name           = "Psi-MS" 
+                                                                      Ontology.RowVersion     = DateTime.Now.Date 
+                                                                      Ontology.OntologyParams = null 
+                                                                      Ontology.Terms          = null
+                                                                   } 
+                                             Term.RowVersion     = DateTime.Now.Date; 
                                              Term.OntologyParams = null
                                             }
                                 )
@@ -193,23 +628,23 @@ let ontologyPsiMS =
 
 let ontologyPride = 
                 {
-                 Ontology.ID = 0
-                 Ontology.OntologyName = "Pride"
-                 Ontology.RowVersion = DateTime.Now.Date
+                 Ontology.ID             = 0
+                 Ontology.Name           = "Pride"
+                 Ontology.RowVersion     = DateTime.Now.Date
                  Ontology.OntologyParams = null
-                 Ontology.Terms = new System.Collections.Generic.List<Term>
+                 Ontology.Terms          = new System.Collections.Generic.List<Term>
                     (fromPride
                     |> Seq.map (fun item -> {
-                                             Term.ID = item.Id; 
-                                             Term.Name = item.Name; 
-                                             Term.Ontology = {
-                                                              Ontology.ID = 0; 
-                                                              Ontology.OntologyName = "Pride"; 
-                                                              Ontology.RowVersion = DateTime.Now.Date; 
-                                                              Ontology.OntologyParams = null; 
-                                                              Ontology.Terms = null
-                                                             }; 
-                                             Term.RowVersion = DateTime.Now.Date; 
+                                             Term.ID             = item.Id; 
+                                             Term.Name           = item.Name; 
+                                             Term.Ontology       = {
+                                                                      Ontology.ID             = 0 
+                                                                      Ontology.Name           = "Pride" 
+                                                                      Ontology.RowVersion     = DateTime.Now.Date 
+                                                                      Ontology.OntologyParams = null 
+                                                                      Ontology.Terms          = null
+                                                                   } 
+                                             Term.RowVersion     = DateTime.Now.Date; 
                                              Term.OntologyParams = null
                                             }
                                 )
@@ -218,23 +653,23 @@ let ontologyPride =
 
 let ontologyUniMod = 
                 {
-                 Ontology.ID = 0
-                 Ontology.OntologyName = "UniMod"
-                 Ontology.RowVersion = DateTime.Now.Date
+                 Ontology.ID             = 0
+                 Ontology.Name           = "UniMod"
+                 Ontology.RowVersion     = DateTime.Now.Date
                  Ontology.OntologyParams = null
-                 Ontology.Terms = new System.Collections.Generic.List<Term>
+                 Ontology.Terms          = new System.Collections.Generic.List<Term>
                     (fromUniMod
                     |> Seq.map (fun item -> {
-                                             Term.ID = item.Id; 
-                                             Term.Name = item.Name; 
-                                             Term.Ontology = {
-                                                              Ontology.ID = 0; 
-                                                              Ontology.OntologyName = "UniMod"; 
-                                                              Ontology.RowVersion = DateTime.Now.Date; 
-                                                              Ontology.OntologyParams = null; 
-                                                              Ontology.Terms = null
-                                                             }; 
-                                             Term.RowVersion = DateTime.Now.Date; 
+                                             Term.ID             = item.Id 
+                                             Term.Name           = item.Name 
+                                             Term.Ontology       = {
+                                                                      Ontology.ID             = 0 
+                                                                      Ontology.Name           = "UniMod" 
+                                                                      Ontology.RowVersion     = DateTime.Now.Date 
+                                                                      Ontology.OntologyParams = null 
+                                                                      Ontology.Terms          = null
+                                                                   } 
+                                             Term.RowVersion     = DateTime.Now.Date; 
                                              Term.OntologyParams = null
                                             }
                                 )
@@ -243,23 +678,23 @@ let ontologyUniMod =
 
 let ontologyUnit_Ontology = 
                 {
-                 Ontology.ID = 0
-                 Ontology.OntologyName = "Unit_Ontology"
-                 Ontology.RowVersion = DateTime.Now.Date
+                 Ontology.ID             = 0
+                 Ontology.Name           = "Unit_Ontology"
+                 Ontology.RowVersion     = DateTime.Now.Date
                  Ontology.OntologyParams = null
-                 Ontology.Terms = new System.Collections.Generic.List<Term>
+                 Ontology.Terms          = new System.Collections.Generic.List<Term>
                     (fromUnit_Ontology
                     |> Seq.map (fun item -> {
-                                             Term.ID = item.Id; 
-                                             Term.Name = item.Name; 
-                                             Term.Ontology = {
-                                                              Ontology.ID = 0; 
-                                                              Ontology.OntologyName = "Unit_Ontology"; 
-                                                              Ontology.RowVersion = DateTime.Now.Date; 
-                                                              Ontology.OntologyParams = null; 
-                                                              Ontology.Terms = null
-                                                             }; 
-                                             Term.RowVersion = DateTime.Now.Date; 
+                                             Term.ID             = item.Id; 
+                                             Term.Name           = item.Name; 
+                                             Term.Ontology       = {
+                                                                      Ontology.ID             = 0 
+                                                                      Ontology.Name           = "Unit_Ontology"
+                                                                      Ontology.RowVersion     = DateTime.Now.Date 
+                                                                      Ontology.OntologyParams = null 
+                                                                      Ontology.Terms          = null
+                                                                   } 
+                                             Term.RowVersion     = DateTime.Now.Date; 
                                              Term.OntologyParams = null
                                             }
                                 )
@@ -267,24 +702,24 @@ let ontologyUnit_Ontology =
                 }
 
 let Unitless = {
-                Ontology.ID = -1
-                Ontology.OntologyName = ""
-                Ontology.RowVersion = DateTime.Now.Date
+                Ontology.ID             = -1
+                Ontology.Name           = ""
+                Ontology.RowVersion     = DateTime.Now.Date
                 Ontology.OntologyParams = null
-                Ontology.Terms = new System.Collections.Generic.List<Term>
+                Ontology.Terms          = new System.Collections.Generic.List<Term>
                     ([{
-                       Term.ID = ""; 
-                       Term.Name = ""; 
-                       Term.Ontology = {
-                                        Ontology.ID = -1; 
-                                        Ontology.OntologyName = ""; 
-                                        Ontology.RowVersion = DateTime.Now.Date; 
-                                        Ontology.OntologyParams = null; 
-                                        Ontology.Terms = null
-                                       }; 
-                       Term.RowVersion = DateTime.Now.Date; 
+                       Term.ID             = ""; 
+                       Term.Name           = ""; 
+                       Term.Ontology       = {
+                                                Ontology.ID             = -1 
+                                                Ontology.Name           = "" 
+                                                Ontology.RowVersion     = DateTime.Now.Date
+                                                Ontology.OntologyParams = null 
+                                                Ontology.Terms          = null
+                                             } 
+                       Term.RowVersion     = DateTime.Now.Date; 
                        Term.OntologyParams = null
-                   }])
+                    }])
                }
 
 //let ontoTest2 = {
@@ -320,6 +755,7 @@ let Unitless = {
 ///Creating && Checking && inserting into DB
 let initDB =
     let db = new DBMSContext()
+    
     db.Database.EnsureCreated() |> ignore
 
     db.Ontology.Add(ontologyPsiMS)         |> ignore

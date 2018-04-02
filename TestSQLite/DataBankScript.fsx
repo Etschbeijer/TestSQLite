@@ -44,20 +44,7 @@ let fileDir = __SOURCE_DIRECTORY__
 let dbPath = fileDir + "\Ontologies_Terms\DavidsDatenbank.db"
 
 ///types for the DataBank
-
-type Optional<'a> =
-    |Some of 'a
-    |Nullable
-    
-type NullableString() =
-    inherit System.Attribute()
-    member val X : string = null with get, set
-
-type PrimaryKeyAttribute() =
-    class
-        inherit Attribute()
-    end
-//[<PrimaryKey>]
+  
 
 [<CLIMutable>]
 type AnalysisSoftware =
