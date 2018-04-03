@@ -19,6 +19,7 @@ let fileDir = __SOURCE_DIRECTORY__
 
 open System
 //open System.Diagnostics
+open System.ComponentModel.DataAnnotations
 open System.ComponentModel.DataAnnotations.Schema
 open Microsoft.EntityFrameworkCore
 open System.Linq
@@ -45,6 +46,7 @@ open BioFSharp.IO
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : AnalysisSoftware
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -67,6 +69,7 @@ open BioFSharp.IO
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : DBSequence
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -87,6 +90,7 @@ open BioFSharp.IO
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : MassTable
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -110,6 +114,7 @@ open BioFSharp.IO
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : ModLocation
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -134,6 +139,7 @@ open BioFSharp.IO
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : Modification
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -155,6 +161,7 @@ and [<CLIMutable>] OntologyParam =
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID                     : int
     FKParamContainer       : Ontology
+    [<RequiredAttribute()>]
     FKTerm                 : Term
     FKUnit                 : Term
     Value                  : string
@@ -176,6 +183,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : Organization
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -198,6 +206,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
 //    ID               : int
 //    FKParamContainer : Parent
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -219,6 +228,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : Peptide
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -248,6 +258,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : PeptideEvidence
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -269,6 +280,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : PeptideHypothesis
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -292,6 +304,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : Person
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -313,6 +326,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : ProteinAmbiguityGroup
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -335,6 +349,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : ProteinDetection
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -358,6 +373,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : ProteinDetectionHypothesis
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -380,6 +396,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : ProteinDetectionList
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -401,6 +418,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : ProteinDetectionProtocol
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -421,6 +439,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : Sample
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -443,6 +462,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : SearchDatabaseParam
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -465,6 +485,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID                     : int
 //    FKParamContainer       : SpectraData
+//    [<RequiredAttribute()>]
 //    FKTerm                 : Term
 //    FKUnit                 : Term
 //    Value                  : string
@@ -488,6 +509,7 @@ and [<CLIMutable>] SpectrumIdentificationParam =
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID                     : int
     FKParamContainer       : SpectrumIdentification
+    [<RequiredAttribute()>]
     FKTerm                 : Term
     FKUnit                 : Term
     Value                  : string
@@ -519,6 +541,7 @@ and [<CLIMutable>] SpectrumIdentificationParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : SpectrumIdentificationItem
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -540,6 +563,7 @@ and [<CLIMutable>] SpectrumIdentificationParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : SpectrumIdentificationList
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -561,6 +585,7 @@ and [<CLIMutable>] SpectrumIdentificationParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : SpectrumIdentificationProtocol
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -583,6 +608,7 @@ and [<CLIMutable>] SpectrumIdentificationParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : SpectrumIdentificationResult
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -592,7 +618,7 @@ and [<CLIMutable>] SpectrumIdentificationParam =
 and [<CLIMutable>] Term =
     {
     ID             : string
-    mutable Name           : string
+    Name           : string
     Ontology       : Ontology
     RowVersion     : DateTime 
     }
@@ -600,8 +626,8 @@ and [<CLIMutable>] Term =
 //and [<CLIMutable>] TermRelationShip =
 //    {
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//    ID : int
-//    TermID           : Term
+//    ID               : int
+//    Term             : Term
 //    RelationShipType : string
 //    FKRelatedTerm    : Term
 //    RowVersion       : DateTime     
@@ -611,7 +637,7 @@ and [<CLIMutable>] Term =
 //    {
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID         : int
-//    TermID     : Term
+//    Term      : Term
 //    Name       : string
 //    Value      : string
 //    RowVersion : DateTime 
@@ -630,6 +656,7 @@ and [<CLIMutable>] Term =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
 //    FKParamContainer : Translation
+//    [<RequiredAttribute()>]
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -899,18 +926,18 @@ let testOntology =
         select i
           }
 
-let testTerm =
-    query {
-        for i in context.Term do
-        select i
-          }
+//let testTerm =
+//    query {
+//        for i in context.Term do
+//        select i
+//          }
 
 let readLine (input : seq<'a>) =
     for i in input do
         Console.WriteLine(i)
 
 readLine testOntology
-readLine testTerm
+//readLine testTerm
 
 //let testTerm2 =
 //    (query {
