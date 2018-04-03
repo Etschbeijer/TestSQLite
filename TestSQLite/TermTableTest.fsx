@@ -1,8 +1,8 @@
 ﻿
-#I @"..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45"
-#I @"..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\"
-#r "Microsoft.AspNet.Identity.Core.dll"
-#r "Microsoft.AspNet.Identity.EntityFramework.dll"
+//#I @"..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45"
+//#I @"..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\"
+//#r "Microsoft.AspNet.Identity.Core.dll"
+//#r "Microsoft.AspNet.Identity.EntityFramework.dll"
 #r "System.ComponentModel.DataAnnotations.dll"
 #r @"..\TestSQLite\bin\Debug\netstandard.dll"
 #r @"..\TestSQLite\bin\Debug\Microsoft.EntityFrameworkCore.dll"
@@ -26,6 +26,9 @@ open Microsoft.EntityFrameworkCore
 open System.Collections.Generic
 open FSharp.Care.IO
 open BioFSharp.IO
+//open System.Data
+//open System.Data.Common
+
 ///Defining Types
 
 //type [<CLIMutable>] AnalysisSoftware =
@@ -36,7 +39,6 @@ open BioFSharp.IO
 //    RowVersion             : DateTime
 //    AnalysisSoftwareParams : List<AnalysisSoftwareParam>
 //    }
-
 
 //and [<CLIMutable>] AnalysisSoftwareParam =
 //    {
@@ -55,7 +57,7 @@ open BioFSharp.IO
 //    ID               : int
 //    Accession        : string
 //    Name             : string
-//    SearchDBID       : string //Refers to SearchDB???
+//    SearchDB         : SearchDatabase
 //    RowVersion       : DateTime 
 //    DBSequenceParams : List<DBSequenceParam>
 //    }
@@ -64,19 +66,39 @@ open BioFSharp.IO
 //    {
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
-//    FKParamContainer : DBSequenceParam
+//    FKParamContainer : DBSequence
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
 //    RowVersion       : DateTime 
 //    }
+////Added because it is part of the original document and refferd to in the code
+//and [<CLIMutable>] MassTable =
+//    {
+//    ID : int
+//    Name : string
+//    MSLevel : List<int> //MS spectrum that the MassTable reffers to, e.g. "1" for MS1
+//    RowVersion : DateTime
+//    MassTableParams : List<MassTableParam> 
+//    }
 
+//and [<CLIMutable>] MassTableParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : MassTable
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
+////Not part of the original document
 //and [<CLIMutable>] ModLocation =
 //    {
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID                : int
-//    PeptideID         : Peptide
-//    ModificationID    : Modification
+//    Peptide           : Peptide
+//    Modification      : Modification
 //    Location          : int
 //    Residue           : string
 //    RowVersion        : DateTime
@@ -93,7 +115,7 @@ open BioFSharp.IO
 //    Value            : string
 //    RowVersion       : DateTime 
 //    }
-
+////Create connection to ModLocation?
 //and [<CLIMutable>] Modification =
 //    {
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
@@ -102,6 +124,7 @@ open BioFSharp.IO
 //    Residues              : string 
 //    MonoisotopicMassDelta : float 
 //    AvgMassDelta          : float 
+//    ModLocation           : ModLocation //Added to create connection to ModLocation
 //    RowVersion            : DateTime 
 //    ModificationParams    : List<ModificationParam>
 //    }
@@ -143,7 +166,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID                 : int
 //    Name               : string
-//    ParentID           : Parent
+//    ParentID           : Parent //Added to create connection to Parent
 //    RowVersion         : DateTime
 //    OrganizationParams : List<OrganizationParam>
 //    }
@@ -162,9 +185,10 @@ and [<CLIMutable>] OntologyParam =
 //and [<CLIMutable>] Parent =
 //    {
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//    ID           : int
-//    Name         : string
-//    Country      : string 
+//    ID           : int            //Not part of the original document
+//    Name         : string         //Not part of the original document
+//    Organization : Organization 
+//    Country      : string         //Not part of the original document
 //    RowVersion   : DateTime
 //    ParentParams : List<ParentParam>
 //    }
@@ -184,7 +208,8 @@ and [<CLIMutable>] OntologyParam =
 //    {
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID            : int
-//    Sequence      : string
+//    Name          : string             //Part of the original document
+//    Sequence      : string             //Not part of the original document
 //    RowVersion    : DateTime 
 //    PeptideParams : List<PeptideParam>
 //    }
@@ -205,15 +230,15 @@ and [<CLIMutable>] OntologyParam =
 //    {
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID                    : int
-//    DBSequenceID          : int //Refers to DBSequenceList
-//    PeptideID             : Peptide
+//    DBSequence            : DBSequence
+//    Peptide               : Peptide
 //    isDecoy               : string 
 //    Frame                 : string 
 //    Start                 : int 
 //    End                   : int 
 //    Pre                   : string 
 //    Post                  : string 
-//    TranslationsID        : int //Refers to Translation
+//    Translation           : Translation              //Refers to TranslationTable
 //    RowVersion            : DateTime 
 //    PeptideEvidenceParams : List<PeptideEvidenceParam>
 //    }
@@ -233,8 +258,8 @@ and [<CLIMutable>] OntologyParam =
 //    {
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID                           : int
-//    PeptideEvidenceID            : PeptideEvidence
-//    PeptideDetectionHypothesisID : int //Refers to peptideDetectionHyptothesis
+//    PeptideEvidence              : PeptideEvidence
+//    PeptideDetectionHypothesisID : int                //Not part of the original document
 //    RowVersion                   : DateTime  
 //    PeptideHypothesisParams      : List<PeptideHypothesisParam>
 //    }
@@ -257,7 +282,7 @@ and [<CLIMutable>] OntologyParam =
 //    FirstName      : string 
 //    LastName       : string 
 //    MiddleName     : string 
-//    OrganisationID : int //Refers to Organisation
+//    Organisation   : Organization         //Not part of the original document
 //    RowVersion     : DateTime  
 //    PersonParams   : List<PersonParam>
 //    }
@@ -277,7 +302,7 @@ and [<CLIMutable>] OntologyParam =
 //    {
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID                          : int
-//    ProteinDetectionListID      : int //Refers to ProteinList
+//    ProteinDetectionList        : ProteinDetectionList //Not part of the original document
 //    Name                        : string 
 //    RowVersion                  : DateTime
 //    ProteinAmbiguityGroupParams : List<ProteinAmbiguityGroupParam>
@@ -293,13 +318,35 @@ and [<CLIMutable>] OntologyParam =
 //    Value            : string
 //    RowVersion       : DateTime     
 //    }
+////Added because it is part of the original document
+//and [<CLIMutable>] ProteinDetection =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
+//    ID                        : int
+//    Name                      : string
+//    ProteinDetectionList      : ProteinDetectionList
+//    ProteinDetectionProtocoll : ProteinDetectionProtocoll
+//    RowVersion                : DateTime
+//    ProteinDetectionParams    : List<ProteinDetectionParam>
+//    }
+
+//and [<CLIMutable>] ProteinDetectionParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : ProteinDetection
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime
+//    }
 
 //and [<CLIMutable>] ProteinDetectionHypothesis =
 //    {
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID                               : int
-//    DBSequenceID                     : int //Refers to DBSequenceList
-//    ProteinAmbiguityGroupID          : ProteinAmbiguityGroup
+//    DBSequence                       : DBSequence
+//    ProteinAmbiguityGroup            : ProteinAmbiguityGroup //Not part of the original document
 //    Name                             : string 
 //    PassThreshold                    : string
 //    RowVersion                       : DateTime  
@@ -323,7 +370,7 @@ and [<CLIMutable>] OntologyParam =
 //    ID                         : int
 //    Accession                  : string
 //    Name                       : string
-//    SearchDBID                 : string //Refers to SearchDBList
+//    SearchDB                   : SearchDatabase       //Not part of the original document
 //    RowVersion                 : DateTime
 //    ProteinDetectionListParams : List<ProteinDetectionListParam>
 //    }
@@ -344,7 +391,7 @@ and [<CLIMutable>] OntologyParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID                             : int
 //    Name                           : string 
-//    AnalysisSoftwareID             : int
+//    AnalysisSoftware               : AnalysisSofware
 //    RowVersion                     : DateTime
 //    ProteinDetectionProtocolParams : List<ProteinDetectionProtocolParam>
 //    }
@@ -359,15 +406,79 @@ and [<CLIMutable>] OntologyParam =
 //    Value            : string
 //    RowVersion       : DateTime  
 //    }
-    
+////Added because it is part of the original document and refferd to in the code
+//and [<CLIMutable>] Sample =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID           : int
+//    Name         : string 
+//    RowVersion   : DateTime
+//    SampleParams : List<SampleParam>
+//    }
+
+//and [<CLIMutable>] SampleParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : Sample
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime  
+//    }
+
+////Added because it exists in the original document and is referred multiple times in the code
+//and [<CLIMutable>] SearchDatabase =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                             : int
+//    Name                           : string 
+//    Location                       : string //Location of the datafile, commonly an URL
+//    RowVersion                     : DateTime
+//    SearchDatabaseParams : List<SearchDatabaseParam>
+//    }
+
+//and [<CLIMutable>] SearchDatabaseParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : SearchDatabaseParam
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime  
+//    }
+
+////Added because it exists in the original document and is referred in the code
+//and [<CLIMutable>] SpectraData =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                                : int
+//    Name                              : string 
+//    Location                          : string //Location of the datafile, commonly an URL
+//    RowVersion                        : DateTime
+//    SpectrumIdentificationParams      : List<SpectraDataParam>
+//    }
+
+//and [<CLIMutable>] SpectraDataParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                     : int
+//    FKParamContainer       : SpectraData
+//    FKTerm                 : Term
+//    FKUnit                 : Term
+//    Value                  : string
+//    RowVersion             : DateTime
+//    }
+
 and [<CLIMutable>] SpectrumIdentification =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID                                : int
     Name                              : string 
-    ActivityDate                      : string 
-    SpectrumIdentificationListID      : int //Refers to SpectrumidentificationList normally
-    SpectrumIdentificationProtocollID : int //Refers to SpectrumIdentificationProtocol normally
+    ActivityDate                      : string  //Not part of the original document
+    SpectrumIdentificationList        : int     //Refers to SpectrumidentificationList normally
+    SpectrumIdentificationProtocoll   : int     //Refers to SpectrumIdentificationProtocol normally
     RowVersion                        : DateTime
     SpectrumIdentificationParams      : List<SpectrumIdentificationParam>
     }
@@ -387,10 +498,10 @@ and [<CLIMutable>] SpectrumIdentificationParam =
 //    {
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID                               : int
-//    SpectrumIdentificationResultID   : SpectrumIdentificationResult
-//    SampleID                         : int 
-//    PeptideID                        : Peptide
-//    MassTableID                      : int //Refers to MassTableList
+//    SpectrumIdentificationResult     : SpectrumIdentificationResult
+//    Sample                           : Sample          
+//    Peptide                          : Peptide
+//    MassTable                        : MassTable
 //    Name                             : string 
 //    PassThreshold                    : string
 //    Rank                             : int 
@@ -419,7 +530,7 @@ and [<CLIMutable>] SpectrumIdentificationParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID                               : int
 //    Name                             : string 
-//    NumSequencesSeqrched             : int 
+//    NumSequencesSearched             : int 
 //    RowVersion                       : DateTime
 //    SpectrumIdentificationListParams : List<SpectrumIdentificationListParam>
 //    }
@@ -440,7 +551,7 @@ and [<CLIMutable>] SpectrumIdentificationParam =
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID                                   : int
 //    Name                                 : string 
-//    AnalysisSoftwareID                   : int
+//    AnalysisSoftware                     : AnalysisSoftware
 //    RowVersion                           : DateTime 
 //    SpectrumIdentificationProtocolParams : List<SpectrumIdentificationProtocolParam>
 //    }
@@ -460,9 +571,9 @@ and [<CLIMutable>] SpectrumIdentificationParam =
 //    {
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID                           : int
-//    SpectrumID                   : int//Refers to SpectrumIdentificationID
-//    //SpectraDataID : string // quetionable???
-//    SpectrumIdentificationListID : int 
+//    SpectrumID                   : int    //Refers to SpectrumID, unique in the SpectraData for the specific Spectrum
+//    SpectraData                  : SpectraData       
+//    SpectrumIdentificationList   : SpectrumIdentificationList
 //    Name                         : string 
 //    RowVersion                   : DateTime 
 //    }
@@ -471,7 +582,7 @@ and [<CLIMutable>] SpectrumIdentificationParam =
 //    {
 //    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
 //    ID               : int
-//    FKParamContainer : int
+//    FKParamContainer : SpectrumIdentificationResult
 //    FKTerm           : Term
 //    FKUnit           : Term
 //    Value            : string
@@ -505,6 +616,25 @@ and [<CLIMutable>] Term =
 //    Name       : string
 //    Value      : string
 //    RowVersion : DateTime 
+//    }
+////Added because it is part of the original document and refferd to in the code
+//and [<CLIMutable>] Translation =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                : int
+//    Name              : string 
+//    TranslationParams : List<TranslationParam>
+//    }
+
+//and [<CLIMutable>] TranslationParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : Translation
+//    FKTerm           : Term
+//    FKUnit           : Term
+//    Value            : string
+//    RowVersion       : DateTime    
 //    }
 
 ///Defining Context of DB
