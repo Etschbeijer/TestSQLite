@@ -21,13 +21,13 @@ open System
 //open System.Diagnostics
 open System.ComponentModel.DataAnnotations.Schema
 open Microsoft.EntityFrameworkCore
-//open System.Linq
+open System.Linq
 //open BioFSharp.BioItem
 open System.Collections.Generic
 open FSharp.Care.IO
 open BioFSharp.IO
-//open System.Data
-//open System.Data.Common
+
+
 
 ///Defining Types
 
@@ -592,10 +592,9 @@ and [<CLIMutable>] SpectrumIdentificationParam =
 and [<CLIMutable>] Term =
     {
     ID             : string
-    Name           : string
+    mutable Name           : string
     Ontology       : Ontology
     RowVersion     : DateTime 
-    OntologyParams : List<OntologyParam>
     }
 
 //and [<CLIMutable>] TermRelationShip =
@@ -701,11 +700,11 @@ type DBMSContext() =
     //member public this.TermTag with get() = this.m_termTag
     //                                    and set value = this.m_termTag <- value
 
-    override this.OnModelCreating (modelbuilder : ModelBuilder) =
-        modelbuilder.Entity<OntologyParam>()
-            .HasOne(fun field -> field.FKTerm)
-            .WithMany("OntologyParams")
-            .IsRequired(true) |> ignore
+    //override this.OnModelCreating (modelbuilder : ModelBuilder) =
+    //    modelbuilder.Entity<OntologyParam>()
+    //        .HasOne(fun field -> field.FKTerm)
+    //        .WithMany("OntologyParams")
+    //        .IsRequired(true) |> ignore
 
     override this.OnConfiguring (optionsBuilder :  DbContextOptionsBuilder) =
         let fileDir = __SOURCE_DIRECTORY__ 
@@ -749,8 +748,7 @@ let ontologyPsiMS =
                                                                       Ontology.OntologyParams = null 
                                                                       Ontology.Terms          = null
                                                                    } 
-                                             Term.RowVersion     = DateTime.Now.Date; 
-                                             Term.OntologyParams = null
+                                             Term.RowVersion     = DateTime.Now.Date
                                             }
                                 )
                     )
@@ -774,8 +772,7 @@ let ontologyPride =
                                                                       Ontology.OntologyParams = null 
                                                                       Ontology.Terms          = null
                                                                    } 
-                                             Term.RowVersion     = DateTime.Now.Date; 
-                                             Term.OntologyParams = null
+                                             Term.RowVersion     = DateTime.Now.Date
                                             }
                                 )
                     )
@@ -799,8 +796,7 @@ let ontologyUniMod =
                                                                       Ontology.OntologyParams = null 
                                                                       Ontology.Terms          = null
                                                                    } 
-                                             Term.RowVersion     = DateTime.Now.Date; 
-                                             Term.OntologyParams = null
+                                             Term.RowVersion     = DateTime.Now.Date 
                                             }
                                 )
                     )
@@ -824,8 +820,7 @@ let ontologyUnit_Ontology =
                                                                       Ontology.OntologyParams = null 
                                                                       Ontology.Terms          = null
                                                                    } 
-                                             Term.RowVersion     = DateTime.Now.Date; 
-                                             Term.OntologyParams = null
+                                             Term.RowVersion     = DateTime.Now.Date
                                             }
                                 )
                     )
@@ -847,8 +842,7 @@ let Unitless = {
                                                 Ontology.OntologyParams = null 
                                                 Ontology.Terms          = null
                                              } 
-                       Term.RowVersion     = DateTime.Now.Date; 
-                       Term.OntologyParams = null
+                       Term.RowVersion     = DateTime.Now.Date 
                     }])
                }
 
@@ -894,9 +888,45 @@ let initDB =
     db.Ontology.Add(ontologyUnit_Ontology) |> ignore
     db.Ontology.Add(Unitless)              |> ignore
     db.SaveChanges()
-    
-//type Test =
-//    {Variable : int}
 
-//let x = List<Test>().FirstOrDefault()
-//if (box x = null) then None else Some(x)
+///Read and manipulate the DB
+    
+let context = new DBMSContext()
+
+let testOntology =
+    query {
+        for i in context.Ontology do
+        select i
+          }
+
+let testTerm =
+    query {
+        for i in context.Term do
+        select i
+          }
+
+let readLine (input : seq<'a>) =
+    for i in input do
+        Console.WriteLine(i)
+
+readLine testOntology
+readLine testTerm
+
+//let testTerm2 =
+//    (query {
+//        for i in context.Term do
+//        if i.ID = "" then select i}).Single()
+//testTerm2.Name <- "Some BoB"
+
+let testTerm3 =
+    (query {
+        for i in context.Term do
+        if i.ID = "" then select i.Ontology})
+readLine testTerm3
+(Seq.item 0 testTerm3)
+
+context.SaveChanges()
+
+
+
+///Testen verschiedener Varianten, Ergebnis anhand eines Linearitätstests überprüfen: Stabile Linie ja, nein?
