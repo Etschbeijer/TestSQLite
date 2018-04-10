@@ -996,548 +996,548 @@ type DBMSContext() =
         optionsBuilder.EnableSensitiveDataLogging() |> ignore
         optionsBuilder.UseSqlite(@"Data Source="+ dbPath) |> ignore
 
-///Define functions to create input for tables of DB////////////////////////////
+///Define functions to create  for tables of DB////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-module CreateTablesOfDB =
+module InsertStatements =
 
-    let createAnalysisSoftware inputName inputASParams =
+    let createAnalysisSoftware Name ASParams =
         {
          AnalysisSoftware.ID                     = 0
-         AnalysisSoftware.Name                   = inputName
+         AnalysisSoftware.Name                   = Name
          AnalysisSoftware.RowVersion             = DateTime.Now.Date
-         AnalysisSoftware.AnalysisSoftwareParams = inputASParams
+         AnalysisSoftware.AnalysisSoftwareParams = ASParams
         }
 
-    let createAnalysisSoftwareParam inputAnalysisSoftware inputValue inputTerm inputUnit =
+    let createAnalysisSoftwareParam AnalysisSoftware Value Term Unit =
         {
          AnalysisSoftwareParam.ID               = 0
-         AnalysisSoftwareParam.FKParamContainer = inputAnalysisSoftware
-         AnalysisSoftwareParam.Value            = inputValue
-         AnalysisSoftwareParam.Term             = inputTerm
-         AnalysisSoftwareParam.Unit             = inputUnit
+         AnalysisSoftwareParam.FKParamContainer = AnalysisSoftware
+         AnalysisSoftwareParam.Value            = Value
+         AnalysisSoftwareParam.Term             = Term
+         AnalysisSoftwareParam.Unit             = Unit
          AnalysisSoftwareParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createDBSequence inputName inputAccession inputSearchDB inputDBSParams =
+    let createDBSequence Name Accession SearchDB DBSParams =
         {
          DBSequence.ID               = 0
-         DBSequence.Name             = inputName
-         DBSequence.Accession        = inputAccession
-         DBSequence.SearchDB         = inputSearchDB
+         DBSequence.Name             = Name
+         DBSequence.Accession        = Accession
+         DBSequence.SearchDB         = SearchDB
          DBSequence.RowVersion       = DateTime.Now.Date
-         DBSequence.DBSequenceParams = inputDBSParams
+         DBSequence.DBSequenceParams = DBSParams
         }
 
-    let createDBSequenceParam inputDBSequence inputValue inputTerm inputUnit =
+    let createDBSequenceParam DBSequence Value Term Unit =
         {
          DBSequenceParam.ID               = 0
-         DBSequenceParam.FKParamContainer = inputDBSequence
-         DBSequenceParam.Value            = inputValue
-         DBSequenceParam.Term             = inputTerm
-         DBSequenceParam.Unit             = inputUnit
+         DBSequenceParam.FKParamContainer = DBSequence
+         DBSequenceParam.Value            = Value
+         DBSequenceParam.Term             = Term
+         DBSequenceParam.Unit             = Unit
          DBSequenceParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createMassTable inputName inputMSLevel inputMTParams =
+    let createMassTable Name MSLevel MTParams =
         {
          MassTable.ID              = 0
-         MassTable.Name            = inputName
-         MassTable.MSLevel         = inputMSLevel
+         MassTable.Name            = Name
+         MassTable.MSLevel         = MSLevel
          MassTable.RowVersion      = DateTime.Now.Date
-         MassTable.MassTableParams = inputMTParams
+         MassTable.MassTableParams = MTParams
         }
 
-    let createMassTableParam inputMassTable inputValue inputTerm inputUnit =
+    let createMassTableParam MassTable Value Term Unit =
         {
          MassTableParam.ID               = 0
-         MassTableParam.FKParamContainer = inputMassTable
-         MassTableParam.Value            = inputValue
-         MassTableParam.Term             = inputTerm
-         MassTableParam.Unit             = inputUnit
+         MassTableParam.FKParamContainer = MassTable
+         MassTableParam.Value            = Value
+         MassTableParam.Term             = Term
+         MassTableParam.Unit             = Unit
          MassTableParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createModification inputName inputAvgMassDelta inputMIMD inputResidues inputModLocation inputModificationParams =
+    let createModification Name AvgMassDelta MIMD Residues ModLocation ModificationParams =
         {
          Modification.ID                    = 0
-         Modification.Name                  = inputName
-         Modification.AvgMassDelta          = inputAvgMassDelta
-         Modification.MonoisotopicMassDelta = inputMIMD
-         Modification.Residues              = inputResidues
-         Modification.ModLocation           = inputModLocation
+         Modification.Name                  = Name
+         Modification.AvgMassDelta          = AvgMassDelta
+         Modification.MonoisotopicMassDelta = MIMD
+         Modification.Residues              = Residues
+         Modification.ModLocation           = ModLocation
          Modification.RowVersion            = DateTime.Now.Date
-         Modification.ModificationParams    = inputModificationParams
+         Modification.ModificationParams    = ModificationParams
         }
 
-    let createModificationParam inputModification inputValue inputTerm inputUnit =
+    let createModificationParam Modification Value Term Unit =
         {
          ModificationParam.ID               = 0
-         ModificationParam.FKParamContainer = inputModification
-         ModificationParam.Value            = inputValue
-         ModificationParam.Term             = inputTerm
-         ModificationParam.Unit             = inputUnit
+         ModificationParam.FKParamContainer = Modification
+         ModificationParam.Value            = Value
+         ModificationParam.Term             = Term
+         ModificationParam.Unit             = Unit
          ModificationParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createModLocation inputModification inputLocation inputPeptide inputResidue inputModlocationParams =
+    let createModLocation Modification Location Peptide Residue ModlocationParams =
         {
          ModLocation.ID = 0
-         ModLocation.Modification = inputModification
-         ModLocation.Location = inputLocation
-         ModLocation.Peptide = inputPeptide
-         ModLocation.Residue = inputResidue
+         ModLocation.Modification = Modification
+         ModLocation.Location = Location
+         ModLocation.Peptide = Peptide
+         ModLocation.Residue = Residue
          ModLocation.RowVersion = DateTime.Now.Date
-         ModLocation.ModLocationParams = inputModlocationParams
+         ModLocation.ModLocationParams = ModlocationParams
         }
 
-    let createModLocationParam inputModLocation inputValue inputTerm inputUnit =
+    let createModLocationParam ModLocation Value Term Unit =
         {
          ModLocationParam.ID               = 0
-         ModLocationParam.FKParamContainer = inputModLocation
-         ModLocationParam.Value            = inputValue
-         ModLocationParam.Term             = inputTerm
-         ModLocationParam.Unit             = inputUnit
+         ModLocationParam.FKParamContainer = ModLocation
+         ModLocationParam.Value            = Value
+         ModLocationParam.Term             = Term
+         ModLocationParam.Unit             = Unit
          ModLocationParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createOntology inputName inputParams inputTerms =
+    let createOntology Name Params Terms =
         {
          Ontology.ID             = 0
-         Ontology.Name           = inputName
+         Ontology.Name           = Name
          Ontology.RowVersion     = DateTime.Now.Date
-         Ontology.OntologyParams = inputParams
-         Ontology.Terms          = inputTerms
+         Ontology.OntologyParams = Params
+         Ontology.Terms          = Terms
         }
 
-    let createOntologyParam inputOntology inputValue inputTerm inputUnit =
+    let createOntologyParam Ontology Value Term Unit =
         {
          OntologyParam.ID               = 0
-         OntologyParam.FKParamContainer = inputOntology
-         OntologyParam.Value            = inputValue
-         OntologyParam.Term             = inputTerm
-         OntologyParam.Unit             = inputUnit
+         OntologyParam.FKParamContainer = Ontology
+         OntologyParam.Value            = Value
+         OntologyParam.Term             = Term
+         OntologyParam.Unit             = Unit
          OntologyParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createOrganization inputName inputParent inputOrganizationParams =
+    let createOrganization Name Parent OrganizationParams =
         {
          Organization.ID                 = 0
-         Organization.Name               = inputName
-         Organization.Parent             = inputParent
+         Organization.Name               = Name
+         Organization.Parent             = Parent
          Organization.RowVersion         = DateTime.Now.Date
-         Organization.OrganizationParams = inputOrganizationParams
+         Organization.OrganizationParams = OrganizationParams
         }
 
-    let createOrganizationParam inputOrganization inputValue inputTerm inputUnit =
+    let createOrganizationParam Organization Value Term Unit =
         {
          OrganizationParam.ID               = 0
-         OrganizationParam.FKParamContainer = inputOrganization
-         OrganizationParam.Value            = inputValue
-         OrganizationParam.Term             = inputTerm
-         OrganizationParam.Unit             = inputUnit
+         OrganizationParam.FKParamContainer = Organization
+         OrganizationParam.Value            = Value
+         OrganizationParam.Term             = Term
+         OrganizationParam.Unit             = Unit
          OrganizationParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createParent inputName inputCountry inputOrganization inputParentParams =
+    let createParent Name Country Organization ParentParams =
         {
          Parent.ID           = 0
-         Parent.Name         = inputName
-         Parent.Country      = inputCountry
-         Parent.Organization = inputOrganization
+         Parent.Name         = Name
+         Parent.Country      = Country
+         Parent.Organization = Organization
          Parent.RowVersion   = DateTime.Now.Date
-         Parent.ParentParams = inputParentParams
+         Parent.ParentParams = ParentParams
         }
 
-    let createParentParam inputParent inputValue inputTerm inputUnit =
+    let createParentParam Parent Value Term Unit =
         {
          ParentParam.ID               = 0
-         ParentParam.FKParamContainer = inputParent
-         ParentParam.Value            = inputValue
-         ParentParam.Term             = inputTerm
-         ParentParam.Unit             = inputUnit
+         ParentParam.FKParamContainer = Parent
+         ParentParam.Value            = Value
+         ParentParam.Term             = Term
+         ParentParam.Unit             = Unit
          ParentParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createPeptide inputName inputSequence inputPeptideParams =
+    let createPeptide Name Sequence PeptideParams =
         {
          Peptide.ID            = 0
-         Peptide.Name          = inputName
-         Peptide.Sequence      = inputSequence
+         Peptide.Name          = Name
+         Peptide.Sequence      = Sequence
          Peptide.RowVersion    = DateTime.Now.Date
-         Peptide.PeptideParams = inputPeptideParams
+         Peptide.PeptideParams = PeptideParams
         }
 
-    let createPeptideParam inputPeptide inputValue inputTerm inputUnit =
+    let createPeptideParam Peptide Value Term Unit =
         {
          PeptideParam.ID               = 0
-         PeptideParam.FKParamContainer = inputPeptide
-         PeptideParam.Value            = inputValue
-         PeptideParam.Term             = inputTerm
-         PeptideParam.Unit             = inputUnit
+         PeptideParam.FKParamContainer = Peptide
+         PeptideParam.Value            = Value
+         PeptideParam.Term             = Term
+         PeptideParam.Unit             = Unit
          PeptideParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createPeptideEvidence inputPeptide inputDBSequence inputIsDecoy inputFrame inputTranslation inputStart inputEnd inputPre inputPost inputPEParams =
+    let createPeptideEvidence Peptide DBSequence IsDecoy Frame Translation Start End Pre Post PEParams =
         {
          PeptideEvidence.ID                    = 0
-         PeptideEvidence.Peptide               = inputPeptide
-         PeptideEvidence.DBSequence            = inputDBSequence
-         PeptideEvidence.isDecoy               = inputIsDecoy
-         PeptideEvidence.Frame                 = inputFrame
-         PeptideEvidence.Translation           = inputTranslation
-         PeptideEvidence.Start                 = inputStart
-         PeptideEvidence.End                   = inputEnd
-         PeptideEvidence.Pre                   = inputPre
-         PeptideEvidence.Post                  = inputPost
+         PeptideEvidence.Peptide               = Peptide
+         PeptideEvidence.DBSequence            = DBSequence
+         PeptideEvidence.isDecoy               = IsDecoy
+         PeptideEvidence.Frame                 = Frame
+         PeptideEvidence.Translation           = Translation
+         PeptideEvidence.Start                 = Start
+         PeptideEvidence.End                   = End
+         PeptideEvidence.Pre                   = Pre
+         PeptideEvidence.Post                  = Post
          PeptideEvidence.RowVersion            = DateTime.Now.Date
-         PeptideEvidence.PeptideEvidenceParams = inputPEParams
+         PeptideEvidence.PeptideEvidenceParams = PEParams
         }
 
-    let createPeptideEvidenceParam inputPeptideEvidence inputValue inputTerm inputUnit =
+    let createPeptideEvidenceParam PeptideEvidence Value Term Unit =
         {
          PeptideEvidenceParam.ID               = 0
-         PeptideEvidenceParam.FKParamContainer = inputPeptideEvidence
-         PeptideEvidenceParam.Value            = inputValue
-         PeptideEvidenceParam.Term             = inputTerm
-         PeptideEvidenceParam.Unit             = inputUnit
+         PeptideEvidenceParam.FKParamContainer = PeptideEvidence
+         PeptideEvidenceParam.Value            = Value
+         PeptideEvidenceParam.Term             = Term
+         PeptideEvidenceParam.Unit             = Unit
          PeptideEvidenceParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createPeptideHypothesis inputPDHID inputPeptideEvidence inputPeptideHypothesisParams =
+    let createPeptideHypothesis PDHID PeptideEvidence PeptideHypothesisParams =
         {
          PeptideHypothesis.ID                           = 0
-         PeptideHypothesis.PeptideDetectionHypothesisID = inputPDHID
-         PeptideHypothesis.PeptideEvidence              = inputPeptideEvidence
+         PeptideHypothesis.PeptideDetectionHypothesisID = PDHID
+         PeptideHypothesis.PeptideEvidence              = PeptideEvidence
          PeptideHypothesis.RowVersion                   = DateTime.Now.Date
-         PeptideHypothesis.PeptideHypothesisParams      = inputPeptideHypothesisParams
+         PeptideHypothesis.PeptideHypothesisParams      = PeptideHypothesisParams
         }
 
-    let createPeptideHypothesisParam inputPeptideHypothesis inputValue inputTerm inputUnit =
+    let createPeptideHypothesisParam PeptideHypothesis Value Term Unit =
         {
          PeptideHypothesisParam.ID               = 0
-         PeptideHypothesisParam.FKParamContainer = inputPeptideHypothesis
-         PeptideHypothesisParam.Value            = inputValue
-         PeptideHypothesisParam.Term             = inputTerm
-         PeptideHypothesisParam.Unit             = inputUnit
+         PeptideHypothesisParam.FKParamContainer = PeptideHypothesis
+         PeptideHypothesisParam.Value            = Value
+         PeptideHypothesisParam.Term             = Term
+         PeptideHypothesisParam.Unit             = Unit
          PeptideHypothesisParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createPerson inputFirstName inputMiddleName inputLastName inputOrganization inputPersonenParams =
+    let createPerson FirstName MiddleName LastName Organization PersonenParams =
         {
          Person.ID           = 0
-         Person.FirstName    = inputFirstName
-         Person.MiddleName   = inputMiddleName
-         Person.LastName     = inputLastName
-         Person.Organization = inputOrganization
+         Person.FirstName    = FirstName
+         Person.MiddleName   = MiddleName
+         Person.LastName     = LastName
+         Person.Organization = Organization
          Person.RowVersion   = DateTime.Now.Date
-         Person.PersonParams = inputPersonenParams
+         Person.PersonParams = PersonenParams
         }
 
-    let createPersonParam inputPerson inputValue inputTerm inputUnit =
+    let createPersonParam Person Value Term Unit =
         {
          PersonParam.ID               = 0
-         PersonParam.FKParamContainer = inputPerson
-         PersonParam.Value            = inputValue
-         PersonParam.Term             = inputTerm
-         PersonParam.Unit             = inputUnit
+         PersonParam.FKParamContainer = Person
+         PersonParam.Value            = Value
+         PersonParam.Term             = Term
+         PersonParam.Unit             = Unit
          PersonParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createProteinAmbiguityGroup inputName inputPDL inputPAP =
+    let createProteinAmbiguityGroup Name PDL PAP =
         {
          ProteinAmbiguityGroup.ID                          = 0
-         ProteinAmbiguityGroup.Name                        = inputName
-         ProteinAmbiguityGroup.ProteinDetectionList        = inputPDL
+         ProteinAmbiguityGroup.Name                        = Name
+         ProteinAmbiguityGroup.ProteinDetectionList        = PDL
          ProteinAmbiguityGroup.RowVersion                  = DateTime.Now.Date
-         ProteinAmbiguityGroup.ProteinAmbiguityGroupParams = inputPAP
+         ProteinAmbiguityGroup.ProteinAmbiguityGroupParams = PAP
         }
 
-    let createProteinAmbiguityGroupParam inputProteinAmbiguityGroup inputValue inputTerm inputUnit =
+    let createProteinAmbiguityGroupParam ProteinAmbiguityGroup Value Term Unit =
         {
          ProteinAmbiguityGroupParam.ID               = 0
-         ProteinAmbiguityGroupParam.FKParamContainer = inputProteinAmbiguityGroup
-         ProteinAmbiguityGroupParam.Value            = inputValue
-         ProteinAmbiguityGroupParam.Term             = inputTerm
-         ProteinAmbiguityGroupParam.Unit             = inputUnit
+         ProteinAmbiguityGroupParam.FKParamContainer = ProteinAmbiguityGroup
+         ProteinAmbiguityGroupParam.Value            = Value
+         ProteinAmbiguityGroupParam.Term             = Term
+         ProteinAmbiguityGroupParam.Unit             = Unit
          ProteinAmbiguityGroupParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createProteinDetection inputName inputPDProtocoll inputPDList inputPDParams =
+    let createProteinDetection Name PDProtocoll PDList PDParams =
         {
          ProteinDetection.ID                        = 0
-         ProteinDetection.Name                      = inputName
-         ProteinDetection.ProteinDetectionProtocoll = inputPDProtocoll
-         ProteinDetection.ProteinDetectionList      = inputPDList
+         ProteinDetection.Name                      = Name
+         ProteinDetection.ProteinDetectionProtocoll = PDProtocoll
+         ProteinDetection.ProteinDetectionList      = PDList
          ProteinDetection.RowVersion                = DateTime.Now.Date
-         ProteinDetection.ProteinDetectionParams    = inputPDParams
+         ProteinDetection.ProteinDetectionParams    = PDParams
         }
 
-    let createProteinDetectionParam inputProteinDetection inputValue inputTerm inputUnit =
+    let createProteinDetectionParam ProteinDetection Value Term Unit =
         {
          ProteinDetectionParam.ID               = 0
-         ProteinDetectionParam.FKParamContainer = inputProteinDetection
-         ProteinDetectionParam.Value            = inputValue
-         ProteinDetectionParam.Term             = inputTerm
-         ProteinDetectionParam.Unit             = inputUnit
+         ProteinDetectionParam.FKParamContainer = ProteinDetection
+         ProteinDetectionParam.Value            = Value
+         ProteinDetectionParam.Term             = Term
+         ProteinDetectionParam.Unit             = Unit
          ProteinDetectionParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createProteinDetectionHypothesis inputName inputDBSequence inputPassThreshold inputPAGroup inputPDHParams =
+    let createProteinDetectionHypothesis Name DBSequence PassThreshold PAGroup PDHParams =
         {
          ProteinDetectionHypothesis.ID                               = 0
-         ProteinDetectionHypothesis.Name                             = inputName
-         ProteinDetectionHypothesis.DBSequence                       = inputDBSequence
-         ProteinDetectionHypothesis.PassThreshold                    = inputPassThreshold
-         ProteinDetectionHypothesis.ProteinAmbiguityGroup            = inputPAGroup
+         ProteinDetectionHypothesis.Name                             = Name
+         ProteinDetectionHypothesis.DBSequence                       = DBSequence
+         ProteinDetectionHypothesis.PassThreshold                    = PassThreshold
+         ProteinDetectionHypothesis.ProteinAmbiguityGroup            = PAGroup
          ProteinDetectionHypothesis.RowVersion                       = DateTime.Now.Date
-         ProteinDetectionHypothesis.ProteinDetectionHypothesisParams = inputPDHParams
+         ProteinDetectionHypothesis.ProteinDetectionHypothesisParams = PDHParams
         }
 
-    let createProteinDetectionHypothesisParam inputProteinDetectionHypothesis inputValue inputTerm inputUnit =
+    let createProteinDetectionHypothesisParam ProteinDetectionHypothesis Value Term Unit =
         {
          ProteinDetectionHypothesisParam.ID               = 0
-         ProteinDetectionHypothesisParam.FKParamContainer = inputProteinDetectionHypothesis
-         ProteinDetectionHypothesisParam.Value            = inputValue
-         ProteinDetectionHypothesisParam.Term             = inputTerm
-         ProteinDetectionHypothesisParam.Unit             = inputUnit
+         ProteinDetectionHypothesisParam.FKParamContainer = ProteinDetectionHypothesis
+         ProteinDetectionHypothesisParam.Value            = Value
+         ProteinDetectionHypothesisParam.Term             = Term
+         ProteinDetectionHypothesisParam.Unit             = Unit
          ProteinDetectionHypothesisParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createProteinDetectionList inputName inputSearchDB inputAccession inputPDLParams =
+    let createProteinDetectionList Name SearchDB Accession PDLParams =
         {
          ProteinDetectionList.ID                         = 0
-         ProteinDetectionList.Name                       = inputName
-         ProteinDetectionList.SearchDB                   = inputSearchDB
-         ProteinDetectionList.Accession                  = inputAccession
+         ProteinDetectionList.Name                       = Name
+         ProteinDetectionList.SearchDB                   = SearchDB
+         ProteinDetectionList.Accession                  = Accession
          ProteinDetectionList.RowVersion                 = DateTime.Now.Date
-         ProteinDetectionList.ProteinDetectionListParams = inputPDLParams
+         ProteinDetectionList.ProteinDetectionListParams = PDLParams
         }
 
-    let createProteinDetectionListParam inputProteinDetectionList inputValue inputTerm inputUnit =
+    let createProteinDetectionListParam ProteinDetectionList Value Term Unit =
         {
          ProteinDetectionListParam.ID               = 0
-         ProteinDetectionListParam.FKParamContainer = inputProteinDetectionList
-         ProteinDetectionListParam.Value            = inputValue
-         ProteinDetectionListParam.Term             = inputTerm
-         ProteinDetectionListParam.Unit             = inputUnit
+         ProteinDetectionListParam.FKParamContainer = ProteinDetectionList
+         ProteinDetectionListParam.Value            = Value
+         ProteinDetectionListParam.Term             = Term
+         ProteinDetectionListParam.Unit             = Unit
          ProteinDetectionListParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createProteinDetectionProtocol inputName inputAnalysisSoftware inputPDPParams =
+    let createProteinDetectionProtocol Name AnalysisSoftware PDPParams =
         {
          ProteinDetectionProtocol.ID                             = 0
-         ProteinDetectionProtocol.Name                           = inputName
-         ProteinDetectionProtocol.AnalysisSoftware               = inputAnalysisSoftware
+         ProteinDetectionProtocol.Name                           = Name
+         ProteinDetectionProtocol.AnalysisSoftware               = AnalysisSoftware
          ProteinDetectionProtocol.RowVersion                     = DateTime.Now.Date
-         ProteinDetectionProtocol.ProteinDetectionProtocolParams = inputPDPParams
+         ProteinDetectionProtocol.ProteinDetectionProtocolParams = PDPParams
         }
 
-    let createProteinDetectionProtocolParam inputProteinDetectionProtocol inputValue inputTerm inputUnit =
+    let createProteinDetectionProtocolParam ProteinDetectionProtocol Value Term Unit =
         {
          ProteinDetectionProtocolParam.ID               = 0
-         ProteinDetectionProtocolParam.FKParamContainer = inputProteinDetectionProtocol
-         ProteinDetectionProtocolParam.Value            = inputValue
-         ProteinDetectionProtocolParam.Term             = inputTerm
-         ProteinDetectionProtocolParam.Unit             = inputUnit
+         ProteinDetectionProtocolParam.FKParamContainer = ProteinDetectionProtocol
+         ProteinDetectionProtocolParam.Value            = Value
+         ProteinDetectionProtocolParam.Term             = Term
+         ProteinDetectionProtocolParam.Unit             = Unit
          ProteinDetectionProtocolParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createSample inputName inputSampleParams =
+    let createSample Name SampleParams =
         {
          Sample.ID           = 0
-         Sample.Name         = inputName
+         Sample.Name         = Name
          Sample.RowVersion   = DateTime.Now.Date
-         Sample.SampleParams = inputSampleParams
+         Sample.SampleParams = SampleParams
         }
 
-    let createSampleParam inputSample inputValue inputTerm inputUnit =
+    let createSampleParam Sample Value Term Unit =
         {
          SampleParam.ID               = 0
-         SampleParam.FKParamContainer = inputSample
-         SampleParam.Value            = inputValue
-         SampleParam.Term             = inputTerm
-         SampleParam.Unit             = inputUnit
+         SampleParam.FKParamContainer = Sample
+         SampleParam.Value            = Value
+         SampleParam.Term             = Term
+         SampleParam.Unit             = Unit
          SampleParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createSearchDatabase inputName inputLocation inputSDParams =
+    let createSearchDatabase Name Location SDParams =
         {
          SearchDatabase.ID                   = 0
-         SearchDatabase.Name                 = inputName
-         SearchDatabase.Location             = inputLocation
+         SearchDatabase.Name                 = Name
+         SearchDatabase.Location             = Location
          SearchDatabase.RowVersion           = DateTime.Now.Date
-         SearchDatabase.SearchDatabaseParams = inputSDParams
+         SearchDatabase.SearchDatabaseParams = SDParams
         }
 
-    let createSearchDatabaseParam inputSearchDatabase inputValue inputTerm inputUnit =
+    let createSearchDatabaseParam SearchDatabase Value Term Unit =
         {
          SearchDatabaseParam.ID               = 0
-         SearchDatabaseParam.FKParamContainer = inputSearchDatabase
-         SearchDatabaseParam.Value            = inputValue
-         SearchDatabaseParam.Term             = inputTerm
-         SearchDatabaseParam.Unit             = inputUnit
+         SearchDatabaseParam.FKParamContainer = SearchDatabase
+         SearchDatabaseParam.Value            = Value
+         SearchDatabaseParam.Term             = Term
+         SearchDatabaseParam.Unit             = Unit
          SearchDatabaseParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createSpectraData inputName inputLocation inputSpectraDataParams =
+    let createSpectraData Name Location SpectraDataParams =
         {
          SpectraData.ID                = 0
-         SpectraData.Name              = inputName
-         SpectraData.Location          = inputLocation
+         SpectraData.Name              = Name
+         SpectraData.Location          = Location
          SpectraData.RowVersion        = DateTime.Now.Date
-         SpectraData.SpectraDataParams = inputSpectraDataParams
+         SpectraData.SpectraDataParams = SpectraDataParams
         }
 
-    let createSpectraDataParam inputSpectraData inputValue inputTerm inputUnit =
+    let createSpectraDataParam SpectraData Value Term Unit =
         {
          SpectraDataParam.ID               = 0
-         SpectraDataParam.FKParamContainer = inputSpectraData
-         SpectraDataParam.Value            = inputValue
-         SpectraDataParam.Term             = inputTerm
-         SpectraDataParam.Unit             = inputUnit
+         SpectraDataParam.FKParamContainer = SpectraData
+         SpectraDataParam.Value            = Value
+         SpectraDataParam.Term             = Term
+         SpectraDataParam.Unit             = Unit
          SpectraDataParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createSpectrumIdentification inputName inputDate inputList inputProtocoll inputParams =
+    let createSpectrumIdentification name activityDate spectrumIdentificationList spectrumIdentificationProtocoll spectrumIdentificationParams =
         {
          SpectrumIdentification.ID                              = 0
-         SpectrumIdentification.Name                            = inputName
-         SpectrumIdentification.ActivityDate                    = inputDate
-         SpectrumIdentification.SpectrumIdentificationList      = inputList
-         SpectrumIdentification.SpectrumIdentificationProtocoll = inputProtocoll
+         SpectrumIdentification.Name                            = name
+         SpectrumIdentification.ActivityDate                    = activityDate
+         SpectrumIdentification.SpectrumIdentificationList      = spectrumIdentificationList
+         SpectrumIdentification.SpectrumIdentificationProtocoll = spectrumIdentificationProtocoll
          SpectrumIdentification.RowVersion                      = DateTime.Now.Date
-         SpectrumIdentification.SpectrumIdentificationParams    = inputParams
+         SpectrumIdentification.SpectrumIdentificationParams    = spectrumIdentificationParams
         }
 
-    let createSpectrumIdentificationParam inputSpectrumIdentification inputValue inputTerm inputUnit =
+    let createSpectrumIdentificationParam spectrumIdentification value term unit =
         {
          SpectrumIdentificationParam.ID               = 0
-         SpectrumIdentificationParam.FKParamContainer = inputSpectrumIdentification
-         SpectrumIdentificationParam.Value            = inputValue
-         SpectrumIdentificationParam.Term             = inputTerm
-         SpectrumIdentificationParam.Unit             = inputUnit
+         SpectrumIdentificationParam.FKParamContainer = spectrumIdentification
+         SpectrumIdentificationParam.Value            = value
+         SpectrumIdentificationParam.Term             = term
+         SpectrumIdentificationParam.Unit             = unit
          SpectrumIdentificationParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createSpectrumIdentificationItem inputName inputPeptide inputChargeState inputSample inputPassThreshold inputFragmentation inputRank inputmassTable inputCalculatedIP inputCalculatedMassToCharge inputExperimentalMassToCharge inputSpectrumIdentificationResult inputSpectrumIdentificationItemParams =
+    let createSpectrumIdentificationItem name peptide chargeState sample passThreshold fragmentation rank massTable calculatedIP calculatedMassToCharge experimentalMassToCharge spectrumIdentificationResult spectrumIdentificationItemParams =
         {
          SpectrumIdentificationItem.ID                               = 0
-         SpectrumIdentificationItem.Name                             = inputName
-         SpectrumIdentificationItem.Peptide                          = inputPeptide
-         SpectrumIdentificationItem.ChargeState                      = inputChargeState
-         SpectrumIdentificationItem.Sample                           = inputSample
-         SpectrumIdentificationItem.PassThreshold                    = inputPassThreshold
-         SpectrumIdentificationItem.Fragmentation                    = inputFragmentation
-         SpectrumIdentificationItem.Rank                             = inputRank
-         SpectrumIdentificationItem.MassTable                        = inputmassTable
-         SpectrumIdentificationItem.CalculatedIP                     = inputCalculatedIP
-         SpectrumIdentificationItem.CalculatedMassToCharge           = inputCalculatedMassToCharge
-         SpectrumIdentificationItem.ExperimentalMassToCharge         = inputExperimentalMassToCharge
-         SpectrumIdentificationItem.SpectrumIdentificationResult     = inputSpectrumIdentificationResult
+         SpectrumIdentificationItem.Name                             = name
+         SpectrumIdentificationItem.Peptide                          = peptide
+         SpectrumIdentificationItem.ChargeState                      = chargeState
+         SpectrumIdentificationItem.Sample                           = sample
+         SpectrumIdentificationItem.PassThreshold                    = passThreshold
+         SpectrumIdentificationItem.Fragmentation                    = fragmentation
+         SpectrumIdentificationItem.Rank                             = rank
+         SpectrumIdentificationItem.MassTable                        = massTable
+         SpectrumIdentificationItem.CalculatedIP                     = calculatedIP
+         SpectrumIdentificationItem.CalculatedMassToCharge           = calculatedMassToCharge
+         SpectrumIdentificationItem.ExperimentalMassToCharge         = experimentalMassToCharge
+         SpectrumIdentificationItem.SpectrumIdentificationResult     = spectrumIdentificationResult
          SpectrumIdentificationItem.RowVersion                       = DateTime.Now.Date
-         SpectrumIdentificationItem.SpectrumIdentificationItemParams = inputSpectrumIdentificationItemParams
+         SpectrumIdentificationItem.SpectrumIdentificationItemParams = spectrumIdentificationItemParams
         }
 
-    let createSpectrumIdentificationItemParam inputSpectrumIdentificationItem inputValue inputTerm inputUnit =
+    let createSpectrumIdentificationItemParam SpectrumIdentificationItem Value Term Unit =
         {
          SpectrumIdentificationItemParam.ID               = 0
-         SpectrumIdentificationItemParam.FKParamContainer = inputSpectrumIdentificationItem
-         SpectrumIdentificationItemParam.Value            = inputValue
-         SpectrumIdentificationItemParam.Term             = inputTerm
-         SpectrumIdentificationItemParam.Unit             = inputUnit
+         SpectrumIdentificationItemParam.FKParamContainer = SpectrumIdentificationItem
+         SpectrumIdentificationItemParam.Value            = Value
+         SpectrumIdentificationItemParam.Term             = Term
+         SpectrumIdentificationItemParam.Unit             = Unit
          SpectrumIdentificationItemParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createSpectrumIdentificationList inputName inputNumSequencesSearched inputSpectrumIdentificationListParams =
+    let createSpectrumIdentificationList Name NumSequencesSearched SpectrumIdentificationListParams =
         {
          SpectrumIdentificationList.ID                               = 0
-         SpectrumIdentificationList.Name                             = inputName
-         SpectrumIdentificationList.NumSequencesSearched             = inputNumSequencesSearched
+         SpectrumIdentificationList.Name                             = Name
+         SpectrumIdentificationList.NumSequencesSearched             = NumSequencesSearched
          SpectrumIdentificationList.RowVersion                       = DateTime.Now.Date
-         SpectrumIdentificationList.SpectrumIdentificationListParams = inputSpectrumIdentificationListParams
+         SpectrumIdentificationList.SpectrumIdentificationListParams = SpectrumIdentificationListParams
         }
 
-    let createSpectrumIdentificationListParam inputSpectrumIdentificationList inputValue inputTerm inputUnit =
+    let createSpectrumIdentificationListParam SpectrumIdentificationList Value Term Unit =
         {
          SpectrumIdentificationListParam.ID               = 0
-         SpectrumIdentificationListParam.FKParamContainer = inputSpectrumIdentificationList
-         SpectrumIdentificationListParam.Value            = inputValue
-         SpectrumIdentificationListParam.Term             = inputTerm
-         SpectrumIdentificationListParam.Unit             = inputUnit
+         SpectrumIdentificationListParam.FKParamContainer = SpectrumIdentificationList
+         SpectrumIdentificationListParam.Value            = Value
+         SpectrumIdentificationListParam.Term             = Term
+         SpectrumIdentificationListParam.Unit             = Unit
          SpectrumIdentificationListParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createSpectrumIdentificationProtocol inputName inputAnalysisSoftware inputSpectrumIdentificationProtocolParams =
+    let createSpectrumIdentificationProtocol Name AnalysisSoftware SpectrumIdentificationProtocolParams =
         {
          SpectrumIdentificationProtocol.ID                                   = 0
-         SpectrumIdentificationProtocol.Name                                 = inputName
-         SpectrumIdentificationProtocol.AnalysisSoftware                     = inputAnalysisSoftware
+         SpectrumIdentificationProtocol.Name                                 = Name
+         SpectrumIdentificationProtocol.AnalysisSoftware                     = AnalysisSoftware
          SpectrumIdentificationProtocol.RowVersion                           = DateTime.Now.Date
-         SpectrumIdentificationProtocol.SpectrumIdentificationProtocolParams = inputSpectrumIdentificationProtocolParams
+         SpectrumIdentificationProtocol.SpectrumIdentificationProtocolParams = SpectrumIdentificationProtocolParams
         }
 
-    let createSpectrumIdentificationProtocolParam inputSpectrumIdentificationProtocol inputValue inputTerm inputUnit =
+    let createSpectrumIdentificationProtocolParam SpectrumIdentificationProtocol Value Term Unit =
         {
          SpectrumIdentificationProtocolParam.ID               = 0
-         SpectrumIdentificationProtocolParam.FKParamContainer = inputSpectrumIdentificationProtocol
-         SpectrumIdentificationProtocolParam.Value            = inputValue
-         SpectrumIdentificationProtocolParam.Term             = inputTerm
-         SpectrumIdentificationProtocolParam.Unit             = inputUnit
+         SpectrumIdentificationProtocolParam.FKParamContainer = SpectrumIdentificationProtocol
+         SpectrumIdentificationProtocolParam.Value            = Value
+         SpectrumIdentificationProtocolParam.Term             = Term
+         SpectrumIdentificationProtocolParam.Unit             = Unit
          SpectrumIdentificationProtocolParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createSpectrumIdentificationResult inputName inputSpectrumID inputSpectraData inputSpectrumIdentificationList inputSpectrumIdentificationResultParams =
+    let createSpectrumIdentificationResult Name SpectrumID SpectraData SpectrumIdentificationList SpectrumIdentificationResultParams =
         {
          SpectrumIdentificationResult.ID                                 = 0
-         SpectrumIdentificationResult.Name                               = inputName
-         SpectrumIdentificationResult.SpectrumID                         = inputSpectrumID
-         SpectrumIdentificationResult.SpectraData                        = inputSpectraData
-         SpectrumIdentificationResult.SpectrumIdentificationList         = inputSpectrumIdentificationList
+         SpectrumIdentificationResult.Name                               = Name
+         SpectrumIdentificationResult.SpectrumID                         = SpectrumID
+         SpectrumIdentificationResult.SpectraData                        = SpectraData
+         SpectrumIdentificationResult.SpectrumIdentificationList         = SpectrumIdentificationList
          SpectrumIdentificationResult.RowVersion                         = DateTime.Now.Date
-         SpectrumIdentificationResult.SpectrumIdentificationResultParams = inputSpectrumIdentificationResultParams
+         SpectrumIdentificationResult.SpectrumIdentificationResultParams = SpectrumIdentificationResultParams
         }
 
-    let createSpectrumIdentificationResultParam inputSpectrumIdentificationResult inputValue inputTerm inputUnit =
+    let createSpectrumIdentificationResultParam SpectrumIdentificationResult Value Term Unit =
         {
          SpectrumIdentificationResultParam.ID               = 0
-         SpectrumIdentificationResultParam.FKParamContainer = inputSpectrumIdentificationResult
-         SpectrumIdentificationResultParam.Value            = inputValue
-         SpectrumIdentificationResultParam.Term             = inputTerm
-         SpectrumIdentificationResultParam.Unit             = inputUnit
+         SpectrumIdentificationResultParam.FKParamContainer = SpectrumIdentificationResult
+         SpectrumIdentificationResultParam.Value            = Value
+         SpectrumIdentificationResultParam.Term             = Term
+         SpectrumIdentificationResultParam.Unit             = Unit
          SpectrumIdentificationResultParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createTerm inputOntology (inputOboTerm : seq<Obo.OboTerm>) =
+    let createTerm Ontology (OboTerm : seq<Obo.OboTerm>) =
         new System
             .Collections
             .Generic
             .List<Term>(
-            inputOboTerm
+            OboTerm
                 |> Seq.map (fun item ->
                                         {
                                          Term.ID         = item.Id
                                          Term.Name       = item.Name
-                                         Term.Ontology   = inputOntology
+                                         Term.Ontology   = Ontology
                                          Term.RowVersion = DateTime.Now.Date
                                         }
                            )   
                        )
 
-    let createTermRelationship inputTerm inputRelationType inputRelatedTerm=
+    let createTermRelationship Term RelationType RelatedTerm=
         {
          TermRelationShip.ID               = 0
-         TermRelationShip.Term             = inputTerm
-         TermRelationShip.RelationShipType = inputRelationType
-         TermRelationShip.RelatedTerm      = inputRelatedTerm
+         TermRelationShip.Term             = Term
+         TermRelationShip.RelationShipType = RelationType
+         TermRelationShip.RelatedTerm      = RelatedTerm
          TermRelationShip.RowVersion       = DateTime.Now.Date
         }
 
-    let createTermTag inputName inputValue inputTerm =
+    let createTermTag Name Value Term =
         {
          TermTag.ID         = 0
-         TermTag.Name       = inputName
-         TermTag.Value      = inputValue
-         TermTag.Term       = inputTerm
+         TermTag.Name       = Name
+         TermTag.Value      = Value
+         TermTag.Term       = Term
          TermTag.RowVersion = DateTime.Now.Date
         }
 
@@ -1561,7 +1561,7 @@ let fromUnit_Ontology =
 ///Applying functions/////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-open CreateTablesOfDB
+open InsertStatements 
 
 let ontologyCustom =
      {
@@ -1606,13 +1606,14 @@ let spectrumIdentificationParam =
 let initDB =
     let db = new DBMSContext()
     
-    db.Database.EnsureCreated()                                    |> ignore
-    db.Ontology.                   Add(ontologyCustom)             |> ignore
-    db.Ontology.                   Add(ontologyPsiMS)              |> ignore
-    db.Ontology.                   Add(ontologyPride)              |> ignore
-    db.Ontology.                   Add(ontologyUniMod)             |> ignore
-    db.Ontology.                   Add(ontologyUnit_Ontology)      |> ignore
-    db.SpectrumIdentification.     Add(spectrumIdentification)     |> ignore
+    db.Database.EnsureCreated()                                     |> ignore
+
+    db.Ontology.Add(ontologyCustom)                                 |> ignore
+    db.Ontology.Add(ontologyPsiMS)                                  |> ignore
+    db.Ontology.Add(ontologyPride)                                  |> ignore
+    db.Ontology.Add(ontologyUniMod)                                 |> ignore
+    db.Ontology.Add(ontologyUnit_Ontology)                          |> ignore
+    db.SpectrumIdentification.Add(spectrumIdentification)           |> ignore
     db.SpectrumIdentificationParam.Add(spectrumIdentificationParam) |> ignore
     db.SaveChanges()
 
@@ -1664,98 +1665,98 @@ let readLine (input : seq<'a>) =
 //    )
 //readLine testTerm4
 
-let selectSpectrumIdentificationByID inputID =
+let selectSpectrumIdentificationByID ID =
     (query {
             for i in context.SpectrumIdentification do
-                if i.ID = inputID 
+                if i.ID = ID 
                 then select i
            }
     )
 
-let selectSpectrumIdentificationByName inputName =
+let selectSpectrumIdentificationByName Name =
     (query {
             for i in context.SpectrumIdentification do
-                if i.Name = inputName 
+                if i.Name = Name 
                     then select i
            }
     )
 
-let selectSpectrumIdentificationByActivityDate inputActivityDate =
+let selectSpectrumIdentificationByActivityDate ActivityDate =
     (query {
             for i in context.SpectrumIdentification do
-                if i.ActivityDate = inputActivityDate 
+                if i.ActivityDate = ActivityDate 
                     then select i
            }
     )
 
-let selectSpectrumIdentificationBySIList inputSIList =
+let selectSpectrumIdentificationBySIList SIList =
     (query {
             for i in context.SpectrumIdentification do
-                if i.SpectrumIdentificationList = inputSIList 
+                if i.SpectrumIdentificationList = SIList 
                     then select i
            }
     )
 
-let selectSpectrumIdentificationBySIProtocoll inputSIProtocoll =
+let selectSpectrumIdentificationBySIProtocoll SIProtocoll =
     (query {
             for i in context.SpectrumIdentification do
-                if i.SpectrumIdentificationProtocoll = inputSIProtocoll 
+                if i.SpectrumIdentificationProtocoll = SIProtocoll 
                     then select i
            }
     )
 
-let selectSpectrumIdentificationParamBySI inputSI =
+let selectSpectrumIdentificationParamBySI SI =
     (query {
             for i in context.SpectrumIdentificationParam do
-                if i.FKParamContainer = inputSI 
+                if i.FKParamContainer = SI 
                     then select (i, i.Term, i.Unit)
            }
     )
 
-let selectSpectrumIdentificationParamBySIID inputSIID =
+let selectSpectrumIdentificationParamBySIID SIID =
     (query {
             for i in context.SpectrumIdentificationParam do
-                if i.FKParamContainer.ID = inputSIID
+                if i.FKParamContainer.ID = SIID
                     then select (i, i.Term, i.Unit)
            }
     )
 
-let selectSpectrumIdentificationParamBySIName inputSIName =
+let selectSpectrumIdentificationParamBySIName SIName =
     (query {
             for i in context.SpectrumIdentificationParam do
-                if i.FKParamContainer.Name = inputSIName
+                if i.FKParamContainer.Name = SIName
                     then select (i, i.Term, i.Unit)
            }
     )
 
-let selectTermByOntologyID inputOntologyID =
+let selectTermByOntologyID OntologyID =
     (query {
             for i in context.Term do
-                if i.Ontology.ID = inputOntologyID
+                if i.Ontology.ID = OntologyID
                     then select (i)
            }
     )
 
-let selectTermByOntologyName inputOntologyName =
+let selectTermByOntologyName OntologyName =
     (query {
             for i in context.Term do
-                if i.Ontology.Name = inputOntologyName
+                if i.Ontology.Name = OntologyName
                     then select (i)
            }
     )
 
-let selectTermByTermID inputTermID =
+let selectTermByTermID TermID =
     (query {
             for i in context.Term do
-                if i.ID = inputTermID
+                if i.ID = TermID
                     then select (i)
            }
     )
 
-let selectTermByTermName inputTermName =
+let selectTermByTermName TermName =
     (query {
             for i in context.Term do
-                if i.Name = inputTermName
+                if i.Name = TermName
                     then select (i)
            }
     )
