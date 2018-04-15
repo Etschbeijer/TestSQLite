@@ -29,69 +29,117 @@ open System.Collections.Generic
 open FSharp.Care.IO
 open BioFSharp.IO
 open System.Data
+open Microsoft.EntityFrameworkCore.Metadata.Internal
+open System.Windows.Forms
 
 
 //open System.Reflection
 
 
 
-///Defining types and relations for DB/////////////////////////////
+//Defining types and relations for DB/////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
-//type [<CLIMutable>] 
-//     MzIdentML =
-//     {
-//      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//      ID              : int
-//      Name            : string
-//      Version         : string
-//      CreationDate    : DateTime
-//      RowVersion      : DateTime
-//      MzIdentMLParams : List<MzIdentMLParam>
-//     }
 
-//and [<CLIMutable>] 
-//    MzIdentMLParam =
-//    {
-//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//    ID                     : int
-//    FKParamContainer       : MzIdentMLParam
-//    [<RequiredAttribute()>]
-//    Term                   : Term
-//    Unit                   : Term
-//    Value                  : string
-//    CVs                    : List<CV>
-//    AnalysisSoftware       : List<AnalysisSoftware>
-//    Providers              : List<Provider>
-//    AuditCollections       : List<AuditCollection>
-//    AnalysisSamples        : List<AnalysisSample>
-//    Sequences              : List<Sequences>
-//    AnalysisCollection     : AnalysisCollection
-//    AnalysisProtocolls     : List<AnalysisProtocoll>
-//    Datas                  : List<Datas>
-//    BiblioGraphicReference : BiblioGraphicReference
-//    RowVersion             : DateTime  
-//    }
-///Don`t see a need for it
-//and [<CLIMutable>]
-//    Affiliation =
-//    {
-//     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//     ID           : int
-//     Organization : Organization
-//     RowVersion   : DateTime
-//    }
+///Upper-most hierarchy of MzIdentML with sub-containers to describe relations of data. 
+type [<CLIMutable>] 
+     MzIdentML =
+     {
+      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+      ID              : int
+      Name            : string
+      Version         : string
+      CreationDate    : DateTime
+      RowVersion      : DateTime
+      MzIdentMLParams : List<MzIdentMLParam>
+     }
 
-///Add Suplements to each Table
+///Param to MiIdentML-Table
+and [<CLIMutable>] 
+    MzIdentMLParam =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID                         : int
+    FKParamContainer           : MzIdentMLParam
+    [<RequiredAttribute()>]
+    Term                       : Term
+    Unit                       : Term
+    Value                      : string
+    CV                         : CV
+    AnalysisSoftware           : AnalysisSoftware
+    Providers                  : Provider
+    AuditCollections           : AuditCollection
+    AnalysisSampleCollection   : AnalysisSampleCollection
+    SequenceCollection         : SequenceCollection
+    AnalysisCollection         : AnalysisCollection
+    AnalysisProtocolCollection : AnalysisProtocolCollection
+    DataCollection             : DataCollection
+    BiblioGraphicReference     : BiblioGraphicReference
+    RowVersion                 : DateTime  
+    }
 
-//and [<CLIMutable>]
-//    AmbitousResidue =
-//    {
-//     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//     ID   : int
-//     code : char
-//    }
+///The searchparameters other than the modifications searched.
+and [<CLIMutable>] 
+     AdditionalSearchparam =
+     {
+      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+      ID                     : int
+      RowVersion             : DateTime
+      AdditionalSearchparams : List<AdditionalSearchparams>
+      UserParam              : List<UserParam>
+     }
 
-type [<CLIMutable>]
+///CvParam for AdditionalSearchParam
+and [<CLIMutable>] 
+    AdditionalSearchparams =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID               : int
+    FKParamContainer : AdditionalSearchparam
+    [<RequiredAttribute()>]
+    Term             : Term
+    Unit             : Term
+    Value            : string
+    RowVersion       : DateTime  
+    }
+
+///The organization a person belongs to.
+and [<CLIMutable>]
+    Affiliation =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+     ID           : int
+     Organization : Organization
+     RowVersion   : DateTime
+    }
+
+///Ambitous residues describes the range of mass that a specific location shall be checked because its position is ambitous.
+and [<CLIMutable>]
+    AmbitousResidue =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+     ID                    : int
+     Code                  : string
+     RowVersion            : DateTime
+     AmbitousResidueParams : List<AmbitousResidueParam>
+     UserParam             : List<UserParam>
+    }
+
+///CvParam for AmbitousResidue
+and [<CLIMutable>] 
+    AmbitousResidueParam =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID               : int
+    FKParamContainer : AdditionalSearchparam
+    [<RequiredAttribute()>]
+    Term             : Term
+    Unit             : Term
+    Value            : string
+    RowVersion       : DateTime  
+    }
+
+///Maps the input and output data sets.
+and [<CLIMutable>]
     AnalysisCollection =
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
@@ -101,18 +149,29 @@ type [<CLIMutable>]
      RowVersion             : DateTime  
     }
 
+///Data sets generated by the anaylsis of input and output.
 and [<CLIMutable>]
     AnalysisData =
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
      ID : int
-     Spectrumidentifications : List<SpectrumIdentification>
-     Proteindetections       : List<ProteinDetection>
-     RowVersion              : DateTime
+     SpectrumidentificationList : SpectrumIdentificationList
+     ProteindetectionList       : ProteinDetectionList
+     RowVersion                 : DateTime
     }
 
+///The parameters and settings for the protein etection.
+and [<CLIMutable>]
+    AnalysisParams =
+    {
+     ID        : int
+     Term      : Term
+     UserParam : UserParam
+    }
+
+///Collection of the Protocols of the analyses.
 and [<CLIMutable>] 
-    AnalysisProtocollCollection =
+    AnalysisProtocolCollection =
     {
      ID : int
      SpectrumIdentificationProtocol : SpectrumIdentificationProtocol
@@ -120,6 +179,7 @@ and [<CLIMutable>]
      DataRowVersion                 : DateTime
     }
 
+///The samples analysed can optionally be recorded using CV terms for descriptions. If a composite sample has been analysed, the subsample association can be used to build a hierarchical description.
 and [<CLIMutable>] 
     AnalysisSampleCollection =
     {
@@ -128,40 +188,45 @@ and [<CLIMutable>]
      RowVersion : DateTime
     }
 
+///The software used for performing the analyses.
 and [<CLIMutable>] 
     AnalysisSoftware =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID                     : int
     Name                   : string
-    //ContactRole            : ContactRole
-    Customizations         : List<string>
+    URI                    : string
+    ContactRole            : ContactRole
+    SoftwareName           : SoftwareName
+    Customizations         : Customizations
     RowVersion             : DateTime
-    AnalysisSoftwareParams : List<AnalysisSoftwareParam>  
+    //AnalysisSoftwareParams : List<AnalysisSoftwareParam>  
     }
 
-and [<CLIMutable>] 
-    AnalysisSoftwareParam =
-    {
-    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID               : int
-    FKParamContainer : AnalysisSoftware
-    [<RequiredAttribute()>]
-    Term             : Term
-    Unit             : Term
-    Value            : string
-    RowVersion       : DateTime  
-    }
+//and [<CLIMutable>] 
+//    AnalysisSoftwareParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : AnalysisSoftware
+//    [<RequiredAttribute()>]
+//    Term             : Term
+//    Unit             : Term
+//    Value            : string
+//    RowVersion       : DateTime  
+//    }
 
+///Lust of analysis softwares.
 and [<CLIMutable>] 
     AnalysisSoftwareList =
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
      ID               : int
-     AnalysisSoftware : List<AnalysisSoftware>
+     AnalysisSoftware : AnalysisSoftware
      RowVersion       : DateTime
     }
 
+///The complete set of Contacts (people and organisations) for this file.
 and [<CLIMutable>]
     AuditCollection =
     {
@@ -171,6 +236,7 @@ and [<CLIMutable>]
      RowVersion   : DateTime
     }
 
+///Any bibliographic references associated with the file
 and [<CLIMutable>] 
     BiblioGraphicReference =
     {
@@ -190,16 +256,28 @@ and [<CLIMutable>]
      RowVersion  : DateTime
     }
 
-//and [<CLIMutable>] 
-//    ContactRole =
-//    {
-//     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
-//     ID         : int
-//     Role       : Role
-//     Person     : Person // SelfAdded
-//     RowVersion : DateTime
-//    }
+///Different details, depending of the kind of contact.
+and [<CLIMutable>] 
+    ContactRole =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
+     ID          : int
+     Person     : Person
+     Role        : Role
+     RowVersion  : DateTime
+    }
 
+///Customizations on the analysis-software in the form of a free text.
+and [<CLIMutable>] 
+    Customizations =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
+     ID          : int
+     Description : string
+     RowVersion  : DateTime
+    }
+
+///A source controlled vocabulary from which cvParams will be obtained.
 and [<CLIMutable>] 
     CV =
     {
@@ -211,34 +289,52 @@ and [<CLIMutable>]
      RowVersion : DateTime
     }
 
+///The list of controlled vocabularies used in the file.
 and [<CLIMutable>]
     CVLsit =
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
      ID         : int
-     CVs        : List<CV>
+     CV         : CV
      RowVersion : DateTime
     }
 
-//and [<CLIMutable>] 
-//    DataBaseFilters =
-//    {
-//     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//     ID             : int
-//     Filters        : List<Filter>
-//     RowVersion     : DateTime
-//    }
+///Params of CV
+and [<CLIMutable>] 
+    CVParam =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID               : int
+    FKParamContainer : CV
+    [<RequiredAttribute()>]
+    Term             : Term
+    Unit             : Term
+    Value            : string
+    RowVersion       : DateTime  
+    }
 
+///The specification of filters applied to the Database searched.
+and [<CLIMutable>] 
+    DatabaseFilters =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+     ID             : int
+     Filter         : Filter
+     RowVersion     : DateTime
+    }
+
+///Name of the Database.
 and [<CLIMutable>]
     DatabaseName =
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-     ID         : int
-     Name       : string
-     RowVersion : DateTime
+     ID                : int
+     Name              : string
+     RowVersion        : DateTime
      DatabseNameParams : List<DatabaseNameParam>
     }
 
+///Params of DatabseName.
 and [<CLIMutable>] 
     DatabaseNameParam =
     {
@@ -252,37 +348,43 @@ and [<CLIMutable>]
     RowVersion       : DateTime 
     }
 
+///A specification of how a nucleic acid sequence Database was translated for searching.
 and [<CLIMutable>] 
     DatabaseTranslation =
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-     ID          : int
-     Frames      : List<string> ///SelfAdded
-     Translation : Translation
-     RowVersion  : DateTime
+     ID               : int
+     Frames           : List<string> ///SelfAdded
+     TranslationTable : TranslationTable
+     RowVersion       : DateTime
     }
 
-//and [<CLIMutable>]
-//    DataCollection =
-//    {
-//     ID            : int
-//     Inputs        : List<Input>
-//     AnalysisDatas : List<AnalysisData>
-//    }
+///The collection of input and output data sets of the analyses.
+and [<CLIMutable>]
+    DataCollection =
+    {
+     ID            : int
+     Input         : Input
+     AnalysisData  : AnalysisData
+    }
 
+///Sequence from the Database search.
 and [<CLIMutable>] 
     DBSequence =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID               : int
-    Accession        : string
     Name             : string
+    Accession        : string
+    Length           : int
+    Seq              : Seq
     SearchDB         : SearchDatabase
-    //Sequence         : Sequence
     RowVersion       : DateTime 
     DBSequenceParams : List<DBSequenceParam>
+    UserParam        : List<UserParam>
     }
 
+///Params of DBSequence.
 and [<CLIMutable>] 
     DBSequenceParam =
     {
@@ -296,66 +398,85 @@ and [<CLIMutable>]
     RowVersion       : DateTime 
     }
 
-//and [<CLIMutable>]
-//    Enzyme =
-//    {
-//     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//     ID           : int
-//     Name         : string
-//     SemiSpecific : bool
-//     CTermGain    : string
-//     NTermGain    : string
-//     MinDistance  : int
-//     CleavageSite : string
-//     RowVersion   : DateTime
-//     EnzymeParams : List<EnzymeParam>
-//    }
+///Infomration about the used cleavage enzyme.
+and [<CLIMutable>]
+    Enzyme =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+     ID           : int
+     Name         : string
+     SemiSpecific : bool
+     CTermGain    : string
+     NTermGain    : string
+     MinDistance  : int
+     CleavageSite : string
+     RowVersion   : DateTime
+     EnzymeParams : List<EnzymeParam>
+    }
 
-//and [<CLIMutable>] 
-//    EnzymeParam =
-//    {
-//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//    ID               : int
-//    FKParamContainer : EnzymeParam
-//    [<RequiredAttribute()>]
-//    Term             : Term
-//    Unit             : Term
-//    Value            : string
-//    RowVersion       : DateTime 
-//    }
+///Params of enzyme.
+and [<CLIMutable>] 
+    EnzymeParam =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID               : int
+    FKParamContainer : EnzymeParam
+    [<RequiredAttribute()>]
+    Term             : Term
+    Unit             : Term
+    Value            : string
+    RowVersion       : DateTime 
+    }
 
-//and [<CLIMutable>]
-//    Enzymes =
-//    {
-//     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//     ID         : int
-//     Enzymes    : List<Enzymes>
-//     RowVersion : DateTime
-//    }
+///List of used enzyme.
+and [<CLIMutable>]
+    Enzymes =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+     ID          : int
+     independent : bool
+     Enzyme      : Enzyme
+     RowVersion  : DateTime
+    }
 
-//and [<CLIMutable>]
-//    Exclude =
-//    {
-//     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//     ID            : int
-//     Term          : Term
-//     RowVerion     : DateTime
-//     ExcludeParams : List<ExcludeParam>
-//    }
+///All sequences fulfilling the specifed criteria are excluded.
+and [<CLIMutable>]
+    Exclude =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+     ID            : int
+     Term          : Term
+     RowVerion     : DateTime
+     ExcludeParams : List<ExcludeParams>
+    }
 
-//and [<CLIMutable>] 
-//    ExcludeParams =
-//    {
-//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//    ID               : int
-//    FKParamContainer : Exclude
-//    [<RequiredAttribute()>]
-//    Term             : Term
-//    Unit             : Term
-//    Value            : string
-//    RowVersion       : DateTime 
-//    }
+///Params of exclude.
+and [<CLIMutable>] 
+    ExcludeParams =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID               : int
+    FKParamContainer : Exclude
+    [<RequiredAttribute()>]
+    Term             : Term
+    Unit             : Term
+    Value            : string
+    RowVersion       : DateTime 
+    }
 
+///A URI to access documentation and tools to interpret the external format of the ExternalData instance.
+and [<CLIMutable>]
+    ExternalFormatDocumentation =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+     ID               : int
+     URI              : string //Added because it seemed necessary
+     Format           : string
+     RowVersion       : DateTime
+     FileFormatParams : List<FileFormatParam>
+    }
+
+///The format of the ExternalData file.
 and [<CLIMutable>]
     FileFormat =
     {
@@ -366,6 +487,7 @@ and [<CLIMutable>]
      FileFormatParams : List<FileFormatParam>
     }
 
+///Params for FileFormat.
 and [<CLIMutable>] 
     FileFormatParam =
     {
@@ -379,17 +501,19 @@ and [<CLIMutable>]
     RowVersion       : DateTime 
     }
 
-//and [<CLIMutable>]
-//    Filter =
-//    {
-//     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//     ID         : int
-//     FilterType : FilterType
-//     Exclude    : Exclude
-//     Include    : Include
-//     RowVersion : DateTime
-//    }
+///Filters applied to the search Database.
+and [<CLIMutable>]
+    Filter =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+     ID         : int
+     FilterType : FilterType
+     Exclude    : Exclude
+     Include    : Include
+     RowVersion : DateTime
+    }
 
+///The type of filter e.g. Database taxonomy filter, pi filter, mw filter.
 and [<CLIMutable>]
     FilterType =
     {
@@ -398,14 +522,16 @@ and [<CLIMutable>]
      Name             : string
      RowVersion       : DateTime
      FilterTypeParams : List<FilterTypeParam>
+     UserParam        : List<UserParam>
     }
 
+///Params for FilterType.
 and [<CLIMutable>] 
     FilterTypeParam =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID               : int
-    FKParamContainer : FilterTypeParam
+    FKParamContainer : FilterType
     [<RequiredAttribute()>]
     Term             : Term
     Unit             : Term
@@ -413,33 +539,47 @@ and [<CLIMutable>]
     RowVersion       : DateTime 
     }
 
-//and [<CLIMutable>] 
-//    FragmentArray =
-//    {
-//     ID                 : int
-//     Values             : List<Floats>
-//     FragmentationTable : Fragmentation
-//     RowVersion         : DateTime
-//    }
+///An array of values for a given type of measure and for a particular ion type, in parallel to the index of ions identified.
+and [<CLIMutable>] 
+    FragmentArray =
+    {
+     ID                 : int
+     Values             : List<Value>
+     FragmentationTable : Fragmentation
+     RowVersion         : DateTime
+    }
 
-//and [<CLIMutable>]
-//    Fragmentation =
-//    {
-//     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//     ID         : int
-//     IonType    : IonType
-//     RowVersion : DateTime
-//    }
+///Flaot value of the FragmentArray.
+and [<CLIMutable>] 
+    Value =
+    {
+     ID            : string
+     Value         : float
+     FragmentArray : FragmentArray
+     RowVersion         : DateTime
+    }
 
-//and [<CLIMutable>]
-//    FragmentationTable =
-//    {
-//     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//     ID         : int
-//     Measure    : Measure
-//     RowVersion : DateTime
-//    }
+///The product ions identified in this result.
+and [<CLIMutable>]
+    Fragmentation =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+     ID         : int
+     IonType    : IonType
+     RowVersion : DateTime
+    }
 
+///Contains the types of measures that will be reported in generic arrays for each SpectrumIdentificationItem.
+and [<CLIMutable>]
+    FragmentationTable =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+     ID         : int
+     Measure    : Measure
+     RowVersion : DateTime
+    }
+
+///The tolerance of the search given as a plus and minus value with units.
 and [<CLIMutable>]
     FragmentTolerance =
     {
@@ -450,6 +590,7 @@ and [<CLIMutable>]
      FragmentToleranceParams : List<FragmentToleranceParam>
     }
 
+///Params of FragmentTolerance.
 and [<CLIMutable>] 
     FragmentToleranceParam =
     {
@@ -463,6 +604,7 @@ and [<CLIMutable>]
     RowVersion       : DateTime 
     }
 
+///All sequences fulfilling the specifed criteria are included.
 and [<CLIMutable>]
     Include =
     {
@@ -472,6 +614,7 @@ and [<CLIMutable>]
      IncludeParams : List<IncludeParam>
     }
 
+///Params ofInclude.
 and [<CLIMutable>] 
     IncludeParam =
     {
@@ -485,56 +628,88 @@ and [<CLIMutable>]
     RowVersion       : DateTime 
     }
 
-//and [<CLIMutable>]
-//    Input =
-//    {
-//     ID             : int
-//     URL            : string ///Added by self
-//     SourceFile     : SourceFile
-//     SearchDatabase : SearchDatabase
-//     SpectraData    : SpectraData
-//     RowVersion     : DateTime
-//    }
+///The inputs to the analyses including the Databases searched, the spectral data and the source file converted to mzIdentML.
+and [<CLIMutable>]
+    Input =
+    {
+     ID             : int
+     //URL            : string ///Added by self
+     SourceFile     : SourceFile
+     SearchDatabase : SearchDatabase
+     SpectraData    : SpectraData
+     RowVersion     : DateTime
+    }
 
-///InputSpectra???
-///InputSpectrumIdentifications????
+///One of the spectra data sets used.
+and [<CLIMutable>]
+    InputSpectra =
+    {
+     ID             : int
+     SpectraData    : SpectraData
+     RowVersion     : DateTime
+    }
 
-//and [<CLIMutable>]
-//    IonType =
-//    {
-//     ID            : int
-//     Type          : string ///Added by self
-//     Charge        : int
-//     Index         : List<int>
-//     FragmentArray : FragmentArray
-//     RowVersion    : DateTime
-//     IonTypeParams : List<IonTypeParam>
-//    }
+///The lists of spectrum identifications that are input to the protein detection process.
+and [<CLIMutable>]
+    InputSpectrumIdentification =
+    {
+     ID                         : int
+     SpectrumIdentificationList : SpectraData
+     RowVersion                 : DateTime
+    }
 
-//and [<CLIMutable>] 
-//    IonTypeParam =
-//    {
-//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-//    ID               : int
-//    FKParamContainer : IonType
-//    [<RequiredAttribute()>]
-//    Term             : Term
-//    Unit             : Term
-//    Value            : string
-//    RowVersion       : DateTime 
-//    }
+///The type of ion that has been identified.
+and [<CLIMutable>]
+    IonType =
+    {
+     ID            : int
+     Type          : string ///Added by self
+     Charge        : int
+     Index         : List<int>
+     FragmentArray : FragmentArray
+     RowVersion    : DateTime
+     IonTypeParams : List<IonTypeParam>
+     UserParam     : List<UserParam>
+    }
 
-//Added because it is part of the original document and refferd to in the code
+///Params of IonType
+and [<CLIMutable>] 
+    IonTypeParam =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+     ID               : int
+     FKParamContainer : IonType
+     [<RequiredAttribute()>]
+     Term             : Term
+     Unit             : Term
+     Value            : string
+     RowVersion       : DateTime 
+    }
+
+///The masses of residues used in the search.
 and [<CLIMutable>] 
     MassTable =
     {
-    ID              : int
-    Name            : string
-    MSLevel         : List<int> //MS spectrum that the MassTable reffers to, e.g. "1" for MS1
-    RowVersion      : DateTime
-    MassTableParams : List<MassTableParam> 
+     ID              : int
+     Name            : string
+     MSLevels        : List<MSLevel> 
+     RowVersion      : DateTime
+     MassTableParams : List<MassTableParam>
+     UserParam       : List<UserParam>
     }
 
+//Added because entity framework can not handle list of primitive types
+///MS spectrum that the MassTable reffers to, e.g. "1" for MS1.
+and [<CLIMutable>] 
+    MSLevel =
+    {
+    ID              : int
+    MSLEvel         : int
+    MassTable       : MassTable
+    RowVersion      : DateTime
+    }
+
+///Params of MassTable.
 and [<CLIMutable>] 
     MassTableParam =
     {
@@ -548,9 +723,32 @@ and [<CLIMutable>]
     RowVersion       : DateTime 
     }
 
-///Add other Tables after MassTable
+///References to CV terms defining the measures about product ions to be reported in SpectrumIdentificationItem.
+and [<CLIMutable>] 
+    Measure =
+    {
+    ID              : int
+    Name            : string
+    MassTable       : MassTable
+    RowVersion      : DateTime
+    MeasureParams   : List<MeasureParam>
+    }
 
-//Create connection to ModLocation?
+///Params of Measure.
+and [<CLIMutable>] 
+    MeasureParam =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID               : int
+    FKParamContainer : Measure
+    [<RequiredAttribute()>]
+    Term             : Term
+    Unit             : Term
+    Value            : string
+    RowVersion       : DateTime 
+    }
+
+///A molecule modification specification. For every modification found in the peptide an extra entry should be created.
 and [<CLIMutable>] 
     Modification =
     {
@@ -560,11 +758,12 @@ and [<CLIMutable>]
     Residues              : string 
     MonoisotopicMassDelta : float 
     AvgMassDelta          : float 
-    ModLocation           : ModLocation //Added to create connection to ModLocation
+    ModLocation           : ModLocation 
     RowVersion            : DateTime 
     ModificationParams    : List<ModificationParam>
     }
 
+///Params of Moodification.
 and [<CLIMutable>] 
     ModificationParam =
     {
@@ -577,7 +776,18 @@ and [<CLIMutable>]
     Value            : string
     RowVersion       : DateTime 
     }
+
+///The specification of static/variable modifications that are to be considered in the spectra search.
+and [<CLIMutable>] 
+    ModificationParams =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID                    : int
+    SearchModification    : SearchModification 
+    RowVersion            : DateTime 
+    }
 //Not part of the original document
+///Param that describes the location of the modification and the altered residue.
 and [<CLIMutable>] 
     ModLocation =
     {
@@ -591,6 +801,7 @@ and [<CLIMutable>]
     ModLocationParams : List<ModLocation>
     }
 
+///Params of ModLocation.
 and [<CLIMutable>] 
     ModLocationParam =
     {
@@ -603,6 +814,8 @@ and [<CLIMutable>]
     Value            : string
     RowVersion       : DateTime 
     }
+
+///Standarized vocabulary for MS-Database.
 and [<CLIMutable>] 
     Ontology = 
     {
@@ -614,6 +827,7 @@ and [<CLIMutable>]
     Terms          : List<Term>
     }
 
+///Params for Ontology.
 and [<CLIMutable>] 
     OntologyParam =
     {
@@ -627,17 +841,19 @@ and [<CLIMutable>]
     RowVersion             : DateTime
     }
 
+///Entity which is responsible for analysis-software, data-file, etc. 
 and [<CLIMutable>] 
     Organization =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID                 : int
     Name               : string
-    Parent             : Parent //Added to create connection to Parent
+    Parent             : Parent
     RowVersion         : DateTime
     OrganizationParams : List<OrganizationParam>
     }
 
+///Params of Organization.
 and [<CLIMutable>] 
     OrganizationParam =
     {
@@ -651,42 +867,57 @@ and [<CLIMutable>]
     RowVersion       : DateTime 
     }
 
+///The containing organization.
 and [<CLIMutable>] 
     Parent =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID           : int            //Not part of the original document
-    Name         : string         //Not part of the original document
+    ID           : int            
+    //Name         : string
     Organization : Organization 
-    Country      : string         //Not part of the original document
+    //Country      : string         
     RowVersion   : DateTime
-    ParentParams : List<ParentParam>
+    //ParentParams : List<ParentParam>
     }
 
+//and [<CLIMutable>] 
+//    ParentParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
+//    ID               : int
+//    FKParamContainer : Parent
+//    [<RequiredAttribute()>]
+//    Term             : Term
+//    Unit             : Term
+//    Value            : string
+//    RowVersion       : DateTime   
+//    }
+
+///The tolerance of the search given as a plus and minus value with units.
 and [<CLIMutable>] 
-    ParentParam =
+    ParentTolerance =
     {
-    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
-    ID               : int
-    FKParamContainer : Parent
-    [<RequiredAttribute()>]
-    Term             : Term
-    Unit             : Term
-    Value            : string
-    RowVersion       : DateTime   
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID           : int            
+    Term         : Term         
+    RowVersion   : DateTime
     }
-
+///One peptide, which can have modifications. The combination of peptide and modification must be unique.
 and [<CLIMutable>] 
     Peptide =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID            : int
-    Name          : string             //Part of the original document
-    Sequence      : string             //Not part of the original document
-    RowVersion    : DateTime 
-    PeptideParams : List<PeptideParam>
+    ID                       : int
+    Name                     : string            
+    PeptideSequence          : PeptideSequence
+    Modification             : Modification
+    SubstitutionModification : SubstitutionModification
+    RowVersion               : DateTime 
+    PeptideParams            : List<PeptideParam>
+    UserParam                : List<UserParam>
     }
 
+///Params of Peptide.
 and [<CLIMutable>] 
     PeptideParam =
     {
@@ -700,6 +931,7 @@ and [<CLIMutable>]
     RowVersion       : DateTime  
     }
 
+///PeptideEvidence links a specific Peptide element to a specific position in a DBSequence. There MUST only be one PeptideEvidence item per Peptide-to-DBSequence-position.
 and [<CLIMutable>] 
     PeptideEvidence =
     {
@@ -713,11 +945,13 @@ and [<CLIMutable>]
     End                   : int 
     Pre                   : string 
     Post                  : string 
-    Translation           : Translation              //Refers to TranslationTable
+    TranslationTable      : TranslationTable
     RowVersion            : DateTime 
     PeptideEvidenceParams : List<PeptideEvidenceParam>
+    UserParam             : List<UserParam>
     }
 
+///Params of PeptideEvidence.
 and [<CLIMutable>] 
     PeptideEvidenceParam =
     {
@@ -731,30 +965,53 @@ and [<CLIMutable>]
     RowVersion       : DateTime 
     }
 
+///Reference to the PeptideEvidence element identified.
+and [<CLIMutable>] 
+    PeptideEvidenceRef =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID                    : int
+    PeptideEvidence       : PeptideEvidence
+    RowVersion            : DateTime 
+    }
+
+///Peptide evidence on which this ProteinHypothesis is based by reference to a PeptideEvidence element.
 and [<CLIMutable>] 
     PeptideHypothesis =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID                           : int
-    PeptideEvidence              : PeptideEvidence
-    PeptideDetectionHypothesisID : int                //Not part of the original document
-    RowVersion                   : DateTime  
-    PeptideHypothesisParams      : List<PeptideHypothesisParam>
+    ID                            : int
+    PeptideEvidenceRef            : PeptideEvidenceRef
+    SpectrumIdentificationItemRef : SpectrumIdentificationItemRef
+    RowVersion                    : DateTime  
+    //PeptideHypothesisParams      : List<PeptideHypothesisParam>
     }
 
+//and [<CLIMutable>] 
+//    PeptideHypothesisParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : PeptideHypothesis
+//    [<RequiredAttribute()>]
+//    Term             : Term
+//    Unit             : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
+
+///Aminoacid sequence of a (poly-) peptide. If substitutions are found, the original sequence should be reported.
 and [<CLIMutable>] 
-    PeptideHypothesisParam =
+    PeptideSequence =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID               : int
-    FKParamContainer : PeptideHypothesis
-    [<RequiredAttribute()>]
-    Term             : Term
-    Unit             : Term
-    Value            : string
-    RowVersion       : DateTime 
+    ID                           : int
+    Sequence                     : string
+    RowVersion                   : DateTime  
+    //PeptideHypothesisParams      : List<PeptideHypothesisParam>
     }
 
+///person's name and contact details.
 and [<CLIMutable>] 
     Person =
     {
@@ -762,12 +1019,15 @@ and [<CLIMutable>]
     ID             : int
     FirstName      : string 
     LastName       : string 
-    MiddleName     : string 
-    Organization   : Organization         //Not part of the original document
+    MiddleName     : string
+    Affiliation    : Affiliation
+    //Organization   : Organization
     RowVersion     : DateTime  
     PersonParams   : List<PersonParam>
+    UserParam      : List<UserParam>
     }
 
+///Params of Person.
 and [<CLIMutable>] 
     PersonParam =
     {
@@ -781,17 +1041,20 @@ and [<CLIMutable>]
     RowVersion       : DateTime   
     }
 
+///A set of logically related results from a protein detection.
 and [<CLIMutable>] 
     ProteinAmbiguityGroup =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID                          : int
-    ProteinDetectionList        : ProteinDetectionList //Not part of the original document
     Name                        : string 
+    ProteinDetectionHypothesis  : ProteinDetectionHypothesis
     RowVersion                  : DateTime
     ProteinAmbiguityGroupParams : List<ProteinAmbiguityGroupParam>
+    UserParam                   : List<UserParam>
     }
 
+///Params of ProteinAmbiguityGroup.
 and [<CLIMutable>] 
     ProteinAmbiguityGroupParam =
     {
@@ -804,32 +1067,35 @@ and [<CLIMutable>]
     Value            : string
     RowVersion       : DateTime     
     }
-//Added because it is part of the original document
+
+///An Analysis which assembles a set of peptides to proteins.
 and [<CLIMutable>] 
     ProteinDetection =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
-    ID                        : int
-    Name                      : string
-    ProteinDetectionList      : ProteinDetectionList
-    ProteinDetectionProtocoll : ProteinDetectionProtocol
-    RowVersion                : DateTime
-    ProteinDetectionParams    : List<ProteinDetectionParam>
+    ID                          : int
+    Name                        : string
+    ProteinDetectionList        : ProteinDetectionList
+    ProteinDetectionProtocol   : ProteinDetectionProtocol
+    InputSpectrumIdentification : InputSpectrumIdentification
+    RowVersion                  : DateTime
+    //ProteinDetectionParams      : List<ProteinDetectionParam>
     }
 
-and [<CLIMutable>] 
-    ProteinDetectionParam =
-    {
-    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID               : int
-    FKParamContainer : ProteinDetection
-    [<RequiredAttribute()>]
-    Term             : Term
-    Unit             : Term
-    Value            : string
-    RowVersion       : DateTime
-    }
+//and [<CLIMutable>] 
+//    ProteinDetectionParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : ProteinDetection
+//    [<RequiredAttribute()>]
+//    Term             : Term
+//    Unit             : Term
+//    Value            : string
+//    RowVersion       : DateTime
+//    }
 
+///A single result of the ProteinDetection analysis.
 and [<CLIMutable>] 
     ProteinDetectionHypothesis =
     {
@@ -837,12 +1103,14 @@ and [<CLIMutable>]
     ID                               : int
     Name                             : string
     DBSequence                       : DBSequence
-    ProteinAmbiguityGroup            : ProteinAmbiguityGroup //Not part of the original document 
-    PassThreshold                    : string
+    PassThreshold                    : bool
+    PeptideHypothesis                : PeptideHypothesis
     RowVersion                       : DateTime  
     ProteinDetectionHypothesisParams : List<ProteinDetectionHypothesisParam>
+    UserParam                        : List<UserParam>
     }
 
+///Params of ProteinDetectionHypothesis.
 and [<CLIMutable>] 
     ProteinDetectionHypothesisParam =
     {
@@ -856,18 +1124,20 @@ and [<CLIMutable>]
     RowVersion       : DateTime
     }
 
+///The protein list resulting from a protein detection process.
 and [<CLIMutable>] 
     ProteinDetectionList =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID                         : int
-    Accession                  : string
     Name                       : string
-    SearchDB                   : SearchDatabase       //Not part of the original document
+    ProteinAmbiguityGroup      : ProteinAmbiguityGroup
     RowVersion                 : DateTime
     ProteinDetectionListParams : List<ProteinDetectionListParam>
+    UserParam                  : List<UserParam>
     }
 
+///Params of ProteindetectionList.
 and [<CLIMutable>] 
     ProteinDetectionListParam =
     {
@@ -881,6 +1151,7 @@ and [<CLIMutable>]
     RowVersion       : DateTime
     }
 
+///The parameters and settings of a ProteinDetection process.
 and [<CLIMutable>] 
     ProteinDetectionProtocol =
     {
@@ -888,33 +1159,88 @@ and [<CLIMutable>]
     ID                             : int
     Name                           : string 
     AnalysisSoftware               : AnalysisSoftware
+    AnalysisParams                 : AnalysisParams
+    Threshold                      : Threshold
     RowVersion                     : DateTime
-    ProteinDetectionProtocolParams : List<ProteinDetectionProtocolParam>
+    //ProteinDetectionProtocolParams : List<ProteinDetectionProtocolParam>
     }
 
+//and [<CLIMutable>] 
+//    ProteinDetectionProtocolParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : ProteinDetectionProtocol
+//    [<RequiredAttribute()>]
+//    Term             : Term
+//    Unit             : Term
+//    Value            : string
+//    RowVersion       : DateTime  
+//    }
+
+///The Provider of the mzIdentML record in terms of the contact and software.
 and [<CLIMutable>] 
-    ProteinDetectionProtocolParam =
+    Provider =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID               : int
-    FKParamContainer : ProteinDetectionProtocol
+    Name             : string 
+    AnalysisSoftware : AnalysisSoftware
+    ContactRole      : ContactRole
+    RowVersion       : DateTime
+    }
+
+///The specification of a single residue within the mass table.
+and [<CLIMutable>] 
+    Residue =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID         : int
+    Sequence   : string
+    Mass       : float
+    RowVersion : DateTime
+    }
+
+///The roles the Contact fills.
+and [<CLIMutable>] 
+    Role =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID         : int
+    Name       : string //self added
+    RowVersion : DateTime
+    RoleParams : List<RoleParam>
+    }
+
+///Params of Role.
+and [<CLIMutable>] 
+    RoleParam =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID               : int
+    FKParamContainer : Role
     [<RequiredAttribute()>]
     Term             : Term
     Unit             : Term
     Value            : string
     RowVersion       : DateTime  
     }
-//Added because it is part of the original document and refferd to in the code
+
+///A description of the sample analysed by mass spectrometry using CVParams or UserParams.
 and [<CLIMutable>] 
     Sample =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID           : int
     Name         : string 
+    ContactRole  : ContactRole
+    SubSample    : SubSample
     RowVersion   : DateTime
     SampleParams : List<SampleParam>
+    UserParams   : List<UserParam>
     }
 
+///Params of Sample.
 and [<CLIMutable>] 
     SampleParam =
     {
@@ -928,18 +1254,26 @@ and [<CLIMutable>]
     RowVersion       : DateTime  
     }
 
-//Added because it exists in the original document and is referred multiple times in the code
+//Added because it exists in the original document and is referred multiple times in the code.
 and [<CLIMutable>] 
     SearchDatabase =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID                             : int
-    Name                           : string 
-    Location                       : string //Location of the datafile, commonly an URL
-    RowVersion                     : DateTime
-    SearchDatabaseParams : List<SearchDatabaseParam>
+    ID                          : int
+    Name                        : string 
+    Location                    : string //Location of the datafile, commonly an URL
+    NumDatabaseSequences        : int
+    NumResidues                 : int
+    ReleaseDate                 : DateTime
+    Version                     : string
+    ExternalFormatDocumentation : ExternalFormatDocumentation
+    FileFormat                  : FileFormat
+    DatabaseName                : DatabaseName
+    RowVersion                  : DateTime
+    SearchDatabaseParams        : List<SearchDatabaseParam>
     }
 
+///Params of SearchDatabase.
 and [<CLIMutable>] 
     SearchDatabaseParam =
     {
@@ -953,78 +1287,256 @@ and [<CLIMutable>]
     RowVersion       : DateTime  
     }
 
-//Added because it exists in the original document and is referred in the code
+///One of the search databases used.
+and [<CLIMutable>] 
+    SearchDatabaseRef =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID             : int
+    SearchDatabase : SearchDatabase
+    RowVersion     : DateTime
+    }
+
+///Specification of a search modification as parameter for a spectra search. Contains the name of the modification, the mass, the specificity and whether it is a static modification.
+and [<CLIMutable>] 
+    SearchDatabaseModification =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID                               : int
+    fixedMod                         : bool
+    massDelta                        : float
+    Residues                         : string
+    SpecificityRules                 : SpecificityRules
+    RowVersion                       : DateTime
+    SearchDatabaseModificationParams : List<SearchDatabaseModificationParam>
+    }
+
+///Params of SearchDatabaseModification
+and [<CLIMutable>] 
+    SearchDatabaseModificationParam =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID                     : int
+    FKParamContainer       : SearchDatabaseModification
+    [<RequiredAttribute()>]
+    Term                   : Term
+    Unit                   : Term
+    Value                  : string
+    RowVersion             : DateTime
+    }
+
+///Specification of a search modification as parameter for a spectra search. Contains the name of the modification, the mass, the specificity and whether it is a static modification.
+and [<CLIMutable>] 
+    SearchModification =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID                       : int
+    FixedMod                 : bool
+    MassDelta                : float
+    Residues                 : string
+    SpecificityRules         : SpecificityRules
+    RowVersion               : DateTime
+    SearchModificationParams : List<SearchModification>
+    }
+
+///Params of SearchModification
+and [<CLIMutable>] 
+    SearchModificationParam =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID                     : int
+    FKParamContainer       : SearchModification
+    [<RequiredAttribute()>]
+    Term                   : Term
+    Unit                   : Term
+    Value                  : string
+    RowVersion             : DateTime
+    }
+
+///The type of search performed e.g. PMF, Tag searches, MS-MS
+and [<CLIMutable>] 
+    SearchType =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID          : int
+    Term        : Term
+    UserParam   : UserParam
+    RowVersion  : DateTime
+    }
+
+///The actual sequence of amino acids or nucleic acid.
+and [<CLIMutable>] 
+    Seq =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID          : int
+    Sequence    : string
+    RowVersion  : DateTime
+    }
+
+///The collection of sequences (DBSequence or Peptide) identified and their relationship between each other (PeptideEvidence) to be referenced elsewhere in the results.
+and [<CLIMutable>] 
+    SequenceCollection =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID              : int
+    DBSequence      : DBSequence
+    Peptide         : Peptide
+    PeptideEvidence : PeptideEvidence
+    RowVersion      : DateTime
+    }
+
+///Regular expression for specifying the enzyme cleavage site.
+and [<CLIMutable>] 
+    SiteRegexp =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID         : int
+    Sequence   : string
+    RowVersion : DateTime
+    }
+
+///Name of a SoftwarePackage
+and [<CLIMutable>] 
+    SoftwareName =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID         : int
+    Name       : string
+    //Term       : Term
+    //UserParam  : UserParam
+    RowVersion : DateTime
+    }
+
+///A file from which this mzIdentML instance was created.
+and [<CLIMutable>] 
+    SourceFile =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID                          : int
+    Name                        : string
+    Location                    : string
+    ExternalFormatDocumentation : ExternalFormatDocumentation
+    FileFormat                  : FileFormat
+    RowVersion                  : DateTime
+    SourceFileParams            : List<SourceFileParam>
+    UserParam                   : List<UserParam>
+    }
+
+///Params of SourceFile
+and [<CLIMutable>] 
+    SourceFileParam =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID                     : int
+    FKParamContainer       : SourceFile
+    [<RequiredAttribute()>]
+    Term                   : Term
+    Unit                   : Term
+    Value                  : string
+    RowVersion             : DateTime
+    }
+
+///The specificity rules of the searched modification including for example the probability of a modification's presence or peptide or protein termini. Standard fixed or variable status should be provided by the attribute fixedMod.
+and [<CLIMutable>] 
+    SpecificityRules =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID         : int
+    Term       : Term
+    RowVersion : DateTime
+    }
+
+///A data set containing spectra data (consisting of one or more spectra).
 and [<CLIMutable>] 
     SpectraData =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID                : int
-    Name              : string 
-    Location          : string //Location of the datafile, commonly an URL
-    RowVersion        : DateTime
-    SpectraDataParams : List<SpectraDataParam>
+    ID                          : int
+    Name                        : string 
+    Location                    : string //Location of the datafile, commonly an URL
+    ExternalFormatDocumentation : ExternalFormatDocumentation
+    FileFormat                  : FileFormat
+    SpectrumIDFormat            : SpectrumIDFormat
+    RowVersion                  : DateTime
+    //SpectraDataParams : List<SpectraDataParam>
     }
 
-and [<CLIMutable>] 
-    SpectraDataParam =
-    {
-    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID                     : int
-    FKParamContainer       : SpectraData
-    [<RequiredAttribute()>]
-    Term                   : Term
-    Unit                   : Term
-    Value                  : string
-    RowVersion             : DateTime
-    }
+//and [<CLIMutable>] 
+//    SpectraDataParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                     : int
+//    FKParamContainer       : SpectraData
+//    [<RequiredAttribute()>]
+//    Term                   : Term
+//    Unit                   : Term
+//    Value                  : string
+//    RowVersion             : DateTime
+//    }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///An Analysis which tries to identify peptides in input spectra, referencing the database searched, the input spectra, the output results and the protocol that is run.
 and [<CLIMutable>] 
     SpectrumIdentification =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID                                : int
-    Name                              : string 
-    ActivityDate                      : string  //Not part of the original document
-    SpectrumIdentificationList        : int     //Refers to SpectrumidentificationList normally
-    SpectrumIdentificationProtocoll   : int     //Refers to SpectrumIdentificationProtocol normally
-    RowVersion                        : DateTime
-    SpectrumIdentificationParams      : List<SpectrumIdentificationParam>
+    ID                              : int
+    Name                            : string 
+    ActivityDate                    : DateTime
+    SpectrumIdentificationList      : int     //Refers to SpectrumidentificationList normally
+    SpectrumIdentificationProtocol : int     //Refers to SpectrumIdentificationProtocol normally
+    InputSpectra                    : InputSpectra
+    SearchDatabaseRef               : SearchDatabaseRef
+    RowVersion                      : DateTime
+    //SpectrumIdentificationParams      : List<SpectrumIdentificationParam>
     }
 
-and [<CLIMutable>] 
-    SpectrumIdentificationParam =
-    {
-    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID                     : int
-    FKParamContainer       : SpectrumIdentification
-    [<RequiredAttribute()>]
-    Term                   : Term
-    Unit                   : Term
-    Value                  : string
-    RowVersion             : DateTime
-    }
+//and [<CLIMutable>] 
+//    SpectrumIdentificationParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                     : int
+//    FKParamContainer       : SpectrumIdentification
+//    [<RequiredAttribute()>]
+//    Term                   : Term
+//    Unit                   : Term
+//    Value                  : string
+//    RowVersion             : DateTime
+//    }
 
+///An identification of a single (poly)peptide, resulting from querying an input spectra, along with the set of confidence values for that identification.
 and [<CLIMutable>] 
     SpectrumIdentificationItem =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID                               : int
+    Name                             : string
     SpectrumIdentificationResult     : SpectrumIdentificationResult
     Sample                           : Sample          
     Peptide                          : Peptide
-    MassTable                        : MassTable
-    Name                             : string 
-    PassThreshold                    : string
+    MassTable                        : MassTable 
+    PassThreshold                    : bool
     Rank                             : int 
     CalculatedMassToCharge           : float 
     ExperimentalMassToCharge         : float
     ChargeState                      : int
     CalculatedIP                     : float 
-    Fragmentation                    : DateTime  
+    Fragmentation                    : Fragmentation
+    PeptideEvidenceRef               : PeptideEvidenceRef
     RowVersion                       : DateTime
     SpectrumIdentificationItemParams : List<SpectrumIdentificationItemParam>
+    UserParam                        : List<UserParam>
     }
 
+///Params of SpectrumIdentification.
 and [<CLIMutable>] 
     SpectrumIdentificationItemParam =
     {
@@ -1032,23 +1544,38 @@ and [<CLIMutable>]
     ID               : int
     FKParamContainer : SpectrumIdentificationItem
     [<RequiredAttribute()>]
-    Term           : Term
-    Unit           : Term
+    Term             : Term
+    Unit             : Term
     Value            : string
     RowVersion       : DateTime 
     }
 
+///An identification of a single (poly)peptide, resulting from querying an input spectra, along with the set of confidence values for that identification.
+and [<CLIMutable>] 
+    SpectrumIdentificationItemRef =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID                         : int
+    SpectrumIdentificationItem : SpectrumIdentificationItem
+    RowVersion                 : DateTime
+    }
+
+///Represents the set of all search results from SpectrumIdentification.
 and [<CLIMutable>] 
     SpectrumIdentificationList =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID                               : int
     Name                             : string 
-    NumSequencesSearched             : int 
+    NumSequencesSearched             : int
+    FragmentationTable               : FragmentationTable
+    SpectrumIdentificationResult     : SpectrumIdentificationResult
     RowVersion                       : DateTime
     SpectrumIdentificationListParams : List<SpectrumIdentificationListParam>
+    UserParam                        : List<UserParam>
     }
 
+///Params of SpectrumIdentificationList.
 and [<CLIMutable>] 
     SpectrumIdentificationListParam =
     {
@@ -1062,6 +1589,7 @@ and [<CLIMutable>]
     RowVersion       : DateTime 
     }
 
+///The parameters and settings of a SpectrumIdentification analysis.
 and [<CLIMutable>] 
     SpectrumIdentificationProtocol =
     {
@@ -1069,34 +1597,46 @@ and [<CLIMutable>]
     ID                                   : int
     Name                                 : string 
     AnalysisSoftware                     : AnalysisSoftware
+    SearchType                           : SearchType
+    AdditionalSearchparams               : AdditionalSearchparams
+    ModificationParams                   : ModificationParams
+    Enzymes                              : Enzymes
+    MassTable                            : MassTable
+    FragmentTolerance                    : FragmentTolerance
+    ParentTolerance                      : ParentTolerance
+    Threshold                            : Threshold
+    DatabaseFilters                      : DatabaseFilters
+    DatabaseTranslation                  : DatabaseTranslation
     RowVersion                           : DateTime 
-    SpectrumIdentificationProtocolParams : List<SpectrumIdentificationProtocolParam>
+    //SpectrumIdentificationProtocolParams : List<SpectrumIdentificationProtocolParam>
     }
 
-and [<CLIMutable>] 
-    SpectrumIdentificationProtocolParam =
-    {
-    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID               : int
-    FKParamContainer : SpectrumIdentificationProtocol
-    [<RequiredAttribute()>]
-    Term             : Term
-    Unit             : Term
-    Value            : string
-    RowVersion       : DateTime 
-    }
+//and [<CLIMutable>] 
+//    SpectrumIdentificationProtocolParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : SpectrumIdentificationProtocol
+//    [<RequiredAttribute()>]
+//    Term             : Term
+//    Unit             : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
 
+///All identifications made from searching one spectrum.
 and [<CLIMutable>] 
     SpectrumIdentificationResult =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID                                 : int
+    Name                               : string
     SpectrumID                         : int    //Refers to SpectrumID, unique in the SpectraData for the specific Spectrum
     SpectraData                        : SpectraData       
-    SpectrumIdentificationList         : SpectrumIdentificationList
-    Name                               : string 
+    SpectrumIdentificationItem         : SpectrumIdentificationItem 
     RowVersion                         : DateTime 
     SpectrumIdentificationResultParams : List<SpectrumIdentificationResultParam>
+    UserParam                          : UserParam
     }
 
 and [<CLIMutable>] 
@@ -1110,6 +1650,40 @@ and [<CLIMutable>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime    
+    }
+
+///The format of the spectrum identifier within the source file.
+and [<CLIMutable>] 
+    SpectrumIDFormat =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID         : int
+    Term       : Term
+    RowVersion : DateTime 
+    }
+
+///References to the individual component samples within a mixed parent sample.
+and [<CLIMutable>] 
+    SubSample =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID         : int
+    Sample     : Sample
+    RowVersion : DateTime 
+    }
+
+///A modification where one residue is substituted by another (amino acid change).
+and [<CLIMutable>] 
+    SubstitutionModification =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID                    : int
+    Location              : int
+    AvgMassDelta          : float
+    MonoisotopicMassDelta : float
+    OriginalResidue       : string
+    ReplacementResidue    : string
+    RowVersion            : DateTime 
     }
 
 and [<CLIMutable>] 
@@ -1142,9 +1716,20 @@ and [<CLIMutable>]
     Value      : string
     RowVersion : DateTime 
     }
+
+///The threshold(s) applied to determine that a result is significant. If multiple terms are used it is assumed that all conditions are satisfied by the passing results.
+and [<CLIMutable>] 
+    Threshold =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID         : int
+    Term       : Term
+    UserParam  : UserParam
+    RowVersion : DateTime 
+    }
 //Added because it is part of the original document and refferd to in the code
 and [<CLIMutable>] 
-    Translation =
+    TranslationTable =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID                : int
@@ -1157,10 +1742,23 @@ and [<CLIMutable>]
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID               : int
-    FKParamContainer : Translation
+    FKParamContainer : TranslationTable
     [<RequiredAttribute()>]
     Term             : Term
     Unit             : Term
+    Value            : string
+    RowVersion       : DateTime    
+    }
+
+and [<CLIMutable>] 
+    UserParam =
+    {
+    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+    ID               : int
+    [<RequiredAttribute()>]
+    Term             : Term
+    Unit             : Term
+    UnitName         : string
     Value            : string
     RowVersion       : DateTime    
     }
@@ -1706,11 +2304,11 @@ module InsertStatements =
          ProteinAmbiguityGroupParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createProteinDetection name proteinDetectionProtocoll proteinDetectionList proteinDetectionParams =
+    let createProteinDetection name proteinDetectionProtocol proteinDetectionList proteinDetectionParams =
         {
          ProteinDetection.ID                        = 0
          ProteinDetection.Name                      = name
-         ProteinDetection.ProteinDetectionProtocoll = proteinDetectionProtocoll
+         ProteinDetection.ProteinDetectionProtocol = proteinDetectionProtocol
          ProteinDetection.ProteinDetectionList      = proteinDetectionList
          ProteinDetection.RowVersion                = DateTime.Now.Date
          ProteinDetection.ProteinDetectionParams    = proteinDetectionParams
@@ -1842,13 +2440,13 @@ module InsertStatements =
          SpectraDataParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createSpectrumIdentification name activityDate spectrumIdentificationList spectrumIdentificationProtocoll spectrumIdentificationParams =
+    let createSpectrumIdentification name activityDate spectrumIdentificationList spectrumIdentificationProtocol spectrumIdentificationParams =
         {
          SpectrumIdentification.ID                              = 0
          SpectrumIdentification.Name                            = name
          SpectrumIdentification.ActivityDate                    = activityDate
          SpectrumIdentification.SpectrumIdentificationList      = spectrumIdentificationList
-         SpectrumIdentification.SpectrumIdentificationProtocoll = spectrumIdentificationProtocoll
+         SpectrumIdentification.SpectrumIdentificationProtocol = spectrumIdentificationProtocol
          SpectrumIdentification.RowVersion                      = DateTime.Now.Date
          SpectrumIdentification.SpectrumIdentificationParams    = spectrumIdentificationParams
         }
@@ -2130,10 +2728,10 @@ let selectSpectrumIdentificationBySIList sIList =
            }
     )
 
-let selectSpectrumIdentificationBySIProtocoll sIProtocoll =
+let selectSpectrumIdentificationBySIProtocol sIProtocol =
     (query {
             for i in context.SpectrumIdentification do
-                if i.SpectrumIdentificationProtocoll = sIProtocoll 
+                if i.SpectrumIdentificationProtocol = sIProtocol 
                     then select i
            }
     )
@@ -2207,7 +2805,7 @@ selectSpectrumIdentificationByActivityDate "Today"
 |> readLine
 selectSpectrumIdentificationBySIList 1
 |> readLine
-selectSpectrumIdentificationBySIProtocoll 2
+selectSpectrumIdentificationBySIProtocol 2
 |> readLine
 selectSpectrumIdentificationParamBySI spectrumIdentification
 |> readLine
@@ -2217,4 +2815,3 @@ selectTermByOntologyName "Pride"
 |> readLine
 
 ///Testen verschiedener Varianten, Ergebnis anhand eines Linearitätstests überprüfen: Stabile Linie ja, nein?
- 
