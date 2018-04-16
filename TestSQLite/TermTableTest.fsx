@@ -29,12 +29,8 @@ open System.Collections.Generic
 open FSharp.Care.IO
 open BioFSharp.IO
 open System.Data
-open Microsoft.EntityFrameworkCore.Metadata.Internal
-open System.Windows.Forms
-
 
 //open System.Reflection
-
 
 
 //Defining types and relations for DB/////////////////////////////
@@ -45,62 +41,63 @@ type [<CLIMutable>]
      MzIdentML =
      {
       [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-      ID              : int
-      Name            : string
-      Version         : string
-      CreationDate    : DateTime
-      RowVersion      : DateTime
-      MzIdentMLParams : List<MzIdentMLParam>
+      ID                         : int
+      Name                       : string
+      Version                    : string
+      CVList                     : CVList
+      AnalysisSoftwareList       : AnalysisSoftwareList
+      Provider                   : Provider
+      AuditCollection            : AuditCollection
+      AnalysisSampleCollection   : AnalysisSampleCollection
+      SequenceCollection         : SequenceCollection
+      AnalysisCollection         : AnalysisCollection
+      AnalysisProtocolCollection : AnalysisProtocolCollection
+      DataCollection             : DataCollection
+      BiblioGraphicReference     : BiblioGraphicReference
+      RowVersion                 : DateTime
+      //MzIdentMLParams : List<MzIdentMLParam>
      }
 
 ///Param to MiIdentML-Table
-and [<CLIMutable>] 
-    MzIdentMLParam =
-    {
-    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID                         : int
-    FKParamContainer           : MzIdentMLParam
-    [<RequiredAttribute()>]
-    Term                       : Term
-    Unit                       : Term
-    Value                      : string
-    CV                         : CV
-    AnalysisSoftware           : AnalysisSoftware
-    Providers                  : Provider
-    AuditCollections           : AuditCollection
-    AnalysisSampleCollection   : AnalysisSampleCollection
-    SequenceCollection         : SequenceCollection
-    AnalysisCollection         : AnalysisCollection
-    AnalysisProtocolCollection : AnalysisProtocolCollection
-    DataCollection             : DataCollection
-    BiblioGraphicReference     : BiblioGraphicReference
-    RowVersion                 : DateTime  
-    }
+//and [<CLIMutable>] 
+//    MzIdentMLParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID                         : int
+//    FKParamContainer           : MzIdentMLParam
+//    [<RequiredAttribute()>]
+//    Term                       : Term
+//    [<RequiredAttribute()>]
+//    Unit                       : Term
+//    Value                      : string
+//    RowVersion                 : DateTime  
+//    }
 
 ///The searchparameters other than the modifications searched.
 and [<CLIMutable>] 
-     AdditionalSearchparam =
+     AdditionalSearchparams =
      {
       [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-      ID                     : int
-      RowVersion             : DateTime
-      AdditionalSearchparams : List<AdditionalSearchparams>
-      UserParam              : List<UserParam>
+      ID         : int
+      Term       : Term
+      UserParam  : UserParam
+      RowVersion : DateTime
      }
 
-///CvParam for AdditionalSearchParam
-and [<CLIMutable>] 
-    AdditionalSearchparams =
-    {
-    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID               : int
-    FKParamContainer : AdditionalSearchparam
-    [<RequiredAttribute()>]
-    Term             : Term
-    Unit             : Term
-    Value            : string
-    RowVersion       : DateTime  
-    }
+/////CvParam for AdditionalSearchParam
+//and [<CLIMutable>] 
+//    AdditionalSearchparams =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : AdditionalSearchparam
+//    [<RequiredAttribute()>]
+//    Term             : Term
+//    [<RequiredAttribute()>]
+//    Unit             : Term
+//    Value            : string
+//    RowVersion       : DateTime  
+//    }
 
 ///The organization a person belongs to.
 and [<CLIMutable>]
@@ -114,25 +111,26 @@ and [<CLIMutable>]
 
 ///Ambitous residues describes the range of mass that a specific location shall be checked because its position is ambitous.
 and [<CLIMutable>]
-    AmbitousResidue =
+    AmbiguousResidue =
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-     ID                    : int
-     Code                  : string
-     RowVersion            : DateTime
-     AmbitousResidueParams : List<AmbitousResidueParam>
-     UserParam             : List<UserParam>
+     ID                     : int
+     Code                   : string
+     RowVersion             : DateTime
+     AmbiguousResidueParams : List<AmbiguousResidueParam>
+     UserParams             : List<UserParam>
     }
 
 ///CvParam for AmbitousResidue
 and [<CLIMutable>] 
-    AmbitousResidueParam =
+    AmbiguousResidueParam =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID               : int
-    FKParamContainer : AdditionalSearchparam
+    FKParamContainer : AmbiguousResidue
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime  
@@ -164,19 +162,20 @@ and [<CLIMutable>]
 and [<CLIMutable>]
     AnalysisParams =
     {
-     ID        : int
-     Term      : Term
-     UserParam : UserParam
+     ID         : int
+     Term       : Term
+     UserParam  : UserParam
+     RowVersion : DateTime
     }
 
 ///Collection of the Protocols of the analyses.
 and [<CLIMutable>] 
     AnalysisProtocolCollection =
     {
-     ID : int
+     ID                             : int
      SpectrumIdentificationProtocol : SpectrumIdentificationProtocol
      ProteinDetectionProtocol       : ProteinDetectionProtocol
-     DataRowVersion                 : DateTime
+     RowVersion                     : DateTime
     }
 
 ///The samples analysed can optionally be recorded using CV terms for descriptions. If a composite sample has been analysed, the subsample association can be used to build a hierarchical description.
@@ -216,7 +215,7 @@ and [<CLIMutable>]
 //    RowVersion       : DateTime  
 //    }
 
-///Lust of analysis softwares.
+///List of analysis softwares.
 and [<CLIMutable>] 
     AnalysisSoftwareList =
     {
@@ -291,7 +290,7 @@ and [<CLIMutable>]
 
 ///The list of controlled vocabularies used in the file.
 and [<CLIMutable>]
-    CVLsit =
+    CVList =
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
      ID         : int
@@ -300,18 +299,18 @@ and [<CLIMutable>]
     }
 
 ///Params of CV
-and [<CLIMutable>] 
-    CVParam =
-    {
-    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID               : int
-    FKParamContainer : CV
-    [<RequiredAttribute()>]
-    Term             : Term
-    Unit             : Term
-    Value            : string
-    RowVersion       : DateTime  
-    }
+//and [<CLIMutable>] 
+//    CVParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : CV
+//    [<RequiredAttribute()>]
+//    Term             : Term
+//    Unit             : Term
+//    Value            : string
+//    RowVersion       : DateTime  
+//    }
 
 ///The specification of filters applied to the Database searched.
 and [<CLIMutable>] 
@@ -328,25 +327,28 @@ and [<CLIMutable>]
     DatabaseName =
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-     ID                : int
-     Name              : string
-     RowVersion        : DateTime
-     DatabseNameParams : List<DatabaseNameParam>
+     ID         : int
+     Name       : string
+     Term       : Term
+     UserParam  : UserParam
+     RowVersion : DateTime
+     //DatabseNameParams : List<DatabaseNameParam>
     }
 
-///Params of DatabseName.
-and [<CLIMutable>] 
-    DatabaseNameParam =
-    {
-    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID               : int
-    FKParamContainer : DatabaseName
-    [<RequiredAttribute()>]
-    Term             : Term
-    Unit             : Term
-    Value            : string
-    RowVersion       : DateTime 
-    }
+/////Params of DatabseName.
+//and [<CLIMutable>] 
+//    DatabaseNameParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : DatabaseName
+//    [<RequiredAttribute()>]
+//    Term             : Term
+//    [<RequiredAttribute()>]
+//    Unit             : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
 
 ///A specification of how a nucleic acid sequence Database was translated for searching.
 and [<CLIMutable>] 
@@ -354,9 +356,19 @@ and [<CLIMutable>]
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
      ID               : int
-     Frames           : List<string> ///SelfAdded
+     Frames           : List<Frame>
      TranslationTable : TranslationTable
      RowVersion       : DateTime
+    }
+
+and [<CLIMutable>] 
+    Frame =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+     ID                  : int
+     Frame               : string
+     DatabaseTranslation : DatabaseTranslation
+     RowVersion          : DateTime
     }
 
 ///The collection of input and output data sets of the analyses.
@@ -366,6 +378,7 @@ and [<CLIMutable>]
      ID            : int
      Input         : Input
      AnalysisData  : AnalysisData
+     RowVersion    : DateTime
     }
 
 ///Sequence from the Database search.
@@ -393,6 +406,7 @@ and [<CLIMutable>]
     FKParamContainer : DBSequence
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime 
@@ -423,9 +437,21 @@ and [<CLIMutable>]
     FKParamContainer : EnzymeParam
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime 
+    }
+
+and [<CLIMutable>]
+    EnzymeName =
+    {
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+     ID         : int
+     Name       : string
+     Term       : Term
+     UserParam  : UserParam
+     RowVersion : DateTime
     }
 
 ///List of used enzyme.
@@ -434,7 +460,7 @@ and [<CLIMutable>]
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
      ID          : int
-     independent : bool
+     Independent : bool
      Enzyme      : Enzyme
      RowVersion  : DateTime
     }
@@ -444,25 +470,27 @@ and [<CLIMutable>]
     Exclude =
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-     ID            : int
-     Term          : Term
-     RowVerion     : DateTime
-     ExcludeParams : List<ExcludeParams>
+     ID        : int
+     Term      : Term
+     UserParam : UserParam
+     RowVersion : DateTime
+     //ExcludeParams : List<ExcludeParams>
     }
 
-///Params of exclude.
-and [<CLIMutable>] 
-    ExcludeParams =
-    {
-    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID               : int
-    FKParamContainer : Exclude
-    [<RequiredAttribute()>]
-    Term             : Term
-    Unit             : Term
-    Value            : string
-    RowVersion       : DateTime 
-    }
+/////Params of exclude.
+//and [<CLIMutable>] 
+//    ExcludeParams =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : Exclude
+//    [<RequiredAttribute()>]
+//    Term             : Term
+//    [<RequiredAttribute()>]
+//    Unit             : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
 
 ///A URI to access documentation and tools to interpret the external format of the ExternalData instance.
 and [<CLIMutable>]
@@ -473,7 +501,7 @@ and [<CLIMutable>]
      URI              : string //Added because it seemed necessary
      Format           : string
      RowVersion       : DateTime
-     FileFormatParams : List<FileFormatParam>
+     //FileFormatParams : List<FileFormatParam>
     }
 
 ///The format of the ExternalData file.
@@ -496,6 +524,7 @@ and [<CLIMutable>]
     FKParamContainer : FileFormat
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime 
@@ -522,7 +551,7 @@ and [<CLIMutable>]
      Name             : string
      RowVersion       : DateTime
      FilterTypeParams : List<FilterTypeParam>
-     UserParam        : List<UserParam>
+     UserParams       : List<UserParam>
     }
 
 ///Params for FilterType.
@@ -534,6 +563,7 @@ and [<CLIMutable>]
     FKParamContainer : FilterType
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime 
@@ -553,7 +583,8 @@ and [<CLIMutable>]
 and [<CLIMutable>] 
     Value =
     {
-     ID            : string
+     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+     ID            : int
      Value         : float
      FragmentArray : FragmentArray
      RowVersion         : DateTime
@@ -599,6 +630,7 @@ and [<CLIMutable>]
     FKParamContainer : FragmentTolerance
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime 
@@ -608,25 +640,27 @@ and [<CLIMutable>]
 and [<CLIMutable>]
     Include =
     {
-     ID : int
-     Term : Term
+     ID         : int
+     Term       : Term
+     UserParam  : UserParam
      RowVersion : DateTime
-     IncludeParams : List<IncludeParam>
+     //IncludeParams : List<IncludeParam>
     }
 
-///Params ofInclude.
-and [<CLIMutable>] 
-    IncludeParam =
-    {
-    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID               : int
-    FKParamContainer : Include
-    [<RequiredAttribute()>]
-    Term             : Term
-    Unit             : Term
-    Value            : string
-    RowVersion       : DateTime 
-    }
+/////Params ofInclude.
+//and [<CLIMutable>] 
+//    IncludeParam =
+//    {
+//    [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
+//    ID               : int
+//    FKParamContainer : Include
+//    [<RequiredAttribute()>]
+//    Term             : Term
+//    [<RequiredAttribute()>]
+//    Unit             : Term
+//    Value            : string
+//    RowVersion       : DateTime 
+//    }
 
 ///The inputs to the analyses including the Databases searched, the spectral data and the source file converted to mzIdentML.
 and [<CLIMutable>]
@@ -663,13 +697,22 @@ and [<CLIMutable>]
     IonType =
     {
      ID            : int
-     Type          : string ///Added by self
+     //Type          : string 
      Charge        : int
-     Index         : List<int>
+     Index         : List<IndexItem>
      FragmentArray : FragmentArray
      RowVersion    : DateTime
      IonTypeParams : List<IonTypeParam>
-     UserParam     : List<UserParam>
+     UserParams    : List<UserParam>
+    }
+
+///The type of ion that has been identified.
+and [<CLIMutable>]
+    IndexItem =
+    {
+     ID         : int
+     IndexItem  : int
+     RowVersion : DateTime
     }
 
 ///Params of IonType
@@ -681,6 +724,7 @@ and [<CLIMutable>]
      FKParamContainer : IonType
      [<RequiredAttribute()>]
      Term             : Term
+     [<RequiredAttribute()>]
      Unit             : Term
      Value            : string
      RowVersion       : DateTime 
@@ -704,7 +748,7 @@ and [<CLIMutable>]
     MSLevel =
     {
     ID              : int
-    MSLEvel         : int
+    MSLevel         : int
     MassTable       : MassTable
     RowVersion      : DateTime
     }
@@ -718,6 +762,7 @@ and [<CLIMutable>]
     FKParamContainer : MassTable
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime 
@@ -729,7 +774,7 @@ and [<CLIMutable>]
     {
     ID              : int
     Name            : string
-    MassTable       : MassTable
+    //MassTable       : MassTable
     RowVersion      : DateTime
     MeasureParams   : List<MeasureParam>
     }
@@ -743,6 +788,7 @@ and [<CLIMutable>]
     FKParamContainer : Measure
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime 
@@ -772,6 +818,7 @@ and [<CLIMutable>]
     FKParamContainer : Modification
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime 
@@ -810,6 +857,7 @@ and [<CLIMutable>]
     FKParamContainer : ModLocation
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime 
@@ -836,6 +884,7 @@ and [<CLIMutable>]
     FKParamContainer       : Ontology
     [<RequiredAttribute()>]
     Term                   : Term
+    [<RequiredAttribute()>]
     Unit                   : Term
     Value                  : string
     RowVersion             : DateTime
@@ -862,6 +911,7 @@ and [<CLIMutable>]
     FKParamContainer : Organization
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime 
@@ -914,7 +964,7 @@ and [<CLIMutable>]
     SubstitutionModification : SubstitutionModification
     RowVersion               : DateTime 
     PeptideParams            : List<PeptideParam>
-    UserParam                : List<UserParam>
+    UserParams               : List<UserParam>
     }
 
 ///Params of Peptide.
@@ -926,6 +976,7 @@ and [<CLIMutable>]
     FKParamContainer : Peptide
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime  
@@ -948,7 +999,7 @@ and [<CLIMutable>]
     TranslationTable      : TranslationTable
     RowVersion            : DateTime 
     PeptideEvidenceParams : List<PeptideEvidenceParam>
-    UserParam             : List<UserParam>
+    UserParams            : List<UserParam>
     }
 
 ///Params of PeptideEvidence.
@@ -960,6 +1011,7 @@ and [<CLIMutable>]
     FKParamContainer : PeptideEvidence
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime 
@@ -1024,7 +1076,7 @@ and [<CLIMutable>]
     //Organization   : Organization
     RowVersion     : DateTime  
     PersonParams   : List<PersonParam>
-    UserParam      : List<UserParam>
+    UserParams     : List<UserParam>
     }
 
 ///Params of Person.
@@ -1036,6 +1088,7 @@ and [<CLIMutable>]
     FKParamContainer : Person
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime   
@@ -1051,7 +1104,7 @@ and [<CLIMutable>]
     ProteinDetectionHypothesis  : ProteinDetectionHypothesis
     RowVersion                  : DateTime
     ProteinAmbiguityGroupParams : List<ProteinAmbiguityGroupParam>
-    UserParam                   : List<UserParam>
+    UserParams                  : List<UserParam>
     }
 
 ///Params of ProteinAmbiguityGroup.
@@ -1063,6 +1116,7 @@ and [<CLIMutable>]
     FKParamContainer : ProteinAmbiguityGroup
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime     
@@ -1076,7 +1130,7 @@ and [<CLIMutable>]
     ID                          : int
     Name                        : string
     ProteinDetectionList        : ProteinDetectionList
-    ProteinDetectionProtocol   : ProteinDetectionProtocol
+    ProteinDetectionProtocol    : ProteinDetectionProtocol
     InputSpectrumIdentification : InputSpectrumIdentification
     RowVersion                  : DateTime
     //ProteinDetectionParams      : List<ProteinDetectionParam>
@@ -1107,7 +1161,7 @@ and [<CLIMutable>]
     PeptideHypothesis                : PeptideHypothesis
     RowVersion                       : DateTime  
     ProteinDetectionHypothesisParams : List<ProteinDetectionHypothesisParam>
-    UserParam                        : List<UserParam>
+    UserParams                       : List<UserParam>
     }
 
 ///Params of ProteinDetectionHypothesis.
@@ -1119,6 +1173,7 @@ and [<CLIMutable>]
     FKParamContainer : ProteinDetectionHypothesis
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime
@@ -1134,7 +1189,7 @@ and [<CLIMutable>]
     ProteinAmbiguityGroup      : ProteinAmbiguityGroup
     RowVersion                 : DateTime
     ProteinDetectionListParams : List<ProteinDetectionListParam>
-    UserParam                  : List<UserParam>
+    UserParams                 : List<UserParam>
     }
 
 ///Params of ProteindetectionList.
@@ -1146,6 +1201,7 @@ and [<CLIMutable>]
     FKParamContainer : ProteinDetectionList
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime
@@ -1221,6 +1277,7 @@ and [<CLIMutable>]
     FKParamContainer : Role
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime  
@@ -1249,6 +1306,7 @@ and [<CLIMutable>]
     FKParamContainer : Sample
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime  
@@ -1282,6 +1340,7 @@ and [<CLIMutable>]
     FKParamContainer : SearchDatabaseParam
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime  
@@ -1320,6 +1379,7 @@ and [<CLIMutable>]
     FKParamContainer       : SearchDatabaseModification
     [<RequiredAttribute()>]
     Term                   : Term
+    [<RequiredAttribute()>]
     Unit                   : Term
     Value                  : string
     RowVersion             : DateTime
@@ -1348,6 +1408,7 @@ and [<CLIMutable>]
     FKParamContainer       : SearchModification
     [<RequiredAttribute()>]
     Term                   : Term
+    [<RequiredAttribute()>]
     Unit                   : Term
     Value                  : string
     RowVersion             : DateTime
@@ -1420,7 +1481,7 @@ and [<CLIMutable>]
     FileFormat                  : FileFormat
     RowVersion                  : DateTime
     SourceFileParams            : List<SourceFileParam>
-    UserParam                   : List<UserParam>
+    UserParams                  : List<UserParam>
     }
 
 ///Params of SourceFile
@@ -1432,6 +1493,7 @@ and [<CLIMutable>]
     FKParamContainer       : SourceFile
     [<RequiredAttribute()>]
     Term                   : Term
+    [<RequiredAttribute()>]
     Unit                   : Term
     Value                  : string
     RowVersion             : DateTime
@@ -1475,14 +1537,6 @@ and [<CLIMutable>]
 //    RowVersion             : DateTime
 //    }
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///An Analysis which tries to identify peptides in input spectra, referencing the database searched, the input spectra, the output results and the protocol that is run.
 and [<CLIMutable>] 
     SpectrumIdentification =
@@ -1491,8 +1545,8 @@ and [<CLIMutable>]
     ID                              : int
     Name                            : string 
     ActivityDate                    : DateTime
-    SpectrumIdentificationList      : int     //Refers to SpectrumidentificationList normally
-    SpectrumIdentificationProtocol : int     //Refers to SpectrumIdentificationProtocol normally
+    SpectrumIdentificationList      : SpectrumIdentificationList
+    SpectrumIdentificationProtocol  : SpectrumIdentificationProtocol
     InputSpectra                    : InputSpectra
     SearchDatabaseRef               : SearchDatabaseRef
     RowVersion                      : DateTime
@@ -1533,7 +1587,7 @@ and [<CLIMutable>]
     PeptideEvidenceRef               : PeptideEvidenceRef
     RowVersion                       : DateTime
     SpectrumIdentificationItemParams : List<SpectrumIdentificationItemParam>
-    UserParam                        : List<UserParam>
+    UserParams                       : List<UserParam>
     }
 
 ///Params of SpectrumIdentification.
@@ -1545,6 +1599,7 @@ and [<CLIMutable>]
     FKParamContainer : SpectrumIdentificationItem
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime 
@@ -1572,7 +1627,7 @@ and [<CLIMutable>]
     SpectrumIdentificationResult     : SpectrumIdentificationResult
     RowVersion                       : DateTime
     SpectrumIdentificationListParams : List<SpectrumIdentificationListParam>
-    UserParam                        : List<UserParam>
+    UserParams                       : List<UserParam>
     }
 
 ///Params of SpectrumIdentificationList.
@@ -1584,6 +1639,7 @@ and [<CLIMutable>]
     FKParamContainer : SpectrumIdentificationList
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime 
@@ -1636,7 +1692,7 @@ and [<CLIMutable>]
     SpectrumIdentificationItem         : SpectrumIdentificationItem 
     RowVersion                         : DateTime 
     SpectrumIdentificationResultParams : List<SpectrumIdentificationResultParam>
-    UserParam                          : UserParam
+    UserParams                         : UserParam
     }
 
 and [<CLIMutable>] 
@@ -1647,6 +1703,7 @@ and [<CLIMutable>]
     FKParamContainer : SpectrumIdentificationResult
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime    
@@ -1680,7 +1737,7 @@ and [<CLIMutable>]
     ID                    : int
     Location              : int
     AvgMassDelta          : float
-    MonoisotopicMassDelta : float
+    MonoIsotopicMassDelta : float
     OriginalResidue       : string
     ReplacementResidue    : string
     RowVersion            : DateTime 
@@ -1732,19 +1789,21 @@ and [<CLIMutable>]
     TranslationTable =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID                : int
-    Name              : string 
-    TranslationParams : List<TranslationParam>
+    ID                     : int
+    Name                   : string 
+    TranslationTableParams : List<TranslationTableParam>
+    RowVersion             : DateTime
     }
 
 and [<CLIMutable>] 
-    TranslationParam =
+    TranslationTableParam =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
     ID               : int
     FKParamContainer : TranslationTable
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     Value            : string
     RowVersion       : DateTime    
@@ -1757,6 +1816,7 @@ and [<CLIMutable>]
     ID               : int
     [<RequiredAttribute()>]
     Term             : Term
+    [<RequiredAttribute()>]
     Unit             : Term
     UnitName         : string
     Value            : string
@@ -1764,19 +1824,143 @@ and [<CLIMutable>]
     }
 
 ///Defining Context of DB
-type DBMSContext() =
-    inherit DbContext()
+type DBMSContext =
+
+    inherit DbContext
+
+    new() = {inherit DbContext()}
+    new(options : DbContextOptions<DBMSContext>) = { inherit DbContext(options) }
     
+    [<DefaultValue>] 
+    val mutable m_mzIdentML : DbSet<MzIdentML>
+    member public this.MzIdentML with get() = this.m_mzIdentML
+                                                and set value = this.m_mzIdentML <- value
+
+    //[<DefaultValue>] 
+    //val mutable m_mzIdentMLParam : DbSet<MzIdentMLParam>
+    //member public this.MzIdentMLParam with get() = this.m_mzIdentMLParam
+    //                                            and set value = this.m_mzIdentMLParam <- value
+
+    //[<DefaultValue>] 
+    //val mutable m_additionalSearchParam : DbSet<AdditionalSearchparam>
+    //member public this.AdditionalSearchParam with get() = this.m_additionalSearchParam
+    //                                            and set value = this.m_additionalSearchParam <- value
+
+    [<DefaultValue>] 
+    val mutable m_additionalSearchParams : DbSet<AdditionalSearchparams>
+    member public this.AdditionalSearchParams with get() = this.m_additionalSearchParams
+                                                and set value = this.m_additionalSearchParams <- value
+
+    [<DefaultValue>] 
+    val mutable m_Affiliation : DbSet<Affiliation>
+    member public this.Affiliation with get() = this.m_Affiliation
+                                                and set value = this.m_Affiliation <- value
+
+    [<DefaultValue>] 
+    val mutable m_AmbiguousResidue : DbSet<AmbiguousResidue>
+    member public this.AmbiguousResidue with get() = this.m_AmbiguousResidue
+                                                and set value = this.m_AmbiguousResidue <- value
+
+    [<DefaultValue>] 
+    val mutable m_AmbiguousResidueParam : DbSet<AmbiguousResidueParam>
+    member public this.AmbiguousResidueParam with get() = this.m_AmbiguousResidueParam
+                                                    and set value = this.m_AmbiguousResidueParam <- value
+
+    [<DefaultValue>] 
+    val mutable m_analysisCollection : DbSet<AnalysisCollection>
+    member public this.AnalysisCollection with get() = this.m_analysisCollection
+                                                and set value = this.m_analysisCollection <- value
+
+    [<DefaultValue>] 
+    val mutable m_analysisData : DbSet<AnalysisData>
+    member public this.AnalysisData with get() = this.m_analysisData
+                                                and set value = this.m_analysisData <- value
+
+    [<DefaultValue>] 
+    val mutable m_analysisParams : DbSet<AnalysisParams>
+    member public this.AnalysisParams with get() = this.m_analysisParams
+                                                and set value = this.m_analysisParams <- value
+
+    [<DefaultValue>] 
+    val mutable m_analysisProtocolCollection : DbSet<AnalysisProtocolCollection>
+    member public this.AnalysisProtocolCollection with get() = this.m_analysisProtocolCollection
+                                                            and set value = this.m_analysisProtocolCollection <- value
+
+    [<DefaultValue>] 
+    val mutable m_analysisSampleCollection : DbSet<AnalysisSampleCollection>
+    member public this.AnalysisSampleCollection with get() = this.m_analysisSampleCollection
+                                                            and set value = this.m_analysisSampleCollection <- value
+
+
     [<DefaultValue>] 
     val mutable m_analysisSoftware : DbSet<AnalysisSoftware>
     member public this.AnalysisSoftware with get() = this.m_analysisSoftware
                                                 and set value = this.m_analysisSoftware <- value
+    //[<DefaultValue>] 
+    //val mutable m_analysisSoftwareParam : DbSet<AnalysisSoftwareParam>
+    //member public this.AnalysisSoftwareParam with get() = this.m_analysisSoftwareParam
+    //                                            and set value = this.m_analysisSoftwareParam <- value
+  
+    [<DefaultValue>] 
+    val mutable m_analysisSoftwareList : DbSet<AnalysisSoftwareList>
+    member public this.AnalysisSoftwareList with get() = this.m_analysisSoftwareList
+                                                and set value = this.m_analysisSoftwareList <- value
 
     [<DefaultValue>] 
-    val mutable m_analysisSoftwareParam : DbSet<AnalysisSoftwareParam>
-    member public this.AnalysisSoftwareParam with get() = this.m_analysisSoftwareParam
-                                                and set value = this.m_analysisSoftwareParam <- value
-    
+    val mutable m_AuditCollection : DbSet<AuditCollection>
+    member public this.AuditCollection with get() = this.m_AuditCollection
+                                                and set value = this.m_AuditCollection <- value
+
+    [<DefaultValue>] 
+    val mutable m_BiblioGraphicReference : DbSet<BiblioGraphicReference>
+    member public this.BiblioGraphicReference with get() = this.m_BiblioGraphicReference
+                                                and set value = this.m_BiblioGraphicReference <- value
+
+    [<DefaultValue>] 
+    val mutable m_ContactRole : DbSet<ContactRole>
+    member public this.ContactRole with get() = this.m_ContactRole
+                                                and set value = this.m_ContactRole <- value
+
+    [<DefaultValue>] 
+    val mutable m_Customizations : DbSet<Customizations>
+    member public this.Customizations with get() = this.m_Customizations
+                                                and set value = this.m_Customizations <- value
+
+    [<DefaultValue>] 
+    val mutable m_CV : DbSet<CV>
+    member public this.CV with get() = this.m_CV
+                                    and set value = this.m_CV <- value
+
+    [<DefaultValue>] 
+    val mutable m_CVList : DbSet<CVList>
+    member public this.CVList with get() = this.CVList
+                                        and set value = this.CVList <- value
+
+    //[<DefaultValue>] 
+    //val mutable m_CVParam : DbSet<CVParam>
+    //member public this.CVParam with get() = this.m_CVParam
+    //                                    and set value = this.m_CVParam <- value
+
+    [<DefaultValue>] 
+    val mutable m_DatabaseFilters : DbSet<DatabaseFilters>
+    member public this.DatabaseFilters with get() = this.m_DatabaseFilters
+                                                and set value = this.m_DatabaseFilters <- value
+
+    [<DefaultValue>] 
+    val mutable m_DatabaseName : DbSet<DatabaseName>
+    member public this.DatabaseName with get() = this.m_DatabaseName
+                                            and set value = this.m_DatabaseName <- value
+
+    [<DefaultValue>] 
+    val mutable m_DatabaseTranslation : DbSet<DatabaseTranslation>
+    member public this.DatabaseTranslation with get() = this.m_DatabaseTranslation
+                                                    and set value = this.m_DatabaseTranslation <- value
+
+    [<DefaultValue>] 
+    val mutable m_DataCollection : DbSet<DataCollection>
+    member public this.DataCollection with get() = this.m_DataCollection
+                                                    and set value = this.m_DataCollection <- value
+
     [<DefaultValue>] 
     val mutable m_dbSequence : DbSet<DBSequence>
     member public this.DBSequence with get() = this.m_dbSequence
@@ -1788,6 +1972,91 @@ type DBMSContext() =
                                                 and set value = this.m_dbSequenceParam <- value
 
     [<DefaultValue>] 
+    val mutable m_enzyme : DbSet<Enzyme>
+    member public this.Enzyme with get() = this.m_enzyme
+                                    and set value = this.m_enzyme <- value
+
+    [<DefaultValue>] 
+    val mutable m_enzymeName : DbSet<EnzymeName>
+    member public this.EnzymeName with get() = this.m_enzymeName
+                                    and set value = this.m_enzymeName <- value
+
+    [<DefaultValue>] 
+    val mutable m_enzymes : DbSet<Enzymes>
+    member public this.Enzymes with get() = this.m_enzymes
+                                    and set value = this.m_enzymes <- value
+
+    [<DefaultValue>] 
+    val mutable m_Exclude : DbSet<Exclude>
+    member public this.Exclude with get() = this.m_Exclude
+                                    and set value = this.m_Exclude <- value
+
+    [<DefaultValue>] 
+    val mutable m_ExternalFormatDocumentation : DbSet<ExternalFormatDocumentation>
+    member public this.ExternalFormatDocumentation with get() = this.m_ExternalFormatDocumentation
+                                                            and set value = this.m_ExternalFormatDocumentation <- value
+
+    [<DefaultValue>] 
+    val mutable m_FileFormat : DbSet<FileFormat>
+    member public this.FileFormat with get() = this.m_FileFormat
+                                                and set value = this.m_FileFormat <- value
+
+    [<DefaultValue>] 
+    val mutable m_Filter : DbSet<Filter>
+    member public this.Filter with get() = this.m_Filter
+                                        and set value = this.m_Filter <- value
+
+    [<DefaultValue>] 
+    val mutable m_FilterType : DbSet<FilterType>
+    member public this.FilterType with get() = this.m_FilterType
+                                        and set value = this.m_FilterType <- value
+
+    [<DefaultValue>] 
+    val mutable m_FragmentArray : DbSet<FragmentArray>
+    member public this.FragmentArray with get() = this.m_FragmentArray
+                                        and set value = this.m_FragmentArray <- value
+
+    [<DefaultValue>] 
+    val mutable m_Fragmentation : DbSet<Fragmentation>
+    member public this.Fragmentation with get() = this.m_Fragmentation
+                                        and set value = this.m_Fragmentation <- value
+
+    [<DefaultValue>] 
+    val mutable m_FragmentationTable : DbSet<FragmentationTable>
+    member public this.FragmentationTable with get() = this.m_FragmentationTable
+                                            and set value = this.m_FragmentationTable <- value
+
+    [<DefaultValue>] 
+    val mutable m_FragmentTolerance : DbSet<FragmentTolerance>
+    member public this.FragmentTolerance with get() = this.m_FragmentTolerance
+                                                and set value = this.m_FragmentTolerance <- value
+
+    [<DefaultValue>] 
+    val mutable m_Include : DbSet<Include>
+    member public this.Include with get() = this.m_Include
+                                        and set value = this.m_Include <- value
+
+    [<DefaultValue>] 
+    val mutable m_Input : DbSet<Input>
+    member public this.Input with get() = this.m_Input
+                                        and set value = this.m_Input <- value
+
+    [<DefaultValue>] 
+    val mutable m_InputSpectra : DbSet<InputSpectra>
+    member public this.InputSpectra with get() = this.m_InputSpectra
+                                        and set value = this.m_InputSpectra <- value
+
+    [<DefaultValue>] 
+    val mutable m_InputSpectrumIdentification : DbSet<InputSpectrumIdentification>
+    member public this.InputSpectrumIdentification with get() = this.m_InputSpectrumIdentification
+                                                        and set value = this.m_InputSpectrumIdentification <- value
+
+    [<DefaultValue>] 
+    val mutable m_IonType : DbSet<IonType>
+    member public this.IonType with get() = this.m_IonType
+                                        and set value = this.m_IonType <- value
+
+    [<DefaultValue>] 
     val mutable m_masstable : DbSet<MassTable>
     member public this.Masstable with get() = this.m_masstable
                                                 and set value = this.m_masstable <- value
@@ -1796,6 +2065,11 @@ type DBMSContext() =
     val mutable m_masstableParam : DbSet<MassTableParam>
     member public this.MasstableParam with get() = this.m_masstableParam
                                                 and set value = this.m_masstableParam <- value
+
+    [<DefaultValue>] 
+    val mutable m_Measure : DbSet<Measure>
+    member public this.Measure with get() = this.m_Measure
+                                        and set value = this.m_Measure <- value
 
     [<DefaultValue>] 
     val mutable m_modification : DbSet<Modification>
@@ -1838,6 +2112,11 @@ type DBMSContext() =
                                                 and set value = this.m_parent <- value
 
     [<DefaultValue>] 
+    val mutable m_parentTolerance : DbSet<ParentTolerance>
+    member public this.ParentTolerance with get() = this.m_parentTolerance
+                                                and set value = this.m_parentTolerance <- value
+
+    [<DefaultValue>] 
     val mutable m_peptide : DbSet<Peptide>
     member public this.Peptide with get() = this.m_peptide
                                                 and set value = this.m_peptide <- value
@@ -1853,6 +2132,11 @@ type DBMSContext() =
                                                 and set value = this.m_peptideEvidence <- value
 
     [<DefaultValue>] 
+    val mutable m_peptideEvidenceRef : DbSet<PeptideEvidenceRef>
+    member public this.PeptideEvidenceRef with get() = this.m_peptideEvidenceRef
+                                                and set value = this.m_peptideEvidenceRef <- value
+
+    [<DefaultValue>] 
     val mutable m_peptideEvidenceParam : DbSet<PeptideEvidenceParam>
     member public this.PeptideEvidenceParam with get() = this.m_peptideEvidenceParam
                                                 and set value = this.m_peptideEvidenceParam <- value
@@ -1862,10 +2146,15 @@ type DBMSContext() =
     member public this.PeptideHypothesis with get() = this.m_peptideHypothesis
                                                 and set value = this.m_peptideHypothesis <- value
 
+    //[<DefaultValue>] 
+    //val mutable m_peptideHypothesisParam : DbSet<PeptideHypothesisParam>
+    //member public this.PeptideHypothesisParam with get() = this.m_peptideHypothesisParam
+    //                                            and set value = this.m_peptideHypothesisParam <- value
+
     [<DefaultValue>] 
-    val mutable m_peptideHypothesisParam : DbSet<PeptideHypothesisParam>
-    member public this.PeptideHypothesisParam with get() = this.m_peptideHypothesisParam
-                                                and set value = this.m_peptideHypothesisParam <- value
+    val mutable m_PeptideSequence : DbSet<PeptideSequence>
+    member public this.PeptideSequence with get() = this.m_PeptideSequence
+                                                and set value = this.m_PeptideSequence <- value
 
     [<DefaultValue>] 
     val mutable m_person : DbSet<Person>
@@ -1892,10 +2181,10 @@ type DBMSContext() =
     member public this.ProteinDetection with get() = this.m_proteinDetection
                                                     and set value = this.m_proteinDetection <- value
 
-    [<DefaultValue>] 
-    val mutable m_proteinDetectionParam : DbSet<ProteinDetectionParam>
-    member public this.ProteinDetectionParam with get() = this.m_proteinDetectionParam
-                                                    and set value = this.m_proteinDetectionParam <- value
+    //[<DefaultValue>] 
+    //val mutable m_proteinDetectionParam : DbSet<ProteinDetectionParam>
+    //member public this.ProteinDetectionParam with get() = this.m_proteinDetectionParam
+    //                                                and set value = this.m_proteinDetectionParam <- value
 
     [<DefaultValue>] 
     val mutable m_proteinDetectionHypothesis : DbSet<ProteinDetectionHypothesis>
@@ -1922,15 +2211,30 @@ type DBMSContext() =
     member public this.ProteinDetectionProtocol with get() = this.m_proteinDetectionProtocol
                                                     and set value = this.m_proteinDetectionProtocol <- value
 
+    //[<DefaultValue>] 
+    //val mutable m_proteinDetectionProtocolParam : DbSet<ProteinDetectionProtocolParam>
+    //member public this.ProteinDetectionProtocolParam with get() = this.m_proteinDetectionProtocolParam
+    //                                                    and set value = this.m_proteinDetectionProtocolParam <- value
+
     [<DefaultValue>] 
-    val mutable m_proteinDetectionProtocolParam : DbSet<ProteinDetectionProtocolParam>
-    member public this.ProteinDetectionProtocolParam with get() = this.m_proteinDetectionProtocolParam
-                                                        and set value = this.m_proteinDetectionProtocolParam <- value
+    val mutable m_Provider : DbSet<Provider>
+    member public this.Provider with get() = this.m_Provider
+                                        and set value = this.m_Provider <- value
+
+    [<DefaultValue>] 
+    val mutable m_Residue : DbSet<Residue>
+    member public this.Residue with get() = this.m_Residue
+                                        and set value = this.m_Residue <- value
+
+    [<DefaultValue>] 
+    val mutable m_Role : DbSet<Role>
+    member public this.Role with get() = this.m_Role
+                                        and set value = this.m_Role <- value
 
     [<DefaultValue>] 
     val mutable m_sample : DbSet<Sample>
     member public this.Sample with get() = this.m_sample
-                                                        and set value = this.m_sample <- value
+                                        and set value = this.m_sample <- value
 
     [<DefaultValue>] 
     val mutable m_sampleParam : DbSet<SampleParam>
@@ -1948,34 +2252,84 @@ type DBMSContext() =
                                                 and set value = this.m_searchDatabaseParam <- value
 
     [<DefaultValue>] 
+    val mutable m_searchDatabaseRef : DbSet<SearchDatabaseRef>
+    member public this.SearchDatabaseRef with get() = this.m_searchDatabaseRef
+                                                and set value = this.m_searchDatabaseRef <- value
+
+    [<DefaultValue>] 
+    val mutable m_SearchModification : DbSet<SearchModification>
+    member public this.SearchModification with get() = this.m_SearchModification
+                                                and set value = this.m_SearchModification <- value
+
+    [<DefaultValue>] 
+    val mutable m_SearchType : DbSet<SearchType>
+    member public this.SearchType with get() = this.m_SearchType
+                                            and set value = this.m_SearchType <- value
+
+    [<DefaultValue>] 
+    val mutable m_seq : DbSet<Seq>
+    member public this.Seq with get() = this.m_seq
+                                    and set value = this.m_seq <- value
+
+    [<DefaultValue>] 
+    val mutable m_sequenceCollection : DbSet<SequenceCollection>
+    member public this.SequenceCollection with get() = this.m_sequenceCollection
+                                                and set value = this.m_sequenceCollection <- value
+
+    [<DefaultValue>] 
+    val mutable m_siteRegexp : DbSet<SiteRegexp>
+    member public this.SiteRegexp with get() = this.m_siteRegexp
+                                            and set value = this.m_siteRegexp <- value
+
+    [<DefaultValue>] 
+    val mutable m_softwareName : DbSet<SoftwareName>
+    member public this.SoftwareName with get() = this.m_softwareName
+                                            and set value = this.m_softwareName <- value
+
+    [<DefaultValue>] 
+    val mutable m_sourceFile : DbSet<SourceFile>
+    member public this.SourceFile with get() = this.m_sourceFile
+                                            and set value = this.m_sourceFile <- value
+
+    [<DefaultValue>] 
+    val mutable m_specificityRules : DbSet<SpecificityRules>
+    member public this.SpecificityRules with get() = this.m_specificityRules
+                                            and set value = this.m_specificityRules <- value
+
+    [<DefaultValue>] 
     val mutable m_spectraData : DbSet<SpectraData>
     member public this.SpectraData with get() = this.m_spectraData
                                                 and set value = this.m_spectraData <- value
 
-    [<DefaultValue>] 
-    val mutable m_spectraDataParam : DbSet<SpectraDataParam>
-    member public this.SpectraDataParam with get() = this.m_spectraDataParam
-                                                and set value = this.m_spectraDataParam <- value
+    //[<DefaultValue>] 
+    //val mutable m_spectraDataParam : DbSet<SpectraDataParam>
+    //member public this.SpectraDataParam with get() = this.m_spectraDataParam
+    //                                            and set value = this.m_spectraDataParam <- value
 
     [<DefaultValue>] 
     val mutable m_spectrumIdentification : DbSet<SpectrumIdentification>
     member public this.SpectrumIdentification with get() = this.m_spectrumIdentification
                                                     and set value = this.m_spectrumIdentification <- value
 
-    [<DefaultValue>] 
-    val mutable m_spectrumIdentificationParam : DbSet<SpectrumIdentificationParam>
-    member public this.SpectrumIdentificationParam with get() = this.m_spectrumIdentificationParam
-                                                    and set value = this.m_spectrumIdentificationParam <- value
+    //[<DefaultValue>] 
+    //val mutable m_spectrumIdentificationParam : DbSet<SpectrumIdentificationParam>
+    //member public this.SpectrumIdentificationParam with get() = this.m_spectrumIdentificationParam
+    //                                                and set value = this.m_spectrumIdentificationParam <- value
 
     [<DefaultValue>] 
     val mutable m_spectrumIdentificationItem : DbSet<SpectrumIdentificationItem>
     member public this.SpectrumIdentificationItem with get() = this.m_spectrumIdentificationItem
-                                                    and set value = this.m_spectrumIdentificationItem <- value
+                                                        and set value = this.m_spectrumIdentificationItem <- value
 
     [<DefaultValue>] 
     val mutable m_spectrumIdentificationItemParam : DbSet<SpectrumIdentificationItemParam>
     member public this.SpectrumIdentificationItemParam with get() = this.m_spectrumIdentificationItemParam
                                                        and set value = this.m_spectrumIdentificationItemParam <- value
+
+    [<DefaultValue>] 
+    val mutable m_spectrumIdentificationItemRef : DbSet<SpectrumIdentificationItemRef>
+    member public this.SpectrumIdentificationItemRef with get() = this.m_spectrumIdentificationItemRef
+                                                            and set value = this.m_spectrumIdentificationItemRef <- value
 
     [<DefaultValue>] 
     val mutable m_spectrumIdentificationList : DbSet<SpectrumIdentificationList>
@@ -1992,10 +2346,10 @@ type DBMSContext() =
     member public this.SpectrumIdentificationProtocol with get() = this.m_spectrumIdentificationProtocol
                                                         and set value = this.m_spectrumIdentificationProtocol <- value
 
-    [<DefaultValue>] 
-    val mutable m_spectrumIdentificationProtocolParam : DbSet<SpectrumIdentificationProtocolParam>
-    member public this.SpectrumIdentificationProtocolParam with get() = this.m_spectrumIdentificationProtocolParam
-                                                            and set value = this.m_spectrumIdentificationProtocolParam <- value
+    //[<DefaultValue>] 
+    //val mutable m_spectrumIdentificationProtocolParam : DbSet<SpectrumIdentificationProtocolParam>
+    //member public this.SpectrumIdentificationProtocolParam with get() = this.m_spectrumIdentificationProtocolParam
+    //                                                        and set value = this.m_spectrumIdentificationProtocolParam <- value
 
     [<DefaultValue>] 
     val mutable m_spectrumIdentificationResult : DbSet<SpectrumIdentificationResult>
@@ -2006,6 +2360,21 @@ type DBMSContext() =
     val mutable m_spectrumIdentificationResultParam : DbSet<SpectrumIdentificationResultParam>
     member public this.SpectrumIdentificationResultParam with get() = this.m_spectrumIdentificationResultParam
                                                             and set value = this.m_spectrumIdentificationResultParam <- value
+
+    [<DefaultValue>] 
+    val mutable m_spectrumIDFormat : DbSet<SpectrumIDFormat>
+    member public this.SpectrumIDFormat with get() = this.m_spectrumIDFormat
+                                        and set value = this.m_spectrumIDFormat <- value
+
+    [<DefaultValue>] 
+    val mutable m_subSample : DbSet<SubSample>
+    member public this.SubSample with get() = this.m_subSample
+                                        and set value = this.m_subSample <- value
+
+    [<DefaultValue>] 
+    val mutable m_substitutionModification : DbSet<SubstitutionModification>
+    member public this.SubstitutionModification with get() = this.m_substitutionModification
+                                                        and set value = this.m_substitutionModification <- value
 
     [<DefaultValue>] 
     val mutable m_term : DbSet<Term>
@@ -2023,51 +2392,273 @@ type DBMSContext() =
                                         and set value = this.m_termTag <- value
 
     [<DefaultValue>] 
-    val mutable m_translation : DbSet<Translation>
-    member public this.Translation with get() = this.m_translation
-                                        and set value = this.m_translation <- value
+    val mutable m_Threshold : DbSet<Threshold>
+    member public this.Threshold with get() = this.m_Threshold
+                                        and set value = this.m_Threshold <- value
 
     [<DefaultValue>] 
-    val mutable m_translationParam : DbSet<TranslationParam>
-    member public this.TranslationParam with get() = this.m_translationParam
-                                        and set value = this.m_translationParam <- value
+    val mutable m_translationTable : DbSet<TranslationTable>
+    member public this.TranslationTable with get() = this.m_translationTable
+                                            and set value = this.m_translationTable <- value
 
-    override this.OnConfiguring (optionsBuilder :  DbContextOptionsBuilder) =
-        let fileDir = __SOURCE_DIRECTORY__ 
-        let dbPath = fileDir + "\Ontologies_Terms\MSDatenbank.db"
-        optionsBuilder.EnableSensitiveDataLogging() |> ignore
-        optionsBuilder.UseSqlite(@"Data Source="+ dbPath) |> ignore
+    [<DefaultValue>] 
+    val mutable m_translationTableParam : DbSet<TranslationTableParam>
+    member public this.TranslationTableParam with get() = this.m_translationTableParam
+                                                    and set value = this.m_translationTableParam <- value
+
+    [<DefaultValue>] 
+    val mutable m_userParam : DbSet<UserParam>
+    member public this.UserParam with get() = this.m_userParam
+                                        and set value = this.m_userParam <- value
+
+    //override this.OnConfiguring (optionsBuilder :  DbContextOptionsBuilder) =
+    //    let fileDir = __SOURCE_DIRECTORY__ 
+    //    let dbPath = fileDir + "\Ontologies_Terms\MSDatenbank.db"
+    //    optionsBuilder.EnableSensitiveDataLogging() |> ignore
+    //    optionsBuilder.UseSqlite(@"Data Source="+ dbPath) |> ignore
+
+let standardDBPath = fileDir + "\Ontologies_Terms\MSDatenbank.db"
+let configureSqlServerContext path = 
+    (fun () ->
+        let optionsBuilder = new DbContextOptionsBuilder<DBMSContext>()
+        optionsBuilder.UseSqlite(@"Data Source=" + path) |> ignore
+        new DBMSContext(optionsBuilder.Options)
+    )
 
 ///Define functions to create  for tables of DB////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 module InsertStatements =
-
-    let createAnalysisSoftware name analysisSoftwareParams =
+    open System.ComponentModel
+    open System.Security.Policy
+    open Microsoft.EntityFrameworkCore.Metadata.Internal
+    
+    let createMzIdentML name version cvList analysisSoftwareList provider auditCollection analysisSampleCollection sequenceCollection analysisCollection analysisProtocolCollection dataCollection biblioGraphicReference =
         {
-         AnalysisSoftware.ID                     = 0
-         AnalysisSoftware.Name                   = name
-         AnalysisSoftware.RowVersion             = DateTime.Now.Date
-         AnalysisSoftware.AnalysisSoftwareParams = analysisSoftwareParams
+         MzIdentML.ID                         = 0
+         MzIdentML.Name                       = name
+         MzIdentML.Version                    = version
+         MzIdentML.CVList                     = cvList
+         MzIdentML.AnalysisSoftwareList       = analysisSoftwareList
+         MzIdentML.Provider                   = provider
+         MzIdentML.AuditCollection            = auditCollection
+         MzIdentML.AnalysisSampleCollection   = analysisSampleCollection
+         MzIdentML.SequenceCollection         = sequenceCollection
+         MzIdentML.AnalysisCollection         = analysisCollection
+         MzIdentML.AnalysisProtocolCollection = analysisProtocolCollection
+         MzIdentML.DataCollection             = dataCollection
+         MzIdentML.BiblioGraphicReference     = biblioGraphicReference
+         MzIdentML.RowVersion                 = DateTime.Now.Date
         }
 
-    let createAnalysisSoftwareParam analysisSoftware value term unit =
+    let createAdditionalSearchParams term userParam =
         {
-         AnalysisSoftwareParam.ID               = 0
-         AnalysisSoftwareParam.FKParamContainer = analysisSoftware
-         AnalysisSoftwareParam.Value            = value
-         AnalysisSoftwareParam.Term             = term
-         AnalysisSoftwareParam.Unit             = unit
-         AnalysisSoftwareParam.RowVersion       = DateTime.Now.Date
+         AdditionalSearchparams.ID         = 0
+         AdditionalSearchparams.Term       = term
+         AdditionalSearchparams.UserParam  = userParam
+         AdditionalSearchparams.RowVersion = DateTime.Now.Date
+        }
+    
+    let createAffiliation organization =
+        {
+         Affiliation.ID           = 0
+         Affiliation.Organization = organization
+         Affiliation.RowVersion   = DateTime.Now.Date
         }
 
-    let createDBSequence name accession searchDB dBSequenceParams =
+    let createAmbiguousResidue code ambitousResidueParams userParams =
+        {
+         AmbiguousResidue.ID                     = 0
+         AmbiguousResidue.Code                   = code
+         AmbiguousResidue.RowVersion             = DateTime.Now.Date
+         AmbiguousResidue.AmbiguousResidueParams = ambitousResidueParams
+         AmbiguousResidue.UserParams             = userParams
+        }
+
+    let createAmbiguousResidueParam ambiguousResidue value term unit =
+        {
+         AmbiguousResidueParam.ID               = 0
+         AmbiguousResidueParam.FKParamContainer = ambiguousResidue
+         AmbiguousResidueParam.Value            = value
+         AmbiguousResidueParam.Term             = term
+         AmbiguousResidueParam.Unit             = unit
+         AmbiguousResidueParam.RowVersion       = DateTime.Now.Date
+        }
+    
+    let createAnalysisCollection proteinDetection spectrumIdentification =
+        {
+         AnalysisCollection.ID                     = 0
+         AnalysisCollection.ProteinDetection       = proteinDetection
+         AnalysisCollection.SpectrumIdentification = spectrumIdentification
+         AnalysisCollection.RowVersion             = DateTime.Now.Date
+        }
+
+    let createAnalysisData spectrumidentificationList proteindetectionList =
+        {
+         AnalysisData.ID                         = 0
+         AnalysisData.SpectrumidentificationList = spectrumidentificationList
+         AnalysisData.ProteindetectionList       = proteindetectionList
+         AnalysisData.RowVersion                 = DateTime.Now.Date
+        }
+
+    let createAnalysisParams term userParam =
+        {
+         AnalysisParams.ID         = 0
+         AnalysisParams.Term       = term
+         AnalysisParams.UserParam  = userParam
+         AnalysisParams.RowVersion = DateTime.Now.Date
+        }
+
+    let createAnalysisProtocolCollection spectrumIdentificationProtocol proteinDetectionProtocol =
+        {
+         AnalysisProtocolCollection.ID                             = 0
+         AnalysisProtocolCollection.SpectrumIdentificationProtocol = spectrumIdentificationProtocol
+         AnalysisProtocolCollection.ProteinDetectionProtocol       = proteinDetectionProtocol
+         AnalysisProtocolCollection.RowVersion                     = DateTime.Now.Date
+        }
+
+    let createAnalysisSampleCollection sample =
+        {
+         AnalysisSampleCollection.ID         = 0
+         AnalysisSampleCollection.Sample     = sample
+         AnalysisSampleCollection.RowVersion = DateTime.Now.Date
+        }
+
+    let createAnalysisSoftware name uri contactRole softwareName customizations =
+        {
+         AnalysisSoftware.ID             = 0
+         AnalysisSoftware.Name           = name
+         AnalysisSoftware.URI            = uri
+         AnalysisSoftware.ContactRole    = contactRole
+         AnalysisSoftware.SoftwareName   = softwareName
+         AnalysisSoftware.Customizations = customizations
+         AnalysisSoftware.RowVersion     = DateTime.Now.Date
+         //AnalysisSoftware.AnalysisSoftwareParams = analysisSoftwareParams
+        }
+
+    //let createAnalysisSoftwareParam analysisSoftware value term unit =
+    //    {
+    //     AnalysisSoftwareParam.ID               = 0
+    //     AnalysisSoftwareParam.FKParamContainer = analysisSoftware
+    //     AnalysisSoftwareParam.Value            = value
+    //     AnalysisSoftwareParam.Term             = term
+    //     AnalysisSoftwareParam.Unit             = unit
+    //     AnalysisSoftwareParam.RowVersion       = DateTime.Now.Date
+    //    }
+
+    let createAnalysisSoftwareList analysisSoftware =
+        {
+         AnalysisSoftwareList.ID               = 0
+         AnalysisSoftwareList.AnalysisSoftware = analysisSoftware
+         AnalysisSoftwareList.RowVersion       = DateTime.Now.Date
+        }
+
+    let createAuditCollection organization  person =
+        {
+         AuditCollection.ID           = 0
+         AuditCollection.Organization = organization 
+         AuditCollection.Person       = person
+         AuditCollection.RowVersion   = DateTime.Now.Date
+        }
+
+    let createBibliographicReference name issue title pages volume doi editor publication publisher year authors =
+        {
+         BiblioGraphicReference.ID          = 0
+         BiblioGraphicReference.Name        = name
+         BiblioGraphicReference.Issue       = issue
+         BiblioGraphicReference.Title       = title
+         BiblioGraphicReference.Pages       = pages
+         BiblioGraphicReference.Volume      = volume
+         BiblioGraphicReference.DOI         = doi
+         BiblioGraphicReference.Editor      = editor
+         BiblioGraphicReference.Publication = publication
+         BiblioGraphicReference.Publisher   = publisher
+         BiblioGraphicReference.Year        = year
+         BiblioGraphicReference.Authors     = authors
+         BiblioGraphicReference.RowVersion  = DateTime.Now.Date
+        }
+
+    let createContactRole person role =
+        {
+         ContactRole.ID         = 0
+         ContactRole.Person     = person
+         ContactRole.Role       = role
+         ContactRole.RowVersion = DateTime.Now.Date
+        }
+
+    let createCustomizations description =
+        {
+         Customizations.ID          = 0
+         Customizations.Description = description
+         Customizations.RowVersion  = DateTime.Now.Date
+        }
+
+    let createCV fullName url version =
+        {
+         CV.ID         = 0
+         CV.FullName   = fullName
+         CV.URL        = url
+         CV.Version    = version 
+         CV.RowVersion = DateTime.Now.Date
+        }
+
+    let createCVList cv =
+        {
+         CVList.ID         = 0
+         CVList.CV         = cv
+         CVList.RowVersion = DateTime.Now.Date
+        }
+
+    let createDatabaseFilters filter =
+        {
+         DatabaseFilters.ID         = 0
+         DatabaseFilters.Filter     = filter
+         DatabaseFilters.RowVersion = DateTime.Now.Date
+        }
+
+    let createDatabaseName name term userParam =
+        {
+         DatabaseName.ID         = 0
+         DatabaseName.Name       = name
+         DatabaseName.Term       = term
+         DatabaseName.UserParam  = userParam
+         DatabaseName.RowVersion = DateTime.Now.Date
+        }
+
+    let createDatabaseTranslation frames translationTable =
+        {
+         DatabaseTranslation.ID               = 0
+         DatabaseTranslation.Frames           = frames
+         DatabaseTranslation.TranslationTable = translationTable
+         DatabaseTranslation.RowVersion       = DateTime.Now.Date
+        }
+
+    let createFrame frame databasetranslation =
+        {
+         Frame.ID                  = 0
+         Frame.Frame               = frame
+         Frame.DatabaseTranslation = databasetranslation
+         Frame.RowVersion          = DateTime.Now.Date
+        }
+
+    let createDataCollection input analysisData =
+        {
+         DataCollection.ID           = 0
+         DataCollection.Input        = input
+         DataCollection.AnalysisData = analysisData
+         DataCollection.RowVersion   = DateTime.Now.Date
+        }
+
+    let createDBSequence name accession length sequence searchDB dBSequenceParams userParams =
         {
          DBSequence.ID               = 0
          DBSequence.Name             = name
          DBSequence.Accession        = accession
+         DBSequence.Length           = length
+         DBSequence.Seq              = sequence
          DBSequence.SearchDB         = searchDB
          DBSequence.RowVersion       = DateTime.Now.Date
          DBSequence.DBSequenceParams = dBSequenceParams
+         DBSequence.UserParam        = userParams
         }
 
     let createDBSequenceParam dBSequence value term unit =
@@ -2080,13 +2671,176 @@ module InsertStatements =
          DBSequenceParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createMassTable name mSLevel massTableParams =
+    let createEnzyme name cleavagesite cTermGain nTermGain minDistance semiSpecific enzymeParams =
+        {
+         Enzyme.ID           = 0
+         Enzyme.Name         = name
+         Enzyme.CleavageSite = cleavagesite
+         Enzyme.CTermGain    = cTermGain
+         Enzyme.NTermGain    = nTermGain
+         Enzyme.MinDistance  = minDistance
+         Enzyme.SemiSpecific = semiSpecific
+         Enzyme.RowVersion   = DateTime.Now.Date
+         Enzyme.EnzymeParams = enzymeParams
+        }
+
+    let createEnzymeName name term userParam =
+        {
+         EnzymeName.ID         = 0
+         EnzymeName.Name       = name
+         EnzymeName.Term       = term
+         EnzymeName.UserParam  = userParam
+         EnzymeName.RowVersion = DateTime.Now.Date
+        }
+
+    let createEnzymes independent enzyme =
+        {
+         Enzymes.ID          = 0
+         Enzymes.Independent = independent
+         Enzymes.Enzyme      = enzyme
+         Enzymes.RowVersion  = DateTime.Now.Date
+        }
+
+    let createExclude term userParam =
+        {
+         Exclude.ID         = 0
+         Exclude.Term       = term
+         Exclude.UserParam  = userParam
+         Exclude.RowVersion = DateTime.Now.Date
+        }
+
+    let createExternalFormatDocumentation uri format =
+        {
+         ExternalFormatDocumentation.ID         = 0
+         ExternalFormatDocumentation.URI        = uri
+         ExternalFormatDocumentation.Format     = format
+         ExternalFormatDocumentation.RowVersion = DateTime.Now.Date
+        }
+
+    let createFileFormat format fileFormatParams =
+        {
+         FileFormat.ID               = 0
+         FileFormat.Format           = format 
+         FileFormat.RowVersion       = DateTime.Now.Date
+         FileFormat.FileFormatParams = fileFormatParams
+        }
+
+    let createFilter filterType exclude includes =
+        {
+         Filter.ID         = 0
+         Filter.FilterType = filterType
+         Filter.Exclude    = exclude
+         Filter.Include    = includes
+         Filter.RowVersion = DateTime.Now.Date
+        }
+
+    let createFilterType name term userParams =
+        {
+         FilterType.ID               = 0
+         FilterType.Name             = name
+         FilterType.FilterTypeParams = term
+         FilterType.UserParams       = userParams
+         FilterType.RowVersion       = DateTime.Now.Date
+        }
+
+    let createFragmentArray values fragmentationTable =
+        {
+         FragmentArray.ID                 = 0
+         FragmentArray.Values             = values
+         FragmentArray.FragmentationTable = fragmentationTable
+         FragmentArray.RowVersion         = DateTime.Now.Date
+        }
+
+    let createValue value fragmentArray =
+        {
+         Value.ID            = 0
+         Value.Value         = value
+         Value.FragmentArray = fragmentArray
+         Value.RowVersion    = DateTime.Now.Date
+        }
+
+    let createFragmentation ionType =
+        {
+         Fragmentation.ID         = 0
+         Fragmentation.IonType    = ionType
+         Fragmentation.RowVersion = DateTime.Now.Date
+        }
+
+    let createFragmentationTable measure =
+        {
+         FragmentationTable.ID         = 0
+         FragmentationTable.Measure    = measure
+         FragmentationTable.RowVersion = DateTime.Now.Date
+        }
+
+    let createFragmentTolerance value fragmentToleranceParams =
+        {
+         FragmentTolerance.ID                      = 0
+         FragmentTolerance.Value                   = value
+         FragmentTolerance.RowVersion              = DateTime.Now.Date
+         FragmentTolerance.FragmentToleranceParams = fragmentToleranceParams
+        }
+
+    let createInclude term userParam =
+        {
+         Include.ID         = 0
+         Include.Term       = term
+         Include.UserParam  = userParam
+         Include.RowVersion = DateTime.Now.Date
+        }
+
+    let createInputs searchDatabase sourceFile spectraData =
+        {
+         Input.ID             = 0
+         Input.SearchDatabase = searchDatabase
+         Input.SourceFile     = sourceFile
+         Input.SpectraData    = spectraData
+         Input.RowVersion     = DateTime.Now.Date
+        }
+
+    let createInputSpectra spectraData =
+        {
+         InputSpectra.ID          = 0
+         InputSpectra.SpectraData = spectraData
+         InputSpectra.RowVersion  = DateTime.Now.Date
+        }
+
+    let createInputSpectrumIdentification spectrumIdentificationList =
+        {
+         InputSpectrumIdentification.ID                         = 0
+         InputSpectrumIdentification.SpectrumIdentificationList = spectrumIdentificationList
+         InputSpectrumIdentification.RowVersion                 = DateTime.Now.Date
+        }
+
+    let createIonType index charge fragmentArray ionTypeParams userParams =
+        {
+         IonType.ID            = 0
+         IonType.Index         = index
+         IonType.Charge        = charge
+         IonType.FragmentArray = fragmentArray
+         IonType.RowVersion    = DateTime.Now.Date
+         IonType.IonTypeParams = ionTypeParams
+         IonType.UserParams    = userParams
+        }
+
+    let createIonTypeParam ionType value term unit =
+        {
+         IonTypeParam.ID               = 0
+         IonTypeParam.FKParamContainer = ionType
+         IonTypeParam.Value            = value
+         IonTypeParam.Term             = term
+         IonTypeParam.Unit             = unit
+         IonTypeParam.RowVersion       = DateTime.Now.Date
+        }
+
+    let createMassTable name msLevel massTableParams userParam =
         {
          MassTable.ID              = 0
          MassTable.Name            = name
-         MassTable.MSLevel         = mSLevel
+         MassTable.MSLevels        = msLevel
          MassTable.RowVersion      = DateTime.Now.Date
          MassTable.MassTableParams = massTableParams
+         MassTable.UserParam       = userParam
         }
 
     let createMassTableParam massTable value term unit =
@@ -2097,6 +2851,14 @@ module InsertStatements =
          MassTableParam.Term             = term
          MassTableParam.Unit             = unit
          MassTableParam.RowVersion       = DateTime.Now.Date
+        }
+
+    let createMeasure name measureParams =
+        {
+         Measure.ID            = 0
+         Measure.Name          = name
+         Measure.RowVersion    = DateTime.Now.Date
+         Measure.MeasureParams = measureParams
         }
 
     let createModification name avgMassDelta monoisotopicMassDelta residues modLocation modificationParams =
@@ -2121,6 +2883,13 @@ module InsertStatements =
          ModificationParam.RowVersion       = DateTime.Now.Date
         }
 
+    let createModificationParams searchModification =
+        {
+         ModificationParams.ID                 = 0
+         ModificationParams.SearchModification = searchModification
+         ModificationParams.RowVersion         = DateTime.Now.Date
+        }
+
     let createModLocation modification location peptide residue modlocationParams =
         {
          ModLocation.ID                = 0
@@ -2142,12 +2911,12 @@ module InsertStatements =
          ModLocationParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createOntology name params terms =
+    let createOntology name ontologyParams terms =
         {
          Ontology.ID             = 0
          Ontology.Name           = name
          Ontology.RowVersion     = DateTime.Now.Date
-         Ontology.OntologyParams = params
+         Ontology.OntologyParams = ontologyParams
          Ontology.Terms          = terms
         }
 
@@ -2180,33 +2949,43 @@ module InsertStatements =
          OrganizationParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createParent name country organization parentParams =
+    let createParent organization  =
         {
          Parent.ID           = 0
-         Parent.Name         = name
-         Parent.Country      = country
+         //Parent.Name         = name
+         //Parent.Country      = country
          Parent.Organization = organization
          Parent.RowVersion   = DateTime.Now.Date
-         Parent.ParentParams = parentParams
+         //Parent.ParentParams = parentParams
         }
 
-    let createParentParam parent value term unit =
+    //let createParentParam parent value term unit =
+    //    {
+    //     ParentParam.ID               = 0
+    //     ParentParam.FKParamContainer = parent
+    //     ParentParam.Value            = value
+    //     ParentParam.Term             = term
+    //     ParentParam.Unit             = unit
+    //     ParentParam.RowVersion       = DateTime.Now.Date
+    //    }
+
+    let createParentTolerance term =
         {
-         ParentParam.ID               = 0
-         ParentParam.FKParamContainer = parent
-         ParentParam.Value            = value
-         ParentParam.Term             = term
-         ParentParam.Unit             = unit
-         ParentParam.RowVersion       = DateTime.Now.Date
+         ParentTolerance.ID         = 0
+         ParentTolerance.Term       = term
+         ParentTolerance.RowVersion = DateTime.Now.Date
         }
 
-    let createPeptide name sequence peptideParams =
+    let createPeptide name peptideSequence modification substitutionModification peptideParams userParams =
         {
-         Peptide.ID            = 0
-         Peptide.Name          = name
-         Peptide.Sequence      = sequence
-         Peptide.RowVersion    = DateTime.Now.Date
-         Peptide.PeptideParams = peptideParams
+         Peptide.ID                         = 0
+         Peptide.Name                       = name
+         Peptide.PeptideSequence            = peptideSequence
+         Peptide.Modification               = modification
+         Peptide.SubstitutionModification   = substitutionModification
+         Peptide.RowVersion                 = DateTime.Now.Date
+         Peptide.PeptideParams              = peptideParams
+         Peptide.UserParams = userParams
         }
 
     let createPeptideParam peptide value term unit =
@@ -2219,20 +2998,21 @@ module InsertStatements =
          PeptideParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createPeptideEvidence peptide dBSequence isDecoy frame translation start ende pre post peptideEvidenceParams =
+    let createPeptideEvidence peptide dBSequence isDecoy frame translationTable start ende pre post peptideEvidenceParams userParams =
         {
          PeptideEvidence.ID                    = 0
          PeptideEvidence.Peptide               = peptide
          PeptideEvidence.DBSequence            = dBSequence
          PeptideEvidence.isDecoy               = isDecoy
          PeptideEvidence.Frame                 = frame
-         PeptideEvidence.Translation           = translation
+         PeptideEvidence.TranslationTable      = translationTable
          PeptideEvidence.Start                 = start
          PeptideEvidence.End                   = ende
          PeptideEvidence.Pre                   = pre
          PeptideEvidence.Post                  = post
          PeptideEvidence.RowVersion            = DateTime.Now.Date
          PeptideEvidence.PeptideEvidenceParams = peptideEvidenceParams
+         PeptideEvidence.UserParams            = userParams
         }
 
     let createPeptideEvidenceParam peptideEvidence value term unit =
@@ -2245,34 +3025,50 @@ module InsertStatements =
          PeptideEvidenceParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createPeptideHypothesis peptideDetectionHypothesisID peptideEvidence peptideHypothesisParams =
+    let createPeptideEvidenceRef peptideEvidence =
         {
-         PeptideHypothesis.ID                           = 0
-         PeptideHypothesis.PeptideDetectionHypothesisID = peptideDetectionHypothesisID
-         PeptideHypothesis.PeptideEvidence              = peptideEvidence
-         PeptideHypothesis.RowVersion                   = DateTime.Now.Date
-         PeptideHypothesis.PeptideHypothesisParams      = peptideHypothesisParams
+         PeptideEvidenceRef.ID              = 0
+         PeptideEvidenceRef.PeptideEvidence = peptideEvidence 
+         PeptideEvidenceRef.RowVersion      = DateTime.Now.Date
         }
 
-    let createPeptideHypothesisParam peptideHypothesis value term unit =
+    let createPeptideHypothesis peptideEvidenceRef spectrumIdentificationItemRef =
         {
-         PeptideHypothesisParam.ID               = 0
-         PeptideHypothesisParam.FKParamContainer = peptideHypothesis
-         PeptideHypothesisParam.Value            = value
-         PeptideHypothesisParam.Term             = term
-         PeptideHypothesisParam.Unit             = unit
-         PeptideHypothesisParam.RowVersion       = DateTime.Now.Date
+         PeptideHypothesis.ID                            = 0
+         PeptideHypothesis.PeptideEvidenceRef            = peptideEvidenceRef
+         PeptideHypothesis.SpectrumIdentificationItemRef = spectrumIdentificationItemRef
+         PeptideHypothesis.RowVersion                    = DateTime.Now.Date
+         //PeptideHypothesis.PeptideHypothesisParams      = peptideHypothesisParams
         }
 
-    let createPerson firstName middleName lastName organization personenParams =
+    //let createPeptideHypothesisParam peptideHypothesis value term unit =
+    //    {
+    //     PeptideHypothesisParam.ID               = 0
+    //     PeptideHypothesisParam.FKParamContainer = peptideHypothesis
+    //     PeptideHypothesisParam.Value            = value
+    //     PeptideHypothesisParam.Term             = term
+    //     PeptideHypothesisParam.Unit             = unit
+    //     PeptideHypothesisParam.RowVersion       = DateTime.Now.Date
+    //    }
+
+    let createPeptideSequence sequence =
+        {
+         PeptideSequence.ID         = 0
+         PeptideSequence.Sequence   = sequence
+         PeptideSequence.RowVersion = DateTime.Now.Date
+        }
+
+    let createPerson firstName middleName lastName affiliation personenParams userParams =
         {
          Person.ID           = 0
          Person.FirstName    = firstName
          Person.MiddleName   = middleName
          Person.LastName     = lastName
-         Person.Organization = organization
+         Person.Affiliation  = affiliation
+         //Person.Organization = organization
          Person.RowVersion   = DateTime.Now.Date
          Person.PersonParams = personenParams
+         Person.UserParams   = userParams
         }
 
     let createPersonParam person value term unit =
@@ -2285,13 +3081,14 @@ module InsertStatements =
          PersonParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createProteinAmbiguityGroup name proteinDetectionList proteinAmbiguityGroupParams =
+    let createProteinAmbiguityGroup name proteinDetectionHypothesis proteinAmbiguityGroupParams userParams =
         {
          ProteinAmbiguityGroup.ID                          = 0
          ProteinAmbiguityGroup.Name                        = name
-         ProteinAmbiguityGroup.ProteinDetectionList        = proteinDetectionList
+         ProteinAmbiguityGroup.ProteinDetectionHypothesis  = proteinDetectionHypothesis
          ProteinAmbiguityGroup.RowVersion                  = DateTime.Now.Date
          ProteinAmbiguityGroup.ProteinAmbiguityGroupParams = proteinAmbiguityGroupParams
+         ProteinAmbiguityGroup.UserParams                  = userParams
         }
 
     let createProteinAmbiguityGroupParam proteinAmbiguityGroup value term unit =
@@ -2304,35 +3101,37 @@ module InsertStatements =
          ProteinAmbiguityGroupParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createProteinDetection name proteinDetectionProtocol proteinDetectionList proteinDetectionParams =
+    let createProteinDetection name proteinDetectionProtocol proteinDetectionList inputSpectrumIdentification =
         {
-         ProteinDetection.ID                        = 0
-         ProteinDetection.Name                      = name
-         ProteinDetection.ProteinDetectionProtocol = proteinDetectionProtocol
-         ProteinDetection.ProteinDetectionList      = proteinDetectionList
-         ProteinDetection.RowVersion                = DateTime.Now.Date
-         ProteinDetection.ProteinDetectionParams    = proteinDetectionParams
+         ProteinDetection.ID                          = 0
+         ProteinDetection.Name                        = name
+         ProteinDetection.ProteinDetectionProtocol    = proteinDetectionProtocol
+         ProteinDetection.ProteinDetectionList        = proteinDetectionList
+         ProteinDetection.InputSpectrumIdentification = inputSpectrumIdentification
+         ProteinDetection.RowVersion                  = DateTime.Now.Date
+         //ProteinDetection.ProteinDetectionParams    = proteinDetectionParams
         }
 
-    let createProteinDetectionParam proteinDetection value term unit =
-        {
-         ProteinDetectionParam.ID               = 0
-         ProteinDetectionParam.FKParamContainer = proteinDetection
-         ProteinDetectionParam.Value            = value
-         ProteinDetectionParam.Term             = term
-         ProteinDetectionParam.Unit             = unit
-         ProteinDetectionParam.RowVersion       = DateTime.Now.Date
-        }
+    //let createProteinDetectionParam proteinDetection value term unit =
+    //    {
+    //     ProteinDetectionParam.ID               = 0
+    //     ProteinDetectionParam.FKParamContainer = proteinDetection
+    //     ProteinDetectionParam.Value            = value
+    //     ProteinDetectionParam.Term             = term
+    //     ProteinDetectionParam.Unit             = unit
+    //     ProteinDetectionParam.RowVersion       = DateTime.Now.Date
+    //    }
 
-    let createProteinDetectionHypothesis name dBSequence passThreshold proteinAmbiguityGroup proteinDetectionHypothesisParams =
+    let createProteinDetectionHypothesis name dBSequence passThreshold peptideHypothesis proteinDetectionHypothesisParams userParams =
         {
          ProteinDetectionHypothesis.ID                               = 0
          ProteinDetectionHypothesis.Name                             = name
          ProteinDetectionHypothesis.DBSequence                       = dBSequence
          ProteinDetectionHypothesis.PassThreshold                    = passThreshold
-         ProteinDetectionHypothesis.ProteinAmbiguityGroup            = proteinAmbiguityGroup
+         ProteinDetectionHypothesis.PeptideHypothesis                = peptideHypothesis
          ProteinDetectionHypothesis.RowVersion                       = DateTime.Now.Date
          ProteinDetectionHypothesis.ProteinDetectionHypothesisParams = proteinDetectionHypothesisParams
+         ProteinDetectionHypothesis.UserParams                       = userParams
         }
 
     let createProteinDetectionHypothesisParam proteinDetectionHypothesis value term unit =
@@ -2345,14 +3144,14 @@ module InsertStatements =
          ProteinDetectionHypothesisParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createProteinDetectionList name searchDB accession proteinDetectionListParams =
+    let createProteinDetectionList name proteinAmbiguityGroup proteinDetectionListParams userParams =
         {
          ProteinDetectionList.ID                         = 0
          ProteinDetectionList.Name                       = name
-         ProteinDetectionList.SearchDB                   = searchDB
-         ProteinDetectionList.Accession                  = accession
+         ProteinDetectionList.ProteinAmbiguityGroup      = proteinAmbiguityGroup
          ProteinDetectionList.RowVersion                 = DateTime.Now.Date
          ProteinDetectionList.ProteinDetectionListParams = proteinDetectionListParams
+         ProteinDetectionList.UserParams                 = userParams
         }
 
     let createProteinDetectionListParam proteinDetectionList value term unit =
@@ -2365,31 +3164,61 @@ module InsertStatements =
          ProteinDetectionListParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createProteinDetectionProtocol name analysisSoftware proteinDetectionProtocolParams =
+    let createProteinDetectionProtocol name analysisSoftware analysisParams threshold =
         {
          ProteinDetectionProtocol.ID                             = 0
          ProteinDetectionProtocol.Name                           = name
          ProteinDetectionProtocol.AnalysisSoftware               = analysisSoftware
+         ProteinDetectionProtocol.AnalysisParams                 = analysisParams
+         ProteinDetectionProtocol.Threshold                      = threshold
          ProteinDetectionProtocol.RowVersion                     = DateTime.Now.Date
-         ProteinDetectionProtocol.ProteinDetectionProtocolParams = proteinDetectionProtocolParams
+         //ProteinDetectionProtocol.ProteinDetectionProtocolParams = proteinDetectionProtocolParams
         }
 
-    let createProteinDetectionProtocolParam proteinDetectionProtocol value term unit =
+    //let createProteinDetectionProtocolParam proteinDetectionProtocol value term unit =
+    //    {
+    //     ProteinDetectionProtocolParam.ID               = 0
+    //     ProteinDetectionProtocolParam.FKParamContainer = proteinDetectionProtocol
+    //     ProteinDetectionProtocolParam.Value            = value
+    //     ProteinDetectionProtocolParam.Term             = term
+    //     ProteinDetectionProtocolParam.Unit             = unit
+    //     ProteinDetectionProtocolParam.RowVersion       = DateTime.Now.Date
+    //    }
+
+    let createProvider name contactRole analysisSoftware =
         {
-         ProteinDetectionProtocolParam.ID               = 0
-         ProteinDetectionProtocolParam.FKParamContainer = proteinDetectionProtocol
-         ProteinDetectionProtocolParam.Value            = value
-         ProteinDetectionProtocolParam.Term             = term
-         ProteinDetectionProtocolParam.Unit             = unit
-         ProteinDetectionProtocolParam.RowVersion       = DateTime.Now.Date
+         Provider.ID               = 0
+         Provider.Name             = name
+         Provider.ContactRole      = contactRole
+         Provider.AnalysisSoftware = analysisSoftware 
+         Provider.RowVersion       = DateTime.Now.Date
         }
 
-    let createSample name sampleParams =
+    let createResidue sequence mass =
+        {
+         Residue.ID         = 0
+         Residue.Sequence   = sequence
+         Residue.Mass       = mass
+         Residue.RowVersion = DateTime.Now.Date
+        }
+
+    let createRole name roleParams =
+        {
+         Role.ID         = 0
+         Role.Name       = name
+         Role.RowVersion = DateTime.Now.Date
+         Role.RoleParams = roleParams
+        }
+
+    let createSample name contactRole subSample sampleParams userParams =
         {
          Sample.ID           = 0
          Sample.Name         = name
+         Sample.ContactRole  = contactRole
+         Sample.SubSample    = subSample
          Sample.RowVersion   = DateTime.Now.Date
          Sample.SampleParams = sampleParams
+         Sample.UserParams   = userParams
         }
 
     let createSampleParam sample value term unit =
@@ -2402,13 +3231,20 @@ module InsertStatements =
          SampleParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createSearchDatabase name location searchDatabaseParams =
+    let createSearchDatabase name location numResidues numDatabaseSequences releaseDate version externalFormatDocumentation fileFormat dataBaseName searchDatabaseParams =
         {
-         SearchDatabase.ID                   = 0
-         SearchDatabase.Name                 = name
-         SearchDatabase.Location             = location
-         SearchDatabase.RowVersion           = DateTime.Now.Date
-         SearchDatabase.SearchDatabaseParams = searchDatabaseParams
+         SearchDatabase.ID                          = 0
+         SearchDatabase.Name                        = name
+         SearchDatabase.Location                    = location
+         SearchDatabase.NumResidues                 = numResidues
+         SearchDatabase.NumDatabaseSequences        = numDatabaseSequences
+         SearchDatabase.ReleaseDate                 = releaseDate
+         SearchDatabase.Version                     = version
+         SearchDatabase.ExternalFormatDocumentation = externalFormatDocumentation
+         SearchDatabase.FileFormat                  = fileFormat
+         SearchDatabase.DatabaseName                = dataBaseName
+         SearchDatabase.RowVersion                  = DateTime.Now.Date
+         SearchDatabase.SearchDatabaseParams        = searchDatabaseParams
         }
 
     let createSearchDatabaseParam searchDatabase value term unit =
@@ -2421,51 +3257,130 @@ module InsertStatements =
          SearchDatabaseParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createSpectraData name location spectraDataParams =
+    let createSearchDatabaseRef searchDatabase =
         {
-         SpectraData.ID                = 0
-         SpectraData.Name              = name
-         SpectraData.Location          = location
-         SpectraData.RowVersion        = DateTime.Now.Date
-         SpectraData.SpectraDataParams = spectraDataParams
+         SearchDatabaseRef.ID             = 0
+         SearchDatabaseRef.SearchDatabase = searchDatabase 
+         SearchDatabaseRef.RowVersion     = DateTime.Now.Date
         }
 
-    let createSpectraDataParam spectraData value term unit =
+    let createSearchModification fixedMod massDelta residues specificityRules searchModificationParams =
         {
-         SpectraDataParam.ID               = 0
-         SpectraDataParam.FKParamContainer = spectraData
-         SpectraDataParam.Value            = value
-         SpectraDataParam.Term             = term
-         SpectraDataParam.Unit             = unit
-         SpectraDataParam.RowVersion       = DateTime.Now.Date
+         SearchModification.ID                       = 0
+         SearchModification.FixedMod                 = fixedMod
+         SearchModification.MassDelta                = massDelta
+         SearchModification.Residues                 = residues
+         SearchModification.SpecificityRules         = specificityRules
+         SearchModification.RowVersion               = DateTime.Now.Date
+         SearchModification.SearchModificationParams = searchModificationParams
         }
 
-    let createSpectrumIdentification name activityDate spectrumIdentificationList spectrumIdentificationProtocol spectrumIdentificationParams =
+    let createSearchType term userParam =
+        {
+         SearchType.ID         = 0
+         SearchType.Term       = term
+         SearchType.UserParam  = userParam
+         SearchType.RowVersion = DateTime.Now.Date
+        }
+
+    let createSeq sequence =
+        {
+         Seq.ID         = 0
+         Seq.Sequence   = sequence
+         Seq.RowVersion = DateTime.Now.Date
+        }
+
+    let creaeSequenceCollection peptide peptideEvidence dbSequence =
+        {
+         SequenceCollection.ID              = 0
+         SequenceCollection.Peptide         = peptide
+         SequenceCollection.PeptideEvidence = peptideEvidence 
+         SequenceCollection.DBSequence      = dbSequence
+         SequenceCollection.RowVersion      = DateTime.Now.Date
+        }
+
+    let createSiteRegexp sequence =
+        {
+         SiteRegexp.ID         = 0
+         SiteRegexp.Sequence   = sequence
+         SiteRegexp.RowVersion = DateTime.Now.Date
+        }
+
+    let createSoftwareName name =
+        {
+         SoftwareName.ID         = 0
+         SoftwareName.Name       = name
+         SoftwareName.RowVersion = DateTime.Now.Date
+        }
+
+    let createSourceFile name location fileFormat externalFormatDocumentation sourceFileParams userParams =
+        {
+         SourceFile.ID                          = 0
+         SourceFile.Name                        = name
+         SourceFile.Location                    = location
+         SourceFile.FileFormat                  = fileFormat
+         SourceFile.ExternalFormatDocumentation = externalFormatDocumentation
+         SourceFile.RowVersion                  = DateTime.Now.Date
+         SourceFile.SourceFileParams            = sourceFileParams
+         SourceFile.UserParams                  = userParams
+        }
+
+    let createSpecificityRules term =
+        {
+         SpecificityRules.ID         = 0
+         SpecificityRules.Term       = term
+         SpecificityRules.RowVersion = DateTime.Now.Date
+        }
+
+    let createSpectraData name location fileFormat externalFormatDocumentation spectrumIDFormat =
+        {
+         SpectraData.ID                          = 0
+         SpectraData.Name                        = name
+         SpectraData.Location                    = location
+         SpectraData.FileFormat                  = fileFormat
+         SpectraData.ExternalFormatDocumentation = externalFormatDocumentation
+         SpectraData.SpectrumIDFormat            = spectrumIDFormat
+         SpectraData.RowVersion                  = DateTime.Now.Date
+         //SpectraData.SpectraDataParams = spectraDataParams
+        }
+
+    //let createSpectraDataParam spectraData value term unit =
+    //    {
+    //     SpectraDataParam.ID               = 0
+    //     SpectraDataParam.FKParamContainer = spectraData
+    //     SpectraDataParam.Value            = value
+    //     SpectraDataParam.Term             = term
+    //     SpectraDataParam.Unit             = unit
+    //     SpectraDataParam.RowVersion       = DateTime.Now.Date
+    //    }
+
+    let createSpectrumIdentification name activityDate spectrumIdentificationList spectrumIdentificationProtocol inputSpectra searchDatabaseRef =
         {
          SpectrumIdentification.ID                              = 0
          SpectrumIdentification.Name                            = name
          SpectrumIdentification.ActivityDate                    = activityDate
          SpectrumIdentification.SpectrumIdentificationList      = spectrumIdentificationList
-         SpectrumIdentification.SpectrumIdentificationProtocol = spectrumIdentificationProtocol
+         SpectrumIdentification.SpectrumIdentificationProtocol  = spectrumIdentificationProtocol
+         SpectrumIdentification.InputSpectra                    = inputSpectra
+         SpectrumIdentification.SearchDatabaseRef               = searchDatabaseRef
          SpectrumIdentification.RowVersion                      = DateTime.Now.Date
-         SpectrumIdentification.SpectrumIdentificationParams    = spectrumIdentificationParams
+         //SpectrumIdentification.SpectrumIdentificationParams    = spectrumIdentificationParams
         }
 
-    let createSpectrumIdentificationParam spectrumIdentification value term unit =
-        {
-         SpectrumIdentificationParam.ID               = 0
-         SpectrumIdentificationParam.FKParamContainer = spectrumIdentification
-         SpectrumIdentificationParam.Value            = value
-         SpectrumIdentificationParam.Term             = term
-         SpectrumIdentificationParam.Unit             = unit
-         SpectrumIdentificationParam.RowVersion       = DateTime.Now.Date
-        }
+    //let createSpectrumIdentificationParam spectrumIdentification value term unit =
+    //    {
+    //     SpectrumIdentificationParam.ID               = 0
+    //     SpectrumIdentificationParam.FKParamContainer = spectrumIdentification
+    //     SpectrumIdentificationParam.Value            = value
+    //     SpectrumIdentificationParam.Term             = term
+    //     SpectrumIdentificationParam.Unit             = unit
+    //     SpectrumIdentificationParam.RowVersion       = DateTime.Now.Date
+    //    }
 
-    let createSpectrumIdentificationItem name peptide chargeState sample passThreshold fragmentation rank massTable calculatedIP calculatedMassToCharge experimentalMassToCharge spectrumIdentificationResult spectrumIdentificationItemParams =
+    let createSpectrumIdentificationItem name peptide chargeState sample passThreshold fragmentation rank massTable calculatedIP calculatedMassToCharge experimentalMassToCharge spectrumIdentificationResult peptideEvidenceRef spectrumIdentificationItemParams userParams =
         {
          SpectrumIdentificationItem.ID                               = 0
          SpectrumIdentificationItem.Name                             = name
-         SpectrumIdentificationItem.Peptide                          = peptide
          SpectrumIdentificationItem.ChargeState                      = chargeState
          SpectrumIdentificationItem.Sample                           = sample
          SpectrumIdentificationItem.PassThreshold                    = passThreshold
@@ -2476,8 +3391,11 @@ module InsertStatements =
          SpectrumIdentificationItem.CalculatedMassToCharge           = calculatedMassToCharge
          SpectrumIdentificationItem.ExperimentalMassToCharge         = experimentalMassToCharge
          SpectrumIdentificationItem.SpectrumIdentificationResult     = spectrumIdentificationResult
+         SpectrumIdentificationItem.Peptide                          = peptide
+         SpectrumIdentificationItem.PeptideEvidenceRef               = peptideEvidenceRef
          SpectrumIdentificationItem.RowVersion                       = DateTime.Now.Date
          SpectrumIdentificationItem.SpectrumIdentificationItemParams = spectrumIdentificationItemParams
+         SpectrumIdentificationItem.UserParams                       = userParams
         }
 
     let createSpectrumIdentificationItemParam spectrumIdentificationItem value term unit =
@@ -2490,13 +3408,23 @@ module InsertStatements =
          SpectrumIdentificationItemParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createSpectrumIdentificationList name numSequencesSearched spectrumIdentificationListParams =
+    let createSpectrumIdentificationItemRef spectrumIdentificationItem =
+        {
+         SpectrumIdentificationItemRef.ID                         = 0
+         SpectrumIdentificationItemRef.SpectrumIdentificationItem = spectrumIdentificationItem
+         SpectrumIdentificationItemRef.RowVersion                 = DateTime.Now.Date
+        }
+
+    let createSpectrumIdentificationList name numSequencesSearched fragmentationTable spectrumIdentificationResult spectrumIdentificationListParams userParams =
         {
          SpectrumIdentificationList.ID                               = 0
          SpectrumIdentificationList.Name                             = name
          SpectrumIdentificationList.NumSequencesSearched             = numSequencesSearched
+         SpectrumIdentificationList.FragmentationTable               = fragmentationTable
+         SpectrumIdentificationList.SpectrumIdentificationResult     = spectrumIdentificationResult
          SpectrumIdentificationList.RowVersion                       = DateTime.Now.Date
          SpectrumIdentificationList.SpectrumIdentificationListParams = spectrumIdentificationListParams
+         SpectrumIdentificationList.UserParams                       = userParams
         }
 
     let createSpectrumIdentificationListParam spectrumIdentificationList value term unit =
@@ -2509,34 +3437,45 @@ module InsertStatements =
          SpectrumIdentificationListParam.RowVersion       = DateTime.Now.Date
         }
 
-    let createSpectrumIdentificationProtocol name analysisSoftware spectrumIdentificationProtocolParams =
+    let createSpectrumIdentificationProtocol name analysisSoftware searchType additionalSearchparams modificationParams enzymes massTable fragmentTolerance parentTolerance databaseFilters databaseTranslation threshold spectrumIdentificationProtocolParams =
         {
-         SpectrumIdentificationProtocol.ID                                   = 0
-         SpectrumIdentificationProtocol.Name                                 = name
-         SpectrumIdentificationProtocol.AnalysisSoftware                     = analysisSoftware
-         SpectrumIdentificationProtocol.RowVersion                           = DateTime.Now.Date
-         SpectrumIdentificationProtocol.SpectrumIdentificationProtocolParams = spectrumIdentificationProtocolParams
+         SpectrumIdentificationProtocol.ID                     = 0
+         SpectrumIdentificationProtocol.Name                   = name
+         SpectrumIdentificationProtocol.AnalysisSoftware       = analysisSoftware
+         SpectrumIdentificationProtocol.SearchType             = searchType
+         SpectrumIdentificationProtocol.AdditionalSearchparams = additionalSearchparams
+         SpectrumIdentificationProtocol.ModificationParams     = modificationParams
+         SpectrumIdentificationProtocol.Enzymes                = enzymes
+         SpectrumIdentificationProtocol.MassTable              = massTable
+         SpectrumIdentificationProtocol.FragmentTolerance      = fragmentTolerance
+         SpectrumIdentificationProtocol.ParentTolerance        = parentTolerance
+         SpectrumIdentificationProtocol.DatabaseFilters        = databaseFilters
+         SpectrumIdentificationProtocol.DatabaseTranslation    = databaseTranslation
+         SpectrumIdentificationProtocol.Threshold              = threshold
+         SpectrumIdentificationProtocol.RowVersion             = DateTime.Now.Date
+         //SpectrumIdentificationProtocol.SpectrumIdentificationProtocolParams = spectrumIdentificationProtocolParams
         }
 
-    let createSpectrumIdentificationProtocolParam spectrumIdentificationProtocol value term unit =
-        {
-         SpectrumIdentificationProtocolParam.ID               = 0
-         SpectrumIdentificationProtocolParam.FKParamContainer = spectrumIdentificationProtocol
-         SpectrumIdentificationProtocolParam.Value            = value
-         SpectrumIdentificationProtocolParam.Term             = term
-         SpectrumIdentificationProtocolParam.Unit             = unit
-         SpectrumIdentificationProtocolParam.RowVersion       = DateTime.Now.Date
-        }
+    //let createSpectrumIdentificationProtocolParam spectrumIdentificationProtocol value term unit =
+    //    {
+    //     SpectrumIdentificationProtocolParam.ID               = 0
+    //     SpectrumIdentificationProtocolParam.FKParamContainer = spectrumIdentificationProtocol
+    //     SpectrumIdentificationProtocolParam.Value            = value
+    //     SpectrumIdentificationProtocolParam.Term             = term
+    //     SpectrumIdentificationProtocolParam.Unit             = unit
+    //     SpectrumIdentificationProtocolParam.RowVersion       = DateTime.Now.Date
+    //    }
 
-    let createSpectrumIdentificationResult name spectrumID spectraData spectrumIdentificationList spectrumIdentificationResultParams =
+    let createSpectrumIdentificationResult name spectrumID spectraData spectrumIdentificationitem spectrumIdentificationResultParams userParams =
         {
          SpectrumIdentificationResult.ID                                 = 0
          SpectrumIdentificationResult.Name                               = name
          SpectrumIdentificationResult.SpectrumID                         = spectrumID
          SpectrumIdentificationResult.SpectraData                        = spectraData
-         SpectrumIdentificationResult.SpectrumIdentificationList         = spectrumIdentificationList
+         SpectrumIdentificationResult.SpectrumIdentificationItem         = spectrumIdentificationitem
          SpectrumIdentificationResult.RowVersion                         = DateTime.Now.Date
          SpectrumIdentificationResult.SpectrumIdentificationResultParams = spectrumIdentificationResultParams
+         SpectrumIdentificationResult.UserParams                         = userParams
         }
 
     let createSpectrumIdentificationResultParam spectrumIdentificationResult value term unit =
@@ -2547,6 +3486,31 @@ module InsertStatements =
          SpectrumIdentificationResultParam.Term             = term
          SpectrumIdentificationResultParam.Unit             = unit
          SpectrumIdentificationResultParam.RowVersion       = DateTime.Now.Date
+        }
+
+    let createSpectrumIDFormat term =
+        {
+         SpectrumIDFormat.ID         = 0
+         SpectrumIDFormat.Term       = term
+         SpectrumIDFormat.RowVersion = DateTime.Now.Date
+        }
+
+    let createSubSamples sample =
+        {
+         SubSample.ID         = 0
+         SubSample.Sample     = sample
+         SubSample.RowVersion = DateTime.Now.Date
+        }
+
+    let createSubstitutionModification location avgMassDelta monoIsotopicMassDelta orgResidue repResidue =
+        {
+         SubstitutionModification.ID                    = 0
+         SubstitutionModification.Location              = location
+         SubstitutionModification.AvgMassDelta          = avgMassDelta
+         SubstitutionModification.MonoIsotopicMassDelta = monoIsotopicMassDelta
+         SubstitutionModification.OriginalResidue       = orgResidue
+         SubstitutionModification.ReplacementResidue    = repResidue
+         SubstitutionModification.RowVersion            = DateTime.Now.Date
         }
 
     let createTerm ontology (oboTerm : seq<Obo.OboTerm>) =
@@ -2564,11 +3528,12 @@ module InsertStatements =
                                         }
                            )   
                        )
+
     let createTermCustom id name ontology =
         {
-         Term.ID = id
-         Term.Name = name
-         Term.Ontology = ontology
+         Term.ID         = id
+         Term.Name       = name
+         Term.Ontology   = ontology
          Term.RowVersion = DateTime.Now.Date
         }
 
@@ -2588,6 +3553,32 @@ module InsertStatements =
          TermTag.Value      = value
          TermTag.Term       = term
          TermTag.RowVersion = DateTime.Now.Date
+        }
+
+    let createThreshold term userParam =
+        {
+         Threshold.ID         = 0
+         Threshold.Term       = term
+         Threshold.UserParam  = userParam
+         Threshold.RowVersion = DateTime.Now.Date
+        }
+
+    let createTranslationTable name translationTableParamms =
+        {
+         TranslationTable.ID                     = 0
+         TranslationTable.Name                   = name
+         TranslationTable.RowVersion             = DateTime.Now.Date
+         TranslationTable.TranslationTableParams = translationTableParamms
+        }
+
+    let userParam value term unit unitName =
+        {
+         UserParam.ID         = 0
+         UserParam.Value      = value
+         UserParam.Term       = term
+         UserParam.Unit       = unit
+         UserParam.UnitName   = unitName
+         UserParam.RowVersion = DateTime.Now.Date
         }
 
 ///Define reader for OboFile
@@ -2612,6 +3603,7 @@ let fromUnit_Ontology =
 
 open InsertStatements 
 
+
 let ontologyCustom =
      createOntology "Custom" null (new System.Collections.Generic.List<Term>([createTermCustom "000000" "Unitless" (createOntology "Custom" null null)]))
 
@@ -2627,15 +3619,16 @@ let ontologyUniMod =
 let ontologyUnit_Ontology =
     createOntology "Unit_Ontology" null (createTerm(createOntology "Unit_Ontology" null null) fromUnit_Ontology)
 
-let spectrumIdentification =
-    createSpectrumIdentification "Test" "Today" 1 2 null
+//let spectrumIdentification =
+//    createSpectrumIdentification "Test" "Today" 1 2 null
 
-let spectrumIdentificationParam =
-    createSpectrumIdentificationParam spectrumIdentification "Point" ontologyPride.Terms.[34] ontologyCustom.Terms.[0]
+//let spectrumIdentificationParam =
+//    createSpectrumIdentificationParam spectrumIdentification "Point" ontologyPride.Terms.[34] ontologyCustom.Terms.[0]
 
 ///Creating && Checking && inserting into DB
-let initDB =
-    let db = new DBMSContext()
+
+let initDB path=
+    let db = (configureSqlServerContext path)()
     
     db.Database.EnsureCreated()                                     |> ignore
 
@@ -2644,14 +3637,15 @@ let initDB =
     db.Ontology.Add(ontologyPride)                                  |> ignore
     db.Ontology.Add(ontologyUniMod)                                 |> ignore
     db.Ontology.Add(ontologyUnit_Ontology)                          |> ignore
-    db.SpectrumIdentification.Add(spectrumIdentification)           |> ignore
-    db.SpectrumIdentificationParam.Add(spectrumIdentificationParam) |> ignore
+    //db.SpectrumIdentification.Add(spectrumIdentification)           |> ignore
+    //db.SpectrumIdentificationParam.Add(spectrumIdentificationParam) |> ignore
     db.SaveChanges()
 
 ///Define Queries for DB//////////////////////////////
 /////////////////////////////////////////////////////////////////////////
     
-let context = new DBMSContext()
+//let context = new DBMSContext()
+    
 
 //let testOntology =
 //    query {
@@ -2665,9 +3659,9 @@ let context = new DBMSContext()
 ////        select i
 ////          }
 
-let readLine (input : seq<'a>) =
-    for i in input do
-        Console.WriteLine(i)
+//let readLine (input : seq<'a>) =
+//    for i in input do
+//        Console.WriteLine(i)
 
 //readLine testOntology
 //readLine testTerm
@@ -2696,122 +3690,125 @@ let readLine (input : seq<'a>) =
 //    )
 //readLine testTerm4
 
-let selectSpectrumIdentificationByID iD =
-    (query {
-            for i in context.SpectrumIdentification do
-                if i.ID = iD 
-                then select i
-           }
-    )
+//let selectSpectrumIdentificationByID iD =
+//    (query {
+//            for i in context.SpectrumIdentification do
+//                if i.ID = iD 
+//                then select i
+//           }
+//    )
 
-let selectSpectrumIdentificationByName name =
-    (query {
-            for i in context.SpectrumIdentification do
-                if i.Name = name 
-                    then select i
-           }
-    )
+//let selectSpectrumIdentificationByName name =
+//    (query {
+//            for i in context.SpectrumIdentification do
+//                if i.Name = name 
+//                    then select i
+//           }
+//    )
 
-let selectSpectrumIdentificationByActivityDate activityDate =
-    (query {
-            for i in context.SpectrumIdentification do
-                if i.ActivityDate = activityDate 
-                    then select i
-           }
-    )
+//let selectSpectrumIdentificationByActivityDate activityDate =
+//    (query {
+//            for i in context.SpectrumIdentification do
+//                if i.ActivityDate = activityDate 
+//                    then select i
+//           }
+//    )
 
-let selectSpectrumIdentificationBySIList sIList =
-    (query {
-            for i in context.SpectrumIdentification do
-                if i.SpectrumIdentificationList = sIList 
-                    then select i
-           }
-    )
+//let selectSpectrumIdentificationBySIList sIList =
+//    (query {
+//            for i in context.SpectrumIdentification do
+//                if i.SpectrumIdentificationList = sIList 
+//                    then select i
+//           }
+//    )
 
-let selectSpectrumIdentificationBySIProtocol sIProtocol =
-    (query {
-            for i in context.SpectrumIdentification do
-                if i.SpectrumIdentificationProtocol = sIProtocol 
-                    then select i
-           }
-    )
+//let selectSpectrumIdentificationBySIProtocol sIProtocol =
+//    (query {
+//            for i in context.SpectrumIdentification do
+//                if i.SpectrumIdentificationProtocol = sIProtocol 
+//                    then select i
+//           }
+//    )
 
-let selectSpectrumIdentificationParamBySI sI =
-    (query {
-            for i in context.SpectrumIdentificationParam do
-                if i.FKParamContainer = sI 
-                    then select (i, i.Term, i.Unit)
-           }
-    )
+//let selectSpectrumIdentificationParamBySI sI =
+//    (query {
+//            for i in context.SpectrumIdentificationParam do
+//                if i.FKParamContainer = sI 
+//                    then select (i, i.Term, i.Unit)
+//           }
+//    )
 
-let selectSpectrumIdentificationParamBySIID sIID =
-    (query {
-            for i in context.SpectrumIdentificationParam do
-                if i.FKParamContainer.ID = sIID
-                    then select (i, i.Term, i.Unit)
-           }
-    )
+//let selectSpectrumIdentificationParamBySIID sIID =
+//    (query {
+//            for i in context.SpectrumIdentificationParam do
+//                if i.FKParamContainer.ID = sIID
+//                    then select (i, i.Term, i.Unit)
+//           }
+//    )
 
-let selectSpectrumIdentificationParamBySIName sIName =
-    (query {
-            for i in context.SpectrumIdentificationParam do
-                if i.FKParamContainer.Name = sIName
-                    then select (i, i.Term, i.Unit)
-           }
-    )
+//let selectSpectrumIdentificationParamBySIName sIName =
+//    (query {
+//            for i in context.SpectrumIdentificationParam do
+//                if i.FKParamContainer.Name = sIName
+//                    then select (i, i.Term, i.Unit)
+//           }
+//    )
 
-let selectTermByOntologyID ontologyID =
-    (query {
-            for i in context.Term do
-                if i.Ontology.ID = ontologyID
-                    then select (i)
-           }
-    )
+//let selectTermByOntologyID ontologyID =
+//    (query {
+//            for i in context.Term do
+//                if i.Ontology.ID = ontologyID
+//                    then select (i)
+//           }
+//    )
 
-let selectTermByOntologyName ontologyName =
-    (query {
-            for i in context.Term do
-                if i.Ontology.Name = ontologyName
-                    then select (i)
-           }
-    )
+//let selectTermByOntologyName ontologyName =
+//    (query {
+//            for i in context.Term do
+//                if i.Ontology.Name = ontologyName
+//                    then select (i)
+//           }
+//    )
 
-let selectTermByTermID termID =
-    (query {
-            for i in context.Term do
-                if i.ID = termID
-                    then select (i)
-           }
-    )
+//let selectTermByTermID termID =
+//    (query {
+//            for i in context.Term do
+//                if i.ID = termID
+//                    then select (i)
+//           }
+//    )
 
-let selectTermByTermName termName =
-    (query {
-            for i in context.Term do
-                if i.Name = termName
-                    then select (i)
-           }
-    )
+//let selectTermByTermName termName =
+//    (query {
+//            for i in context.Term do
+//                if i.Name = termName
+//                    then select (i)
+//           }
+//    )
 
-context.SaveChanges()
+//context.SaveChanges()
+
 
 ///Apply queries to DB////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-selectSpectrumIdentificationByID 1
-|> readLine
-selectSpectrumIdentificationByName "Test"
-|> readLine
-selectSpectrumIdentificationByActivityDate "Today"
-|> readLine
-selectSpectrumIdentificationBySIList 1
-|> readLine
-selectSpectrumIdentificationBySIProtocol 2
-|> readLine
-selectSpectrumIdentificationParamBySI spectrumIdentification
-|> readLine
-selectTermByOntologyID 3
-|> readLine
-selectTermByOntologyName "Pride"
-|> readLine
+//selectSpectrumIdentificationByID 1
+//|> readLine
+//selectSpectrumIdentificationByName "Test"
+//|> readLine
+//selectSpectrumIdentificationByActivityDate "Today"
+//|> readLine
+//selectSpectrumIdentificationBySIList 1
+//|> readLine
+//selectSpectrumIdentificationBySIProtocol 2
+//|> readLine
+//selectSpectrumIdentificationParamBySI spectrumIdentification
+//|> readLine
+//selectTermByOntologyID 3
+//|> readLine
+//selectTermByOntologyName "Pride"
+//|> readLine
 
-///Testen verschiedener Varianten, Ergebnis anhand eines Linearitätstests überprüfen: Stabile Linie ja, nein?
+//Init Database
+
+initDB standardDBPath
