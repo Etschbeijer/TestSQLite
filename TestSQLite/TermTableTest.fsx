@@ -2428,6 +2428,7 @@ type DBMSContext =
     //    optionsBuilder.UseSqlite(@"Data Source="+ dbPath) |> ignore
 
 let standardDBPath = fileDir + "\Ontologies_Terms\MSDatenbank.db"
+
 let configureSqlServerContext path = 
     let optionsBuilder = new DbContextOptionsBuilder<DBMSContext>()
     optionsBuilder.UseSqlite(@"Data Source=" + path) |> ignore
@@ -3845,3 +3846,29 @@ let initDB path=
 //Seq.item 0 test
 
 initDB standardDBPath
+
+//Working with XML_Files
+
+open System.Xml
+
+let getXML_List xmlItem =
+    let getDoc =
+        let doc = new XmlDocument()
+        doc.LoadXml(xmlItem)
+        doc
+    let getScheme (node : XmlNode) =
+        node.InnerText.ToString()
+    let build =
+        new System.Text.StringBuilder()
+    getDoc.SelectNodes("prolog/MzIdentML/cvList/text()")
+        |> Seq.cast<XmlNode>
+        |> Seq.map (fun n -> n.ChildNodes )
+        |> Seq.collect (Seq.cast<XmlNode>)
+        |> Seq.map(fun (node : XmlNode) -> getScheme node) 
+        |> Seq.iter (fun element -> build.AppendLine(element) |> ignore)
+    build.ToString()
+    |> (fun item -> if item.StartsWith ("_byteOrderMarkUtf8")
+                        then item.Remove(0, "_byteOrderMarkUtf8".Length)
+                        else item)
+
+getXML_List @"C:\Users\PatrickB\Source\Repos\TestSQLite\TestSQLite\Ontologies_Terms\ExampleFile\PeptideShaker_mzid_1_2_example.mzid"
