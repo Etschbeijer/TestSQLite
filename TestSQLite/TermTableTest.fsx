@@ -261,7 +261,7 @@ and [<CLIMutable>]
     {
      ID                     : int
      PageNumber             : int
-     BiblioGraphicReference : BiblioGraphicReference
+     //BiblioGraphicReference : BiblioGraphicReference
      RowVersion             : DateTime
     }
 
@@ -377,7 +377,7 @@ and [<CLIMutable>]
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
      ID                  : int
      Frame               : string
-     DatabaseTranslation : DatabaseTranslation
+     //DatabaseTranslation : DatabaseTranslation
      RowVersion          : DateTime
     }
 
@@ -480,9 +480,9 @@ and [<CLIMutable>]
     Exclude =
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-     ID        : int
-     Term      : Term
-     UserParam : UserParam
+     ID         : int
+     Term       : Term
+     UserParam  : UserParam
      RowVersion : DateTime
      //ExcludeParams : List<ExcludeParams>
     }
@@ -594,10 +594,10 @@ and [<CLIMutable>]
     Value =
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-     ID            : int
-     Value         : float
-     FragmentArray : FragmentArray
-     RowVersion         : DateTime
+     ID         : int
+     Value      : float
+     //FragmentArray : FragmentArray
+     RowVersion : DateTime
     }
 
 ///The product ions identified in this result.
@@ -625,9 +625,9 @@ and [<CLIMutable>]
     FragmentTolerance =
     {
      [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-     ID     : int
-     Value : float
-     RowVersion : DateTime
+     ID                      : int
+     Value                   : float
+     RowVersion              : DateTime
      FragmentToleranceParams : List<FragmentToleranceParam>
     }
 
@@ -1067,9 +1067,9 @@ and [<CLIMutable>]
     PeptideSequence =
     {
     [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>] 
-    ID                           : int
-    Sequence                     : string
-    RowVersion                   : DateTime  
+    ID         : int
+    Sequence   : string
+    RowVersion : DateTime  
     //PeptideHypothesisParams      : List<PeptideHypothesisParam>
     }
 
@@ -2591,7 +2591,7 @@ module InsertStatements =
         {
          Page.ID         = 0
          Page.PageNumber = pageNumber
-         Page.BiblioGraphicReference = biblioGraphicReference
+         //Page.BiblioGraphicReference = biblioGraphicReference
          Page.RowVersion = DateTime.Now.Date
         }
 
@@ -2654,7 +2654,7 @@ module InsertStatements =
         {
          Frame.ID                  = 0
          Frame.Frame               = frame
-         Frame.DatabaseTranslation = databasetranslation
+         //Frame.DatabaseTranslation = databasetranslation
          Frame.RowVersion          = DateTime.Now.Date
         }
 
@@ -2773,7 +2773,7 @@ module InsertStatements =
         {
          Value.ID            = 0
          Value.Value         = value
-         Value.FragmentArray = fragmentArray
+         //Value.FragmentArray = fragmentArray
          Value.RowVersion    = DateTime.Now.Date
         }
 
@@ -2839,6 +2839,13 @@ module InsertStatements =
          IonType.RowVersion    = DateTime.Now.Date
          IonType.IonTypeParams = ionTypeParams
          IonType.UserParams    = userParams
+        }
+
+    let createIndexItem indexItem =
+        {
+         IndexItem.ID         = 0
+         IndexItem.IndexItem  = indexItem
+         IndexItem.RowVersion = DateTime.Now.Date
         }
 
     let createIonTypeParam (*ionType*) value term unit =
