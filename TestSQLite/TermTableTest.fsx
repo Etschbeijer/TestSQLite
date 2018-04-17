@@ -3828,23 +3828,20 @@ let initDB path=
 //selectTermByOntologyName "Pride"
 //|> readLine
 
-//Init Database
+//let context = (configureSqlServerContext standardDBPath)
+
+//let readLine (input : seq<'a>) =
+//    for i in input do
+//        Console.WriteLine(i)
+
+//let selectTermByOntologyName ontologyName =
+//     query {
+//            for i in context.Ontology do
+//                if i.Name = ontologyName then
+//                    select (i.Terms)
+//           }
+
+//let test = selectTermByOntologyName "Pride"
+//Seq.item 0 test
 
 initDB standardDBPath
-
-
-let context = (configureSqlServerContext standardDBPath)
-
-let readLine (input : seq<'a>) =
-    for i in input do
-        Console.WriteLine(i)
-
-let selectTermByOntologyName ontologyName =
-     query {
-            for i in context.Ontology do
-                if i.Name = ontologyName then
-                    select (i.Terms)
-           }
-
-let test = selectTermByOntologyName "Pride"
-Seq.item 0 test
