@@ -1758,7 +1758,7 @@ and [<CLIMutable>]
     {
     ID             : string
     Name           : string
-    Ontology       : Ontology
+    //Ontology       : Ontology
     RowVersion     : DateTime 
     }
 
@@ -2429,11 +2429,9 @@ type DBMSContext =
 
 let standardDBPath = fileDir + "\Ontologies_Terms\MSDatenbank.db"
 let configureSqlServerContext path = 
-    (fun () ->
-        let optionsBuilder = new DbContextOptionsBuilder<DBMSContext>()
-        optionsBuilder.UseSqlite(@"Data Source=" + path) |> ignore
-        new DBMSContext(optionsBuilder.Options)
-    )
+    let optionsBuilder = new DbContextOptionsBuilder<DBMSContext>()
+    optionsBuilder.UseSqlite(@"Data Source=" + path) |> ignore
+    new DBMSContext(optionsBuilder.Options)
 
 ///Define functions to create  for tables of DB////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3548,7 +3546,7 @@ module InsertStatements =
                                         {
                                          Term.ID         = item.Id
                                          Term.Name       = item.Name
-                                         Term.Ontology   = ontology
+                                         //Term.Ontology   = ontology
                                          Term.RowVersion = DateTime.Now.Date
                                         }
                            )   
@@ -3558,7 +3556,7 @@ module InsertStatements =
         {
          Term.ID         = id
          Term.Name       = name
-         Term.Ontology   = ontology
+         //Term.Ontology   = ontology
          Term.RowVersion = DateTime.Now.Date
         }
 
@@ -3653,7 +3651,7 @@ let ontologyUnit_Ontology =
 ///Creating && Checking && inserting into DB
 
 let initDB path=
-    let db = (configureSqlServerContext path)()
+    let db = (configureSqlServerContext path)
     
     db.Database.EnsureCreated()                                     |> ignore
 
@@ -3683,10 +3681,6 @@ let initDB path=
 ////        for i in context.Term do
 ////        select i
 ////          }
-
-//let readLine (input : seq<'a>) =
-//    for i in input do
-//        Console.WriteLine(i)
 
 //readLine testOntology
 //readLine testTerm
@@ -3837,3 +3831,20 @@ let initDB path=
 //Init Database
 
 initDB standardDBPath
+
+
+let context = (configureSqlServerContext standardDBPath)
+
+let readLine (input : seq<'a>) =
+    for i in input do
+        Console.WriteLine(i)
+
+let selectTermByOntologyName ontologyName =
+     query {
+            for i in context.Ontology do
+                if i.Name = ontologyName then
+                    select (i.Terms)
+           }
+
+let test = selectTermByOntologyName "Pride"
+Seq.item 0 test
